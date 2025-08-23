@@ -11,7 +11,6 @@ import {
   Send,
   BarChart,
   MessageSquare,
-  Monitor,
   Bell,
   ArrowLeft,
   Circle,
@@ -28,7 +27,6 @@ const navLinks = [
   { href: '/admin/wallet', label: 'Wallet', icon: Wallet },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart },
   { href: '/admin/live-chat', label: 'Live Chat', icon: MessageSquare },
-  { href: '/admin/monitor', label: 'Monitor', icon: Monitor },
 ];
 
 export function AdminHeader() {
