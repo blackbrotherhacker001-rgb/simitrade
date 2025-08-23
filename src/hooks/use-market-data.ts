@@ -1,14 +1,13 @@
 
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 type MarketTrend = 'bullish' | 'bearish' | 'sideways' | 'volatile';
 
-// Set a more realistic starting price for BTC
 const REALISTIC_STARTING_PRICE = 68500;
 
-const generateInitialData = (count = 50) => {
+const generateInitialData = (count = 100) => {
   const data = [];
   let price = REALISTIC_STARTING_PRICE;
   const now = new Date();
@@ -18,9 +17,9 @@ const generateInitialData = (count = 50) => {
       minute: '2-digit',
     });
     // Start with smaller fluctuations for the initial historical data
-    const fluctuation = (Math.random() - 0.5) * 300;
+    const fluctuation = (Math.random() - 0.5) * 200;
     price += fluctuation;
-    data.push({ time, price });
+    data.push({ time, price: parseFloat(price.toFixed(2)) });
   }
   return data;
 };
@@ -43,24 +42,27 @@ export default function useMarketData(trend: MarketTrend) {
           prevData.length > 0
             ? prevData[prevData.length - 1].price
             : REALISTIC_STARTING_PRICE;
+            
         let change = 0;
         const currentTrend = trendRef.current;
 
-        // Make fluctuations more dynamic and realistic
-        switch (currentTrend) {
-          case 'bullish':
-            change = Math.random() * 250 + (Math.random() > 0.2 ? 10 : -50); // Strong upward moves with pullbacks
-            break;
-          case 'bearish':
-            change = Math.random() * -250 - (Math.random() > 0.2 ? 10 : -50); // Strong downward moves with bounces
-            break;
-          case 'sideways':
-            change = (Math.random() - 0.5) * 150; // Tighter range for sideways movement
-            break;
-          case 'volatile':
-            change = (Math.random() - 0.5) * 1200; // Wider swings for volatility
-            break;
-        }
+        const volatilityFactor = {
+            bullish: 0.0005,
+            bearish: 0.0005,
+            sideways: 0.0002,
+            volatile: 0.0015,
+        };
+
+        const trendFactor = {
+            bullish: 0.0001,
+            bearish: -0.0001,
+            sideways: 0,
+            volatile: 0,
+        };
+        
+        const noise = (Math.random() - 0.5) * volatilityFactor[currentTrend];
+        const trendMovement = trendFactor[currentTrend];
+        change = (noise + trendMovement) * lastPrice;
 
         const newPrice = Math.max(0, lastPrice + change);
         const newTime = new Date().toLocaleTimeString([], {
@@ -68,13 +70,13 @@ export default function useMarketData(trend: MarketTrend) {
           minute: '2-digit',
         });
 
-        setCurrentPrice(newPrice);
+        setCurrentPrice(parseFloat(newPrice.toFixed(2)));
 
-        const newDataPoint = { time: newTime, price: newPrice };
+        const newDataPoint = { time: newTime, price: parseFloat(newPrice.toFixed(2)) };
         const updatedData = [...prevData.slice(1), newDataPoint];
         return updatedData;
       });
-    }, 2000); // Interval remains 2 seconds for frequent updates
+    }, 1500); // Update every 1.5 seconds for a more active feel
 
     return () => clearInterval(interval);
   }, []);

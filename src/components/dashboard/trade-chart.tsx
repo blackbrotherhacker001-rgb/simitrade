@@ -65,7 +65,7 @@ export function TradeChart() {
     };
   }, []);
 
-  const { data, currentPrice } = useMarketData(trend);
+  const { data, currentPrice } = useMarketData(mode === 'live' ? 'sideways' : trend);
 
   const priceHistory = data.map(d => d.price);
   const high24h = Math.max(...priceHistory);
