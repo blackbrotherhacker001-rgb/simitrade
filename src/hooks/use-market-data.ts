@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -5,11 +6,11 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 type MarketTrend = 'bullish' | 'bearish' | 'sideways' | 'volatile';
 
 // Set a more realistic starting price for BTC
-const रियलिस्टिक_प्रारंभिक_मूल्य = 68500;
+const REALISTIC_STARTING_PRICE = 68500;
 
 const generateInitialData = (count = 50) => {
   const data = [];
-  let price = रियलिस्टिक_प्रारंभिक_मूल्य;
+  let price = REALISTIC_STARTING_PRICE;
   const now = new Date();
   for (let i = count - 1; i >= 0; i--) {
     const time = new Date(now.getTime() - i * 60000).toLocaleTimeString([], {
@@ -24,16 +25,16 @@ const generateInitialData = (count = 50) => {
   return data;
 };
 
-export default function useMarketData(initialTrend: MarketTrend) {
+export default function useMarketData(trend: MarketTrend) {
   const [data, setData] = useState(generateInitialData());
   const [currentPrice, setCurrentPrice] = useState(
-    data[data.length - 1]?.price || रियलिस्टिक_प्रारंभिक_मूल्य
+    data[data.length - 1]?.price || REALISTIC_STARTING_PRICE
   );
-  const trendRef = useRef(initialTrend);
-
-  const setTrend = useCallback((newTrend: MarketTrend) => {
-    trendRef.current = newTrend;
-  }, []);
+  
+  const trendRef = useRef(trend);
+  useEffect(() => {
+      trendRef.current = trend;
+  }, [trend])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,12 +42,12 @@ export default function useMarketData(initialTrend: MarketTrend) {
         const lastPrice =
           prevData.length > 0
             ? prevData[prevData.length - 1].price
-            : रियलिस्टिक_प्रारंभिक_मूल्य;
+            : REALISTIC_STARTING_PRICE;
         let change = 0;
-        const trend = trendRef.current;
+        const currentTrend = trendRef.current;
 
         // Make fluctuations more dynamic and realistic
-        switch (trend) {
+        switch (currentTrend) {
           case 'bullish':
             change = Math.random() * 250 + (Math.random() > 0.2 ? 10 : -50); // Strong upward moves with pullbacks
             break;
@@ -78,5 +79,5 @@ export default function useMarketData(initialTrend: MarketTrend) {
     return () => clearInterval(interval);
   }, []);
 
-  return { data, currentPrice, setTrend };
+  return { data, currentPrice };
 }

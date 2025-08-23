@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -14,6 +15,7 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts'
 import useMarketData from '@/hooks/use-market-data';
 import { Badge } from '../ui/badge';
 import { TrendingUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const chartConfig = {
   price: {
@@ -22,8 +24,33 @@ const chartConfig = {
   },
 };
 
+type MarketTrend = 'bullish' | 'bearish' | 'sideways' | 'volatile';
+const MARKET_TREND_STORAGE_KEY = 'market-trend';
+
 export function TradeChart() {
-  const { data, currentPrice } = useMarketData('bullish');
+  const [trend, setTrend] = useState<MarketTrend>('sideways');
+  
+  useEffect(() => {
+    const storedTrend = localStorage.getItem(MARKET_TREND_STORAGE_KEY) as MarketTrend;
+    if (storedTrend) {
+      setTrend(storedTrend);
+    }
+
+    const handleStorageChange = () => {
+      const newTrend = localStorage.getItem(MARKET_TREND_STORAGE_KEY) as MarketTrend;
+       if (newTrend) {
+        setTrend(newTrend);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  const { data, currentPrice } = useMarketData(trend);
 
   const priceHistory = data.map(d => d.price);
   const high24h = Math.max(...priceHistory);

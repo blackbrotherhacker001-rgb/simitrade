@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -45,13 +46,26 @@ const trendConfig: Record<Trend, TrendConfig> = {
   },
 };
 
+const MARKET_TREND_STORAGE_KEY = 'market-trend';
+
 export function MarketControl() {
   const [selectedTrend, setSelectedTrend] = useState<Trend>('sideways');
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState<string>('The market is currently stable with minor fluctuations.');
   
-  const handleTrendChange = async (trend: Trend) => {
+  useEffect(() => {
+    const storedTrend = localStorage.getItem(MARKET_TREND_STORAGE_KEY) as Trend;
+    if (storedTrend && trendConfig[storedTrend]) {
+      handleTrendChange(storedTrend, true);
+    }
+  }, []);
+  
+  const handleTrendChange = async (trend: Trend, isInitialLoad = false) => {
     setSelectedTrend(trend);
+    if (!isInitialLoad) {
+      localStorage.setItem(MARKET_TREND_STORAGE_KEY, trend);
+    }
+    
     setLoading(true);
     setDescription('');
     try {
