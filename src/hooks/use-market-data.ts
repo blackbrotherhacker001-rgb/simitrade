@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 
 type MarketTrend = 'bullish' | 'bearish' | 'sideways' | 'volatile';
 
-const REALISTIC_STARTING_PRICE = 67500.00;
+const REALISTIC_STARTING_PRICE = 68185.60;
 
 const generateInitialData = (count = 100) => {
   const data = [];
