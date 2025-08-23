@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,7 +29,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { ADMIN_WALLET_ADDRESS } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const formSchema = z.object({
   amount: z.coerce.number().positive("Amount must be a positive number."),
@@ -39,11 +40,23 @@ interface WalletDialogProps {
   children: React.ReactNode;
 }
 
+const DEPOSIT_WALLET_STORAGE_KEY = 'deposit-wallet-address';
+
 export function WalletDialog({ type, children }: WalletDialogProps) {
   const [open, setOpen] = useState(false);
+  const [depositAddress, setDepositAddress] = useState(ADMIN_WALLET_ADDRESS);
   const { toast } = useToast();
   const { user, updateBalance } = useAuth();
   
+  useEffect(() => {
+    if (type === 'deposit') {
+      const storedAddress = localStorage.getItem(DEPOSIT_WALLET_STORAGE_KEY);
+      if (storedAddress) {
+        setDepositAddress(storedAddress);
+      }
+    }
+  }, [type, open]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -107,7 +120,7 @@ export function WalletDialog({ type, children }: WalletDialogProps) {
                         data-ai-hint="qr code"
                     />
                 </div>
-                <Input readOnly value={ADMIN_WALLET_ADDRESS} className="text-center"/>
+                <Input readOnly value={depositAddress} className="text-center"/>
                  <FormDescription className="text-center">
                     Funds will be added to your account after you complete the transaction with your wallet.
                 </FormDescription>
