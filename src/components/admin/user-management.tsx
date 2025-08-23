@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Edit, ToggleLeft, ToggleRight, UserPlus } from 'lucide-react';
+import { MoreHorizontal, Edit, ToggleLeft, ToggleRight, UserPlus, LogIn } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,6 +48,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
 
 const mockUsers = [
     { id: '1', name: 'Satoshi Nakamoto', wallet_address: '0x1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', balance: 980000.00, is_active: true, last_login_at: '2025-08-23T14:07:03Z' },
@@ -69,6 +71,8 @@ export function UserManagement() {
   const [users, setUsers] = useState(mockUsers);
   const [isCreateUserOpen, setCreateUserOpen] = useState(false);
   const { toast } = useToast();
+  const { login } = useAuth();
+  const router = useRouter();
 
   const form = useForm<CreateUserForm>({
     resolver: zodResolver(createUserSchema),
@@ -83,6 +87,11 @@ export function UserManagement() {
     setUsers(users.map(user => user.id === id ? { ...user, is_active: !user.is_active } : user));
   };
   
+  const handleLoginAsUser = (walletAddress: string) => {
+    login(walletAddress, false);
+    router.push('/dashboard');
+  };
+
   const handleCreateUser = (values: CreateUserForm) => {
     const newUser = {
       id: (users.length + 1).toString(),
@@ -217,6 +226,10 @@ export function UserManagement() {
                         </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleLoginAsUser(user.wallet_address)}>
+                            <LogIn className="mr-2 h-4 w-4" />
+                            Login as User
+                        </DropdownMenuItem>
                         <DropdownMenuItem>
                             <Edit className="mr-2 h-4 w-4" />
                             Adjust Balance
