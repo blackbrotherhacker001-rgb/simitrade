@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -49,10 +50,11 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 
 const mockUsers = [
-  { id: '1', name: 'Alice', wallet_address: '0x123...def', balance: 10500.50, is_active: true, last_login_at: '2024-05-20 10:00:00' },
-  { id: '2', name: 'Bob', wallet_address: '0x456...abc', balance: 7300.00, is_active: true, last_login_at: '2024-05-20 09:30:00' },
-  { id: '3', name: 'Charlie', wallet_address: '0x789...xyz', balance: 0.00, is_active: false, last_login_at: '2024-05-18 12:00:00' },
-  { id: '4', name: 'David', wallet_address: '0xabc...123', balance: 25000.75, is_active: true, last_login_at: '2024-05-19 18:45:00' },
+    { id: '1', name: 'Satoshi Nakamoto', wallet_address: '0x1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', balance: 980000.00, is_active: true, last_login_at: '2025-08-23T14:07:03Z' },
+    { id: '2', name: 'Vitalik Buterin', wallet_address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', balance: 450000.00, is_active: true, last_login_at: '2025-08-23T13:07:03Z' },
+    { id: '3', name: 'Charles Hoskinson', wallet_address: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2', balance: 250000.00, is_active: true, last_login_at: '2025-08-22T18:30:00Z' },
+    { id: '4', name: 'Gavin Wood', wallet_address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e', balance: 150000.00, is_active: true, last_login_at: '2025-08-21T11:45:00Z' },
+    { id: '5', name: 'Barry Silbert', wallet_address: '0x503828976D22510aad0201ac7EC88293211D23Da', balance: 75000.00, is_active: false, last_login_at: '2025-08-20T09:00:00Z' },
 ];
 
 const createUserSchema = z.object({
@@ -88,7 +90,7 @@ export function UserManagement() {
       wallet_address: values.wallet_address,
       balance: values.balance,
       is_active: true,
-      last_login_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      last_login_at: new Date().toISOString(),
     };
     setUsers([...users, newUser]);
     toast({
@@ -98,6 +100,17 @@ export function UserManagement() {
     setCreateUserOpen(false);
     form.reset();
   };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString([], {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    });
+  }
 
   return (
     <Card>
@@ -188,13 +201,13 @@ export function UserManagement() {
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.wallet_address}</TableCell>
-                <TableCell>${user.balance.toLocaleString()}</TableCell>
+                <TableCell>${user.balance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</TableCell>
                 <TableCell>
                   <Badge variant={user.is_active ? 'default' : 'destructive'}>
                     {user.is_active ? 'Active' : 'Suspended'}
                   </Badge>
                 </TableCell>
-                <TableCell>{user.last_login_at}</TableCell>
+                <TableCell>{formatDate(user.last_login_at)}</TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -223,3 +236,5 @@ export function UserManagement() {
     </Card>
   );
 }
+
+    
