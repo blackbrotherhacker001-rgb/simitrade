@@ -9,11 +9,41 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, Zap } from 'lucide-react';
+import { Loader2, TrendingUp, TrendingDown, ArrowRightLeft, Zap, Settings } from 'lucide-react';
 import { simulateMarketTrend } from '@/ai/flows/simulate-market-trend';
+import { cn } from '@/lib/utils';
+import { Badge } from '../ui/badge';
 
 type Trend = 'bullish' | 'bearish' | 'sideways' | 'volatile';
+
+interface TrendConfig {
+    label: string;
+    description: string;
+    icon: React.ReactNode;
+}
+
+const trendConfig: Record<Trend, TrendConfig> = {
+  bullish: {
+    label: 'Bullish',
+    description: 'Upward price movement',
+    icon: <TrendingUp className="h-6 w-6 text-green-500" />
+  },
+  bearish: {
+    label: 'Bearish',
+    description: 'Downward price movement',
+    icon: <TrendingDown className="h-6 w-6 text-red-500" />
+  },
+  sideways: {
+    label: 'Sideways',
+    description: 'Lateral price movement',
+    icon: <ArrowRightLeft className="h-6 w-6 text-yellow-500" />
+  },
+  volatile: {
+    label: 'Volatile',
+    description: 'High price fluctuation',
+    icon: <Zap className="h-6 w-6 text-purple-500" />
+  },
+};
 
 export function MarketControl() {
   const [selectedTrend, setSelectedTrend] = useState<Trend>('sideways');
@@ -40,41 +70,31 @@ export function MarketControl() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Market Control</CardTitle>
-        <CardDescription>
-          Influence the live market trend for all users.
-        </CardDescription>
+        <CardTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5"/>
+            Market Trend Control
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {trends.map(trend => (
-            <Button
-              key={trend}
-              variant={selectedTrend === trend ? 'default' : 'outline'}
+            <Card 
+              key={trend} 
+              className={cn(
+                "p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all",
+                selectedTrend === trend 
+                  ? "border-primary ring-2 ring-primary shadow-lg"
+                  : "border-border hover:border-muted-foreground/50"
+              )}
               onClick={() => handleTrendChange(trend)}
-              className="capitalize"
             >
-              {trend}
-            </Button>
+                {trendConfig[trend].icon}
+                <p className="font-semibold mt-2">{trendConfig[trend].label}</p>
+                <p className="text-xs text-muted-foreground">{trendConfig[trend].description}</p>
+                {selectedTrend === trend && <Badge className="mt-2">Active</Badge>}
+            </Card>
           ))}
         </div>
-        
-        <Alert>
-          <Zap className="h-4 w-4" />
-          <AlertTitle className="flex items-center gap-2">
-            AI Generated Market Outlook
-            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-          </AlertTitle>
-          <AlertDescription>
-            {description || 'Generating new market outlook...'}
-          </AlertDescription>
-        </Alert>
-
-        <Button disabled>
-            Generate Next Tick
-        </Button>
-        <p className="text-xs text-muted-foreground">Note: Chart updates automatically every few seconds. Manual tick generation is disabled for this demo.</p>
-
       </CardContent>
     </Card>
   );
