@@ -7,9 +7,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { WalletDialog } from '@/components/dashboard/wallet-dialog';
-import { DollarSign, Calendar, Wallet, Activity, User, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { DollarSign, Calendar, Wallet, Activity, User, ArrowDownLeft, ArrowUpRight, Settings, Bell, Shield } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -53,7 +55,7 @@ export default function ProfilePage() {
         <CardContent className="space-y-8">
           <div className="flex items-center gap-6">
             <Avatar className="h-20 w-20">
-                <AvatarImage src="https://placehold.co/80x80.png" alt={user.name} data-ai-hint="profile picture" />
+                <AvatarImage src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt={user.name} />
                 <AvatarFallback><User className="h-10 w-10"/></AvatarFallback>
             </Avatar>
             <div>
@@ -112,6 +114,58 @@ export default function ProfilePage() {
                     </WalletDialog>
                 </div>
             </div>
+          </div>
+
+          <Separator />
+          
+          <div>
+            <h3 className="text-xl font-semibold flex items-center gap-2 mb-4"><Settings className="h-5 w-5"/> Settings</h3>
+            <Card className="bg-card/50">
+                <CardContent className="p-6 space-y-6">
+                    <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                            <Label htmlFor="manage-profile" className="text-base">Profile Information</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Manage your name and connected wallet.
+                            </p>
+                        </div>
+                        <Button id="manage-profile" variant="secondary">Manage Profile</Button>
+                    </div>
+                     <div className="space-y-4">
+                        <h4 className="text-md font-medium flex items-center gap-2"><Bell className="h-4 w-4"/> Notification Settings</h4>
+                        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                            <div className="space-y-0.5">
+                                <Label htmlFor="price-alerts">Price Alerts</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Receive alerts when asset prices change dramatically.
+                                </p>
+                            </div>
+                            <Switch id="price-alerts" />
+                        </div>
+                        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                            <div className="space-y-0.5">
+                                <Label htmlFor="trade-confirmations">Trade Confirmations</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Get an email confirmation for every trade.
+                                </p>
+                            </div>
+                            <Switch id="trade-confirmations" defaultChecked/>
+                        </div>
+                    </div>
+                     <div className="space-y-4">
+                        <h4 className="text-md font-medium flex items-center gap-2"><Shield className="h-4 w-4"/> Security</h4>
+                         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                            <div className="space-y-0.5">
+                                <Label htmlFor="2fa">Two-Factor Authentication (2FA)</Label>
+                                <p className="text-sm text-muted-foreground">
+                                   Add an extra layer of security to your account.
+                                </p>
+                            </div>
+                            <Button id="2fa" variant="secondary">Enable</Button>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
           </div>
 
           <Separator />
