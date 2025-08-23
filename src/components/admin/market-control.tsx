@@ -11,13 +11,16 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, TrendingUp, TrendingDown, ArrowRightLeft, Zap, Settings, Save } from 'lucide-react';
+import { Loader2, TrendingUp, TrendingDown, ArrowRightLeft, Zap, Settings, Save, Power, PowerOff } from 'lucide-react';
 import { simulateMarketTrend } from '@/ai/flows/simulate-market-trend';
 import { cn } from '@/lib/utils';
 import { Badge } from '../ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 type Trend = 'bullish' | 'bearish' | 'sideways' | 'volatile';
+type MarketMode = 'live' | 'manual';
 
 interface TrendConfig {
     label: string;
@@ -49,10 +52,12 @@ const trendConfig: Record<Trend, TrendConfig> = {
 };
 
 const MARKET_TREND_STORAGE_KEY = 'market-trend';
+const MARKET_MODE_STORAGE_KEY = 'market-mode';
 
 export function MarketControl() {
   const [activeTrend, setActiveTrend] = useState<Trend>('sideways');
   const [selectedTrend, setSelectedTrend] = useState<Trend>('sideways');
+  const [marketMode, setMarketMode] = useState<MarketMode>('live');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   
@@ -62,7 +67,20 @@ export function MarketControl() {
       setActiveTrend(storedTrend);
       setSelectedTrend(storedTrend);
     }
+    const storedMode = localStorage.getItem(MARKET_MODE_STORAGE_KEY) as MarketMode;
+    if (storedMode) {
+      setMarketMode(storedMode);
+    }
   }, []);
+
+  const handleModeChange = (mode: MarketMode) => {
+    setMarketMode(mode);
+    localStorage.setItem(MARKET_MODE_STORAGE_KEY, mode);
+    toast({
+        title: "Market Mode Updated",
+        description: `Market is now in ${mode === 'live' ? 'Live Simulation' : 'Manual Trend'} mode.`
+    });
+  }
   
   const handleSaveTrend = async () => {
     if (selectedTrend === activeTrend) {
@@ -81,6 +99,10 @@ export function MarketControl() {
         title: "Market Trend Updated",
         description: `The market trend is now set to ${selectedTrend}.`,
       });
+      // Switch to manual mode automatically when a trend is saved
+      if (marketMode !== 'manual') {
+        handleModeChange('manual');
+      }
     } catch (error) {
       console.error('Failed to simulate market trend:', error);
        toast({
@@ -100,35 +122,54 @@ export function MarketControl() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5"/>
-            Market Trend Control
+            Market Control
         </CardTitle>
         <CardDescription>
-            Select a market trend and click save to apply it across the simulation.
+            Control the entire platform's market simulation. Choose between a live feed or manually set a specific trend.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {trends.map(trend => (
-            <Card 
-              key={trend} 
-              className={cn(
-                "p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all border-2",
-                selectedTrend === trend 
-                  ? "border-primary ring-2 ring-primary/50 shadow-lg"
-                  : "border-transparent hover:border-muted-foreground/50"
-              )}
-              onClick={() => setSelectedTrend(trend)}
-            >
-                {trendConfig[trend].icon}
-                <p className="font-semibold mt-2">{trendConfig[trend].label}</p>
-                <p className="text-xs text-muted-foreground">{trendConfig[trend].description}</p>
-                {activeTrend === trend && <Badge className="mt-2" variant="outline">Active</Badge>}
-            </Card>
-          ))}
+      <CardContent className="space-y-6">
+        <div>
+            <h3 className="text-md font-medium mb-2">Market Mode</h3>
+            <RadioGroup value={marketMode} onValueChange={(value) => handleModeChange(value as MarketMode)} className="flex gap-4">
+                <Label htmlFor="live-mode" className={cn("flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary w-full cursor-pointer")}>
+                    <RadioGroupItem value="live" id="live-mode" className="sr-only" />
+                    <Power className="mb-3 h-6 w-6" />
+                    Live Simulation
+                </Label>
+                 <Label htmlFor="manual-mode" className={cn("flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary w-full cursor-pointer")}>
+                    <RadioGroupItem value="manual" id="manual-mode" className="sr-only" />
+                    <PowerOff className="mb-3 h-6 w-6" />
+                    Manual Trend
+                </Label>
+            </RadioGroup>
+        </div>
+
+        <div className={cn(marketMode === 'live' && 'opacity-50 pointer-events-none')}>
+            <h3 className="text-md font-medium mb-2">Manual Trend Control</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {trends.map(trend => (
+                <Card 
+                key={trend} 
+                className={cn(
+                    "p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all border-2",
+                    selectedTrend === trend 
+                    ? "border-primary ring-2 ring-primary/50 shadow-lg"
+                    : "border-transparent hover:border-muted-foreground/50"
+                )}
+                onClick={() => setSelectedTrend(trend)}
+                >
+                    {trendConfig[trend].icon}
+                    <p className="font-semibold mt-2">{trendConfig[trend].label}</p>
+                    <p className="text-xs text-muted-foreground">{trendConfig[trend].description}</p>
+                    {activeTrend === trend && <Badge className="mt-2" variant="outline">Active</Badge>}
+                </Card>
+            ))}
+            </div>
         </div>
       </CardContent>
        <CardFooter>
-          <Button onClick={handleSaveTrend} disabled={loading || selectedTrend === activeTrend}>
+          <Button onClick={handleSaveTrend} disabled={loading || selectedTrend === activeTrend || marketMode === 'live'}>
             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
             Save Trend
           </Button>

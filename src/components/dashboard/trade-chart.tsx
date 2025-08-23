@@ -25,21 +25,36 @@ const chartConfig = {
 };
 
 type MarketTrend = 'bullish' | 'bearish' | 'sideways' | 'volatile';
+type MarketMode = 'live' | 'manual';
 const MARKET_TREND_STORAGE_KEY = 'market-trend';
+const MARKET_MODE_STORAGE_KEY = 'market-mode';
 
 export function TradeChart() {
   const [trend, setTrend] = useState<MarketTrend>('sideways');
+  const [mode, setMode] = useState<MarketMode>('live');
   
   useEffect(() => {
-    const storedTrend = localStorage.getItem(MARKET_TREND_STORAGE_KEY) as MarketTrend;
-    if (storedTrend) {
-      setTrend(storedTrend);
-    }
+    // Function to update state from localStorage
+    const updateMarketState = () => {
+      const storedMode = localStorage.getItem(MARKET_MODE_STORAGE_KEY) as MarketMode;
+      setMode(storedMode || 'live');
 
-    const handleStorageChange = () => {
-      const newTrend = localStorage.getItem(MARKET_TREND_STORAGE_KEY) as MarketTrend;
-       if (newTrend) {
-        setTrend(newTrend);
+      if (storedMode === 'manual') {
+        const storedTrend = localStorage.getItem(MARKET_TREND_STORAGE_KEY) as MarketTrend;
+        setTrend(storedTrend || 'sideways');
+      } else {
+        // In 'live' mode, we can use a default like 'sideways'
+        setTrend('sideways');
+      }
+    };
+
+    // Initial update
+    updateMarketState();
+
+    // Listen for storage changes to update in real-time
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === MARKET_TREND_STORAGE_KEY || event.key === MARKET_MODE_STORAGE_KEY) {
+        updateMarketState();
       }
     };
     
