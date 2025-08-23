@@ -1,7 +1,10 @@
+
 export interface User {
   walletAddress: string;
   balance: number;
   isAdmin: boolean;
+  name: string;
+  lastLoginAt?: string;
 }
 
 export interface Transaction {

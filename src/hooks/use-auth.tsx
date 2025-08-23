@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -9,6 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { User } from '@/types';
+import { USER_WALLET_ADDRESS } from '@/lib/constants';
 
 interface AuthContextType {
   user: User | null;
@@ -39,6 +41,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       walletAddress,
       balance: isAdmin ? 1000000 : 10000,
       isAdmin,
+      name: walletAddress === USER_WALLET_ADDRESS ? 'Vitalik Buterin' : 'Satoshi Nakamoto',
+      lastLoginAt: new Date().toISOString(),
     };
     setUser(newUser);
     localStorage.setItem('crypto-sim-user', JSON.stringify(newUser));
