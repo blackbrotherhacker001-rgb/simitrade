@@ -28,6 +28,7 @@ interface AuthContextType {
   login: (walletAddress: string, isAdmin: boolean) => void;
   logout: () => void;
   updateBalance: (newBalance: number) => void;
+  updateUser: (data: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -73,9 +74,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return updatedUser;
     });
   }, []);
+  
+  const updateUser = useCallback((data: Partial<User>) => {
+    setUser(currentUser => {
+      if (!currentUser) return null;
+      const updatedUser = { ...currentUser, ...data };
+      localStorage.setItem('crypto-sim-user', JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateBalance }}>
+    <AuthContext.Provider value={{ user, login, logout, updateBalance, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

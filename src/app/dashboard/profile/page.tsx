@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { ProfileDialog } from '@/components/dashboard/profile-dialog';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -129,7 +130,9 @@ export default function ProfilePage() {
                                 Manage your name and connected wallet.
                             </p>
                         </div>
-                        <Button id="manage-profile" variant="secondary">Manage Profile</Button>
+                        <ProfileDialog>
+                          <Button variant="secondary">Manage Profile</Button>
+                        </ProfileDialog>
                     </div>
                      <div className="space-y-4">
                         <h4 className="text-md font-medium flex items-center gap-2"><Bell className="h-4 w-4"/> Notification Settings</h4>
