@@ -7,8 +7,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { WalletDialog } from '@/components/dashboard/wallet-dialog';
-import { DollarSign, Calendar, Wallet, Activity, Bot, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { DollarSign, Calendar, Wallet, Activity, User, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import Image from 'next/image';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -52,7 +53,8 @@ export default function ProfilePage() {
         <CardContent className="space-y-8">
           <div className="flex items-center gap-6">
             <Avatar className="h-20 w-20">
-                <AvatarFallback><Bot className="h-10 w-10"/></AvatarFallback>
+                <AvatarImage src="https://placehold.co/80x80.png" alt={user.name} data-ai-hint="profile picture" />
+                <AvatarFallback><User className="h-10 w-10"/></AvatarFallback>
             </Avatar>
             <div>
               <h2 className="text-2xl font-bold">{user.name}</h2>
