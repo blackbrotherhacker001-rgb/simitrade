@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import {
   Table,
   TableBody,
@@ -18,13 +21,32 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Edit, ToggleLeft, ToggleRight } from 'lucide-react';
+import { MoreHorizontal, Edit, ToggleLeft, ToggleRight, UserPlus } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 const mockUsers = [
   { id: '1', name: 'Alice', wallet_address: '0x123...def', balance: 10500.50, is_active: true, last_login_at: '2024-05-20 10:00:00' },
@@ -33,26 +55,127 @@ const mockUsers = [
   { id: '4', name: 'David', wallet_address: '0xabc...123', balance: 25000.75, is_active: true, last_login_at: '2024-05-19 18:45:00' },
 ];
 
+const createUserSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  wallet_address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'),
+  balance: z.coerce.number().min(0, 'Balance cannot be negative'),
+});
+
+type CreateUserForm = z.infer<typeof createUserSchema>;
 
 export function UserManagement() {
   const [users, setUsers] = useState(mockUsers);
+  const [isCreateUserOpen, setCreateUserOpen] = useState(false);
+  const { toast } = useToast();
+
+  const form = useForm<CreateUserForm>({
+    resolver: zodResolver(createUserSchema),
+    defaultValues: {
+      name: '',
+      wallet_address: '',
+      balance: 0,
+    },
+  });
 
   const toggleUserStatus = (id: string) => {
     setUsers(users.map(user => user.id === id ? { ...user, is_active: !user.is_active } : user));
   };
   
+  const handleCreateUser = (values: CreateUserForm) => {
+    const newUser = {
+      id: (users.length + 1).toString(),
+      name: values.name,
+      wallet_address: values.wallet_address,
+      balance: values.balance,
+      is_active: true,
+      last_login_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
+    };
+    setUsers([...users, newUser]);
+    toast({
+      title: 'User Created',
+      description: `User ${values.name} has been created successfully.`,
+    });
+    setCreateUserOpen(false);
+    form.reset();
+  };
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>User Management</CardTitle>
-        <CardDescription>
-          View, manage, and adjust user accounts.
-        </CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>User Management</CardTitle>
+          <CardDescription>
+            View, manage, and adjust user accounts.
+          </CardDescription>
+        </div>
+        <Dialog open={isCreateUserOpen} onOpenChange={setCreateUserOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Create User
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New User</DialogTitle>
+              <DialogDescription>
+                Fill in the details to create a new user account.
+              </DialogDescription>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleCreateUser)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>User Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Satoshi Nakamoto" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="wallet_address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Wallet Address</FormLabel>
+                      <FormControl>
+                        <Input placeholder="0x..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="balance"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Initial Balance (USD)</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
+                  <Button type="submit">Create User</Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Name</TableHead>
               <TableHead>Wallet Address</TableHead>
               <TableHead>Balance</TableHead>
               <TableHead>Status</TableHead>
@@ -63,6 +186,7 @@ export function UserManagement() {
           <TableBody>
             {users.map(user => (
               <TableRow key={user.id}>
+                <TableCell>{user.name}</TableCell>
                 <TableCell>{user.wallet_address}</TableCell>
                 <TableCell>${user.balance.toLocaleString()}</TableCell>
                 <TableCell>
