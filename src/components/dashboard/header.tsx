@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/common/logo';
 import { LogOut, Wallet, User as UserIcon } from 'lucide-react';
-import { TradeDialog } from './trade-dialog';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -58,7 +57,6 @@ export function Header() {
                 <span>{formatAddress(user.walletAddress)}</span>
               </div>
               <div className="text-sm font-semibold">{formatBalance(user.balance)}</div>
-              <TradeDialog />
               <Button variant="ghost" size="icon" onClick={logout}>
                 <LogOut className="h-4 w-4" />
                 <span className="sr-only">Logout</span>
