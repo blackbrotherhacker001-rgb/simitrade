@@ -33,7 +33,8 @@ import {
   AreaChart,
   FileText,
   FileUp,
-  ArrowUpFromLine
+  ArrowUpFromLine,
+  Clock
 } from 'lucide-react';
 import { AdminLogo } from '../common/admin-logo';
 import { Badge } from '../ui/badge';
@@ -87,7 +88,7 @@ export function AdminHeader() {
               <DropdownMenuContent className="w-64" align="start">
                 <DropdownMenuItem asChild>
                    <Link href="/admin/analytics" className="flex items-center gap-2">
-                        <BarChart className="h-4 w-4" />
+                        <BarChart className="mr-2 h-4 w-4" />
                         Revenue Analytics
                     </Link>
                 </DropdownMenuItem>
@@ -131,10 +132,24 @@ export function AdminHeader() {
                         </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                 </DropdownMenuSub>
-                <DropdownMenuItem>
-                    <Binary className="mr-2 h-4 w-4"/>
-                    Binary Options
-                </DropdownMenuItem>
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <Binary className="mr-2 h-4 w-4"/>
+                        Binary Options
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            <DropdownMenuItem>
+                               <AreaChart className="mr-2 h-4 w-4"/>
+                               Binary Markets
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                               <Clock className="mr-2 h-4 w-4"/>
+                               Trading Durations
+                            </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
                  <DropdownMenuItem asChild>
                     <Link href="/admin/ai/investment/plan" className="flex items-center gap-2">
                         <BrainCircuit className="mr-2 h-4 w-4" />
