@@ -139,9 +139,11 @@ export function AdminHeader() {
                     </DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuSubContent>
-                            <DropdownMenuItem>
-                               <AreaChart className="mr-2 h-4 w-4"/>
-                               Binary Markets
+                            <DropdownMenuItem asChild>
+                                <Link href="/admin/binary-markets" className="flex items-center gap-2">
+                                    <AreaChart className="mr-2 h-4 w-4"/>
+                                    Binary Markets
+                                </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                <Clock className="mr-2 h-4 w-4"/>
