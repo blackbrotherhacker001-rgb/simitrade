@@ -50,6 +50,7 @@ import {
     DropdownMenuSubContent
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { useRouter } from 'next/navigation';
 
 
 const NavLink = ({ href, label, icon: Icon, currentPath }: { href: string; label: string; icon: React.ElementType; currentPath: string; }) => (
@@ -70,6 +71,7 @@ const NavLink = ({ href, label, icon: Icon, currentPath }: { href: string; label
 
 export function AdminHeader() {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background">
@@ -233,7 +235,7 @@ export function AdminHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => router.push('/')}>
                 <User className="h-4 w-4"/>
                 User
             </Button>
