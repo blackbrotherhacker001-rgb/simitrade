@@ -152,12 +152,28 @@ export function AdminHeader() {
                         </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                 </DropdownMenuSub>
-                 <DropdownMenuItem asChild>
-                    <Link href="/admin/ai/investment/plan" className="flex items-center gap-2">
+                 <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
                         <BrainCircuit className="mr-2 h-4 w-4" />
-                        Investment Management
-                    </Link>
-                </DropdownMenuItem>
+                        AI Investment
+                    </DropdownMenuSubTrigger>
+                     <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            <DropdownMenuItem asChild>
+                                <Link href="/admin/ai/investment/plan" className="flex items-center gap-2">
+                                    <Briefcase className="mr-2 h-4 w-4" />
+                                    Plans
+                                </Link>
+                            </DropdownMenuItem>
+                             <DropdownMenuItem asChild>
+                                <Link href="/admin/ai/investment/duration" className="flex items-center gap-2">
+                                    <Clock className="mr-2 h-4 w-4"/>
+                                    Duration Management
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
                 <DropdownMenuItem>
                     <FileText className="mr-2 h-4 w-4"/>
                     Order Management
@@ -205,9 +221,11 @@ export function AdminHeader() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                 <DropdownMenuItem>
-                    <Paintbrush className="mr-2 h-4 w-4"/>
-                    Theme Customizer
+                 <DropdownMenuItem asChild>
+                     <Link href="/admin/design/theme" className="flex items-center gap-2">
+                        <Paintbrush className="mr-2 h-4 w-4"/>
+                        Theme Customizer
+                    </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

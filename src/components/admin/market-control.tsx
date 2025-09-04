@@ -32,22 +32,22 @@ const trendConfig: Record<Trend, TrendConfig> = {
   bullish: {
     label: 'Bullish',
     description: 'Upward price movement',
-    icon: <TrendingUp className="h-6 w-6 text-green-500" />
+    icon: <TrendingUp className="h-5 w-5 text-green-500" />
   },
   bearish: {
     label: 'Bearish',
     description: 'Downward price movement',
-    icon: <TrendingDown className="h-6 w-6 text-red-500" />
+    icon: <TrendingDown className="h-5 w-5 text-red-500" />
   },
   sideways: {
     label: 'Sideways',
     description: 'Lateral price movement',
-    icon: <ArrowRightLeft className="h-6 w-6 text-yellow-500" />
+    icon: <ArrowRightLeft className="h-5 w-5 text-yellow-500" />
   },
   volatile: {
     label: 'Volatile',
     description: 'High price fluctuation',
-    icon: <Zap className="h-6 w-6 text-purple-500" />
+    icon: <Zap className="h-5 w-5 text-purple-500" />
   },
 };
 
@@ -131,31 +131,29 @@ export function MarketControl() {
       <CardContent className="space-y-6">
         <div>
             <h3 className="text-md font-medium mb-2">Market Mode</h3>
-            <RadioGroup value={marketMode} onValueChange={(value) => handleModeChange(value as MarketMode)} className="flex gap-4">
-                <Label htmlFor="live-mode" className={cn("flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary w-full cursor-pointer")}>
-                    <RadioGroupItem value="live" id="live-mode" className="sr-only" />
-                    <Power className="mb-3 h-6 w-6" />
-                    Live Simulation
-                </Label>
-                 <Label htmlFor="manual-mode" className={cn("flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary w-full cursor-pointer")}>
-                    <RadioGroupItem value="manual" id="manual-mode" className="sr-only" />
-                    <PowerOff className="mb-3 h-6 w-6" />
-                    Manual Trend
-                </Label>
-            </RadioGroup>
+            <div className="grid grid-cols-2 gap-4">
+                 <div onClick={() => handleModeChange('live')} className={cn("rounded-lg border-2 p-6 flex flex-col items-center justify-center cursor-pointer transition-colors", marketMode === 'live' ? 'border-primary bg-primary/10' : 'border-muted hover:border-primary/50')}>
+                    <Power className="mb-2 h-6 w-6" />
+                    <p className="font-semibold">Live Simulation</p>
+                </div>
+                 <div onClick={() => handleModeChange('manual')} className={cn("rounded-lg border-2 p-6 flex flex-col items-center justify-center cursor-pointer transition-colors", marketMode === 'manual' ? 'border-primary bg-primary/10' : 'border-muted hover:border-primary/50')}>
+                    <PowerOff className="mb-2 h-6 w-6" />
+                    <p className="font-semibold">Manual Trend</p>
+                </div>
+            </div>
         </div>
 
         <div className={cn(marketMode === 'live' && 'opacity-50 pointer-events-none')}>
             <h3 className="text-md font-medium mb-2">Manual Trend Control</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {trends.map(trend => (
-                <Card 
+                <div 
                 key={trend} 
                 className={cn(
-                    "p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all border-2",
+                    "p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all border-2 rounded-lg",
                     selectedTrend === trend 
-                    ? "border-primary ring-2 ring-primary/50 shadow-lg"
-                    : "border-transparent hover:border-muted-foreground/50"
+                    ? "border-primary ring-2 ring-primary/50 shadow-lg bg-primary/10"
+                    : "border-muted hover:border-primary/50"
                 )}
                 onClick={() => setSelectedTrend(trend)}
                 >
@@ -163,7 +161,7 @@ export function MarketControl() {
                     <p className="font-semibold mt-2">{trendConfig[trend].label}</p>
                     <p className="text-xs text-muted-foreground">{trendConfig[trend].description}</p>
                     {activeTrend === trend && <Badge className="mt-2" variant="outline">Active</Badge>}
-                </Card>
+                </div>
             ))}
             </div>
         </div>
