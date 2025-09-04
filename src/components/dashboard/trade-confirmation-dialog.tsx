@@ -38,7 +38,7 @@ export function TradeConfirmationDialog({
   onConfirm,
 }: TradeConfirmationDialogProps) {
   const [confirmCountdown, setConfirmCountdown] = useState(3);
-  const [showDetails, setShowDetails]_ = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -52,11 +52,19 @@ export function TradeConfirmationDialog({
 
   const getExpiryTime = useCallback(() => {
     const now = new Date();
-    now.setMinutes(now.getMinutes() + parseInt(expiry, 10));
+    const expiryMinutes = parseInt(expiry, 10);
+    if(isNaN(expiryMinutes)) return 'Invalid date';
+
+    now.setMinutes(now.getMinutes() + expiryMinutes);
     return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }, [expiry]);
 
   const isRise = type === 'rise';
+  
+  const handleConfirm = () => {
+    onConfirm();
+    onOpenChange(false);
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -144,7 +152,7 @@ export function TradeConfirmationDialog({
           <Button variant="secondary" className="w-full" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button 
             className={cn("w-full", isRise ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700")}
-            onClick={onConfirm}
+            onClick={handleConfirm}
             disabled={confirmCountdown > 0}
           >
             Confirm {confirmCountdown > 0 ? `(${confirmCountdown}s)` : ''}

@@ -98,6 +98,9 @@ export function TradePanel() {
   });
   
   const handleTrade = (type: 'rise' | 'fall') => {
+    const valid = form.trigger();
+    if (!valid) return;
+    
     const values = form.getValues();
      if (!user) return;
      if (values.amount > user.balance) {
@@ -180,7 +183,7 @@ export function TradePanel() {
                       )}
                       />
                   </div>
-                  <p className="text-xs text-muted-foreground">{((amount / (user?.balance || 1)) * 100).toFixed(1)}% of balance</p>
+                  <p className="text-xs text-muted-foreground">{user && user.balance > 0 ? ((amount / user.balance) * 100).toFixed(1) : 0}% of balance</p>
                   
                   <div className="space-y-2 text-sm">
                       <div className="flex justify-between items-center">
