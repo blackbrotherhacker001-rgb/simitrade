@@ -1,18 +1,25 @@
 
 'use client';
 
-import { TradeChart } from "@/components/dashboard/trade-chart";
-import { TradePanel } from "@/components/dashboard/trade-panel";
+import { OrderBook } from '@/components/dashboard/spot/order-book';
+import { SpotMarketList } from '@/components/dashboard/spot/spot-market-list';
+import { SpotTradeChart } from '@/components/dashboard/spot/spot-trade-chart';
+import { SpotTradePanel } from '@/components/dashboard/spot/spot-trade-panel';
 
-
-export default function DashboardPage() {
+export default function SpotTradingPage() {
   return (
-    <div className="flex flex-col md:flex-row h-[calc(100vh-65px)]">
-      <div className="flex-grow h-full">
-        <TradeChart />
+    <div className="h-[calc(100vh-65px)] grid grid-cols-[280px_1fr_320px] grid-rows-[1fr_auto] gap-1 bg-background text-foreground">
+      <div className="row-span-2 border-r border-border overflow-y-auto">
+        <SpotMarketList />
       </div>
-      <div className="w-full md:w-[320px] md:border-l border-t md:border-t-0 border-border bg-card">
-        <TradePanel />
+      <div className="border-r border-border flex flex-col">
+        <SpotTradeChart />
+      </div>
+      <div className="row-span-2 border-l border-border overflow-y-auto">
+        <SpotTradePanel />
+      </div>
+      <div className="border-r border-t border-border overflow-y-auto">
+        <OrderBook />
       </div>
     </div>
   );

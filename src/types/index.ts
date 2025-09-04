@@ -1,5 +1,6 @@
 
 
+
 export interface User {
   walletAddress: string;
   balance: number;
@@ -24,4 +25,19 @@ export interface MarketData {
   high: number;
   low: number;
   close: number;
+}
+
+export interface SpotMarket {
+    symbol: string;
+    name: string;
+    price: number;
+    change24h: number;
+    volume24h: number;
+    icon: string;
+}
+
+export interface OrderBookEntry {
+    price: number;
+    amount: number;
+    total: number;
 }
