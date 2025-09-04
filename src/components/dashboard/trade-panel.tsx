@@ -5,7 +5,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -50,10 +50,10 @@ type MarketMode = 'live' | 'manual';
 const MARKET_TREND_STORAGE_KEY = 'market-trend';
 const MARKET_MODE_STORAGE_KEY = 'market-mode';
 
-const expiryOptions: {[key: string]: string} = {
-    "1": "1 minute",
-    "5": "5 minutes",
-    "15": "15 minutes"
+const expiryOptions: {[key: string]: { label: string, profit: number }} = {
+    "1": { label: "1 minute", profit: 87 },
+    "5": { label: "5 minutes", profit: 85 },
+    "15": { label: "15 minutes", profit: 80 }
 }
 
 const quickAmounts = [100, 500, 1000, 2000, 5000, 10000];
@@ -66,6 +66,7 @@ export function TradePanel() {
   const [isConfirmOpen, setConfirmOpen] = useState(false);
   const [tradeType, setTradeType] = useState<'rise' | 'fall'>('rise');
   const [isAmountPopoverOpen, setAmountPopoverOpen] = useState(false);
+  const [isExpiryPopoverOpen, setExpiryPopoverOpen] = useState(false);
   
   const [trend, setTrend] = useState<MarketTrend>('sideways');
   const [mode, setMode] = useState<MarketMode>('live');
@@ -107,7 +108,7 @@ export function TradePanel() {
     resolver: zodResolver(tradeSchema),
     defaultValues: {
       amount: 100,
-      expiry: "15",
+      expiry: "1",
     },
   });
   
@@ -135,19 +136,24 @@ export function TradePanel() {
     updateBalance(user.balance - values.amount);
     toast({
         title: `Trade Placed: ${tradeType.toUpperCase()}`,
-        description: `$${values.amount} on BTC to ${tradeType} in ${expiryOptions[values.expiry]}.`
+        description: `$${values.amount} on BTC to ${tradeType} in ${expiryOptions[values.expiry].label}.`
     })
     setConfirmOpen(false);
   }
   
   const amount = form.watch('amount');
   const expiry = form.watch('expiry');
-  const potentialProfit = amount * 0.80; // 80% profit
+
+  const potentialProfit = useMemo(() => {
+    const profitPercent = expiryOptions[expiry]?.profit || 80;
+    return amount * (profitPercent / 100);
+  }, [amount, expiry]);
+  
   const potentialLoss = amount;
 
-  const getExpiryTime = () => {
+  const getExpiryTime = (minutes: string) => {
       const now = new Date();
-      now.setMinutes(now.getMinutes() + parseInt(expiry));
+      now.setMinutes(now.getMinutes() + parseInt(minutes));
       return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'});
   }
 
@@ -164,6 +170,11 @@ export function TradePanel() {
   const handleApplyCustomAmount = (customAmount: number) => {
     form.setValue('amount', customAmount);
     setAmountPopoverOpen(false);
+  }
+
+  const handleSelectExpiry = (value: string) => {
+    form.setValue('expiry', value);
+    setExpiryPopoverOpen(false);
   }
 
   return (
@@ -204,7 +215,7 @@ export function TradePanel() {
                                                     <Input
                                                         readOnly
                                                         type="text"
-                                                        value={field.value}
+                                                        value={field.value.toLocaleString()}
                                                         className="bg-transparent border-none text-2xl font-bold w-full text-center h-auto p-0 focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
                                                      />
                                                 </div>
@@ -281,33 +292,69 @@ export function TradePanel() {
                         name="expiry"
                         render={({ field }) => (
                             <FormItem>
-                                <div className="bg-muted/30 p-2 rounded-md">
-                                     <div className="flex justify-between items-center text-xs text-muted-foreground">
-                                        <FormLabel>Expiry</FormLabel>
-                                        <div>
-                                             <Button type="button" variant="ghost" size="icon" className="h-6 w-6"><Minus className="h-4 w-4"/></Button>
-                                             <Button type="button" variant="ghost" size="icon" className="h-6 w-6"><Plus className="h-4 w-4"/></Button>
+                                 <Popover open={isExpiryPopoverOpen} onOpenChange={setExpiryPopoverOpen}>
+                                    <PopoverTrigger asChild>
+                                        <div className="bg-muted/30 p-2 rounded-md cursor-pointer">
+                                            <div className="flex justify-between items-center text-xs text-muted-foreground">
+                                                <FormLabel>Expiry</FormLabel>
+                                                <div>
+                                                    <Button type="button" variant="ghost" size="icon" className="h-6 w-6"><Minus className="h-4 w-4"/></Button>
+                                                    <Button type="button" variant="ghost" size="icon" className="h-6 w-6"><Plus className="h-4 w-4"/></Button>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center justify-center gap-2 text-2xl font-bold w-full text-center">
+                                                <Clock className="h-6 w-6 text-muted-foreground"/>
+                                                {getExpiryTime(field.value)}
+                                            </div>
+                                            <p className="text-xs text-center text-muted-foreground">{expiryOptions[field.value].label}</p>
                                         </div>
-                                    </div>
-                                    <FormControl>
-                                       <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <SelectTrigger className="bg-transparent border-none w-full p-0 h-auto focus:ring-0 focus:ring-offset-0">
-                                                 <SelectValue asChild>
-                                                    <div className="flex items-center justify-center gap-2 text-2xl font-bold w-full text-center">
-                                                        <Clock className="h-6 w-6 text-muted-foreground"/>
-                                                        {getExpiryTime()}
+                                    </PopoverTrigger>
+                                     <PopoverContent className="w-80 p-0" align="start">
+                                        <div className="p-4">
+                                             <h4 className="font-medium text-lg">Expiry Time</h4>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            {Object.entries(expiryOptions).map(([value, { label, profit }]) => (
+                                                <button
+                                                    key={value}
+                                                    type="button"
+                                                    onClick={() => handleSelectExpiry(value)}
+                                                    className={cn(
+                                                        "flex items-center justify-between p-4 text-left hover:bg-muted/50 w-full",
+                                                        field.value === value && "bg-green-600/20 text-green-400"
+                                                    )}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        {field.value === value ? (
+                                                            <Check className="h-5 w-5 text-green-400" />
+                                                        ) : (
+                                                            <div className="w-5 h-5" /> // Placeholder for alignment
+                                                        )}
+                                                        <div>
+                                                            <p className="font-semibold">{getExpiryTime(value)}</p>
+                                                            <p className="text-sm">{label.split(' ')[0]} {label.split(' ')[1]}</p>
+                                                        </div>
                                                     </div>
-                                                 </SelectValue>
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="1">1 minute</SelectItem>
-                                                <SelectItem value="5">5 minutes</SelectItem>
-                                                <SelectItem value="15">15 minutes</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <p className="text-xs text-center text-muted-foreground">{expiryOptions[field.value]}</p>
-                                </div>
+                                                    <div className="text-right">
+                                                        <div className={cn("px-2 py-1 rounded-md text-sm font-semibold", field.value === value ? "bg-green-500 text-white" : "bg-muted")}>
+                                                            {profit}%
+                                                        </div>
+                                                        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                                                            <Clock className="h-3 w-3" />
+                                                            <span>00:04</span>
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                         <div className="p-4 border-t border-border">
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span className="text-muted-foreground">Next expiry in:</span>
+                                                <span className="font-mono text-primary">00:{countdown.toString().padStart(2, '0')}</span>
+                                            </div>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
                             </FormItem>
                         )}
                       />
@@ -316,7 +363,7 @@ export function TradePanel() {
                   <div className="space-y-2 text-sm bg-muted/30 p-3 rounded-md">
                       <div className="flex justify-between items-center">
                           <span className="text-muted-foreground">Profit</span>
-                          <span className="font-medium text-green-500">+80%</span>
+                          <span className="font-medium text-green-500">+{expiryOptions[expiry].profit}%</span>
                       </div>
                       <div className="flex justify-between items-center">
                           <span className="text-muted-foreground">Potential:</span>
@@ -362,3 +409,5 @@ export function TradePanel() {
     </>
   );
 }
+
+    
