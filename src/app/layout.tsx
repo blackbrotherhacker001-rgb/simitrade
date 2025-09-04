@@ -1,13 +1,15 @@
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/hooks/use-auth';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
+import { LoginForm } from '@/components/auth/login-form';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'CryptoSim - Real Fake Crypto Trading',
+  title: 'Bicrypto - Trade Crypto like a pro',
   description: 'A realistic crypto trading simulation platform.',
 };
 
@@ -27,6 +29,7 @@ export default function RootLayout({
         <AuthProvider>
           {children}
           <Toaster />
+          <LoginForm />
         </AuthProvider>
       </body>
     </html>

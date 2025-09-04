@@ -1,10 +1,11 @@
-import { AreaChart } from 'lucide-react';
+
+import { Bot } from 'lucide-react';
 
 export function Logo() {
   return (
     <div className="flex items-center gap-2">
-      <AreaChart className="h-8 w-8 text-primary" />
-      <h1 className="text-2xl font-bold text-foreground">CryptoSim</h1>
+      <Bot className="h-8 w-8 text-primary" />
+      <h1 className="text-2xl font-bold text-foreground">Bicrypto</h1>
     </div>
   );
 }

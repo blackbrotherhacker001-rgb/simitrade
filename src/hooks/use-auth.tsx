@@ -11,7 +11,6 @@ import {
 } from 'react';
 import type { User } from '@/types';
 
-// Mock user data for simulation
 const MOCK_USERS: Record<string, Omit<User, 'walletAddress' | 'isAdmin'>> = {
     '0x1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa': { name: 'Satoshi Nakamoto', balance: 980000, lastLoginAt: '2025-08-23T14:07:03Z' },
     '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045': { name: 'Vitalik Buterin', balance: 450000, lastLoginAt: '2025-08-23T13:07:03Z' },
@@ -29,12 +28,15 @@ interface AuthContextType {
   logout: () => void;
   updateBalance: (newBalance: number) => void;
   updateUser: (data: Partial<User>) => void;
+  needsLogin: boolean;
+  setNeedsLogin: (needsLogin: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [needsLogin, setNeedsLogin] = useState(false);
 
   useEffect(() => {
     try {
@@ -85,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateBalance, updateUser }}>
+    <AuthContext.Provider value={{ user, login, logout, updateBalance, updateUser, needsLogin, setNeedsLogin }}>
       {children}
     </AuthContext.Provider>
   );

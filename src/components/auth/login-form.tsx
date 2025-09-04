@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { QrCode, User, Shield } from 'lucide-react';
 
@@ -8,59 +9,34 @@ import { useAuth } from '@/hooks/use-auth';
 import { ADMIN_WALLET_ADDRESS, USER_WALLET_ADDRESS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import Image from 'next/image';
 
 export function LoginForm() {
-  const [open, setOpen] = useState(false);
-  const { login } = useAuth();
+  const { user, login, needsLogin, setNeedsLogin } = useAuth();
   const router = useRouter();
 
+  useEffect(() => {
+    if (user && needsLogin) {
+        setNeedsLogin(false);
+        router.push(user.isAdmin ? '/admin' : '/dashboard');
+    }
+  }, [user, needsLogin, router, setNeedsLogin]);
+  
   const handleLogin = (isAdmin: boolean) => {
     const walletAddress = isAdmin ? ADMIN_WALLET_ADDRESS : USER_WALLET_ADDRESS;
     login(walletAddress, isAdmin);
-    setOpen(false);
-    router.push(isAdmin ? '/admin' : '/dashboard');
   };
+  
+  if(!needsLogin) return null;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle>Wallet Connect</CardTitle>
-          <CardDescription>
-            Connect your Web3 wallet to start trading.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <DialogTrigger asChild>
-            <Button className="w-full" size="lg">
-              <QrCode className="mr-2 h-5 w-5" />
-              Connect Wallet
-            </Button>
-          </DialogTrigger>
-        </CardContent>
-        <CardFooter>
-          <p className="text-xs text-muted-foreground text-center w-full">
-            We do not store your private keys. Your assets are always secure.
-          </p>
-        </CardFooter>
-      </Card>
-
+    <Dialog open={needsLogin} onOpenChange={setNeedsLogin}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Connect your Wallet</DialogTitle>
