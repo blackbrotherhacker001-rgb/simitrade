@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,13 +18,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -33,7 +25,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { ArrowUp, ArrowDown, Minus, Plus, Clock, Keyboard, ShieldAlert, Check } from "lucide-react";
-import { Separator } from "../ui/separator";
 import { TradeConfirmationDialog } from "./trade-confirmation-dialog";
 import useMarketData from "@/hooks/use-market-data";
 
@@ -153,8 +144,16 @@ export function TradePanel() {
 
   const getExpiryTime = (minutes: string) => {
       const now = new Date();
-      now.setMinutes(now.getMinutes() + parseInt(minutes));
-      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'});
+      const expiryMinutes = parseInt(minutes, 10);
+      if(isNaN(expiryMinutes)) {
+          const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+          const hours = now.getHours() % 12 || 12;
+          return `${hours.toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} ${ampm}`
+      }
+      now.setMinutes(now.getMinutes() + expiryMinutes);
+      const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+      const hours = now.getHours() % 12 || 12;
+      return `${hours.toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} ${ampm}`;
   }
 
   const handleQuickAmount = (value: number) => {
@@ -298,15 +297,13 @@ export function TradePanel() {
                                             <div className="flex justify-between items-center text-xs text-muted-foreground">
                                                 <FormLabel>Expiry</FormLabel>
                                                 <div>
-                                                    <Button type="button" variant="ghost" size="icon" className="h-6 w-6"><Minus className="h-4 w-4"/></Button>
-                                                    <Button type="button" variant="ghost" size="icon" className="h-6 w-6"><Plus className="h-4 w-4"/></Button>
                                                 </div>
                                             </div>
                                             <div className="flex items-center justify-center gap-2 text-2xl font-bold w-full text-center">
                                                 <Clock className="h-6 w-6 text-muted-foreground"/>
                                                 {getExpiryTime(field.value)}
                                             </div>
-                                            <p className="text-xs text-center text-muted-foreground">{expiryOptions[field.value].label}</p>
+                                            <p className="text-xs text-center text-muted-foreground">{expiryOptions[field.value]?.label || 'Custom'}</p>
                                         </div>
                                     </PopoverTrigger>
                                      <PopoverContent className="w-80 p-0" align="start">
@@ -363,7 +360,7 @@ export function TradePanel() {
                   <div className="space-y-2 text-sm bg-muted/30 p-3 rounded-md">
                       <div className="flex justify-between items-center">
                           <span className="text-muted-foreground">Profit</span>
-                          <span className="font-medium text-green-500">+{expiryOptions[expiry].profit}%</span>
+                          <span className="font-medium text-green-500">+{expiryOptions[expiry]?.profit || 80}%</span>
                       </div>
                       <div className="flex justify-between items-center">
                           <span className="text-muted-foreground">Potential:</span>
@@ -409,5 +406,3 @@ export function TradePanel() {
     </>
   );
 }
-
-    
