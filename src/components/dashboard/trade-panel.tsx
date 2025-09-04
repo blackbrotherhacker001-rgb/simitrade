@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,9 +25,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { ArrowUp, ArrowDown, Minus, Plus, Clock, Keyboard, ShieldAlert } from "lucide-react";
+import { ArrowUp, ArrowDown, Minus, Plus, Clock, Keyboard, ShieldAlert, Check } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { TradeConfirmationDialog } from "./trade-confirmation-dialog";
 import useMarketData from "@/hooks/use-market-data";
@@ -50,12 +56,16 @@ const expiryOptions: {[key: string]: string} = {
     "15": "15 minutes"
 }
 
+const quickAmounts = [100, 500, 1000, 2000, 5000, 10000];
+const percentageAmounts = [1, 5, 10, 25];
+
 export function TradePanel() {
   const [countdown, setCountdown] = useState(54);
   const { toast } = useToast();
   const { user, updateBalance } = useAuth();
   const [isConfirmOpen, setConfirmOpen] = useState(false);
   const [tradeType, setTradeType] = useState<'rise' | 'fall'>('rise');
+  const [isAmountPopoverOpen, setAmountPopoverOpen] = useState(false);
   
   const [trend, setTrend] = useState<MarketTrend>('sideways');
   const [mode, setMode] = useState<MarketMode>('live');
@@ -141,6 +151,21 @@ export function TradePanel() {
       return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'});
   }
 
+  const handleQuickAmount = (value: number) => {
+    form.setValue('amount', value);
+  }
+
+  const handlePercentageAmount = (percentage: number) => {
+    if (!user) return;
+    const newAmount = (user.balance * percentage) / 100;
+    form.setValue('amount', Math.floor(newAmount));
+  }
+  
+  const handleApplyCustomAmount = (customAmount: number) => {
+    form.setValue('amount', customAmount);
+    setAmountPopoverOpen(false);
+  }
+
   return (
     <>
       <TradeConfirmationDialog
@@ -164,27 +189,89 @@ export function TradePanel() {
                         name="amount"
                         render={({ field }) => (
                             <FormItem>
-                                <div className="bg-muted/30 p-2 rounded-md">
-                                    <div className="flex justify-between items-center text-xs text-muted-foreground">
-                                        <FormLabel>Amount</FormLabel>
-                                        <div>
-                                            <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => field.onChange(Math.max(0, field.value - 10))}><Minus className="h-4 w-4"/></Button>
-                                            <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => field.onChange(field.value + 10)}><Plus className="h-4 w-4"/></Button>
+                                 <Popover open={isAmountPopoverOpen} onOpenChange={setAmountPopoverOpen}>
+                                    <PopoverTrigger asChild>
+                                        <div className="bg-muted/30 p-2 rounded-md cursor-pointer">
+                                            <div className="flex justify-between items-center text-xs text-muted-foreground">
+                                                <FormLabel>Amount</FormLabel>
+                                                <div>
+                                                    <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={(e) => { e.stopPropagation(); field.onChange(Math.max(0, field.value - 10))}}><Minus className="h-4 w-4"/></Button>
+                                                    <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={(e) => { e.stopPropagation(); field.onChange(field.value + 10)}}><Plus className="h-4 w-4"/></Button>
+                                                </div>
+                                            </div>
+                                                <div className="flex items-baseline justify-center">
+                                                    <span className="text-xl font-semibold">$</span>
+                                                    <Input
+                                                        readOnly
+                                                        type="text"
+                                                        value={field.value}
+                                                        className="bg-transparent border-none text-2xl font-bold w-full text-center h-auto p-0 focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
+                                                     />
+                                                </div>
+                                            <p className="text-xs text-center text-muted-foreground">{user && user.balance > 0 ? ((field.value / user.balance) * 100).toFixed(1) : 0}% of balance</p>
                                         </div>
-                                    </div>
-                                    <FormControl>
-                                        <div className="flex items-baseline justify-center">
-                                            <span className="text-xl font-semibold">$</span>
-                                            <Input
-                                                type="text"
-                                                {...field}
-                                                className="bg-transparent border-none text-2xl font-bold w-full text-center h-auto p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                                             />
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-80" align="start">
+                                        <div className="space-y-4">
+                                            <div>
+                                                <p className="text-sm font-medium mb-2">Quick Amounts</p>
+                                                <div className="grid grid-cols-3 gap-2">
+                                                    {quickAmounts.map(val => (
+                                                        <Button 
+                                                            key={val} 
+                                                            variant={amount === val ? "default" : "secondary"} 
+                                                            onClick={() => handleQuickAmount(val)}
+                                                            className={cn(amount === val && 'bg-green-600 hover:bg-green-700')}
+                                                        >
+                                                            {amount === val && <Check className="mr-2 h-4 w-4"/>}
+                                                            ${val.toLocaleString()}
+                                                        </Button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                             <div>
+                                                <p className="text-sm font-medium mb-2">Percentage of Balance</p>
+                                                <div className="grid grid-cols-4 gap-2">
+                                                    {percentageAmounts.map(val => (
+                                                        <Button 
+                                                            key={val} 
+                                                            variant="secondary"
+                                                            onClick={() => handlePercentageAmount(val)}
+                                                        >
+                                                           {val}%
+                                                        </Button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium mb-2">Custom Amount</p>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="relative flex-grow">
+                                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                                                        <Input 
+                                                            type="number" 
+                                                            defaultValue={amount} 
+                                                            className="pl-6"
+                                                            id="custom-amount-input"
+                                                        />
+                                                    </div>
+                                                    <Button 
+                                                        className="bg-green-600 hover:bg-green-700"
+                                                        onClick={() => {
+                                                            const input = document.getElementById('custom-amount-input') as HTMLInputElement;
+                                                            if (input) {
+                                                                handleApplyCustomAmount(parseFloat(input.value) || 0)
+                                                            }
+                                                        }}
+                                                    >
+                                                        Apply
+                                                    </Button>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground mt-1">Available: ${user?.balance.toLocaleString()}</p>
+                                            </div>
                                         </div>
-                                    </FormControl>
-                                    <p className="text-xs text-center text-muted-foreground">{user && user.balance > 0 ? ((field.value / user.balance) * 100).toFixed(1) : 0}% of balance</p>
-                                </div>
+                                    </PopoverContent>
+                                 </Popover>
                             </FormItem>
                         )}
                       />
