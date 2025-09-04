@@ -20,7 +20,20 @@ import {
   LayoutDashboard,
   DollarSign,
   Briefcase,
-  Paintbrush
+  Paintbrush,
+  User,
+  Maximize,
+  Sun,
+  ChevronRight,
+  Landmark,
+  CreditCard,
+  ArrowDownToLine,
+  CandlestickChart,
+  Binary,
+  AreaChart,
+  FileText,
+  FileUp,
+  ArrowUpFromLine
 } from 'lucide-react';
 import { AdminLogo } from '../common/admin-logo';
 import { Badge } from '../ui/badge';
@@ -30,66 +43,27 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuPortal,
+    DropdownMenuSubContent
 } from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
-const navLinks = {
-  dashboard: { href: '/admin/analytics', label: 'Dashboard', icon: LayoutDashboard },
-  finance: [
-    { href: '/admin/deposits', label: 'Deposits', icon: Wallet },
-    { href: '/admin/transactions', label: 'Transactions', icon: Send },
-  ],
-  extensions: [
-      { href: '/admin/users', label: 'Users', icon: Users },
-      { href: '/admin/market', label: 'Market Simulation', icon: LineChart },
-      { href: '/admin/live-chat', label: 'Live Chat', icon: MessageSquare },
-      { href: '/admin/wallet', label: 'Wallet Settings', icon: Settings },
-      { href: '/admin/ai/investment/plan', label: 'AI Plans', icon: BrainCircuit },
-  ],
-  design: [
-      // Future design-related links can go here
-  ]
-};
 
 const NavLink = ({ href, label, icon: Icon, currentPath }: { href: string; label: string; icon: React.ElementType; currentPath: string; }) => (
     <Link
       href={href}
       className={cn(
-        'flex items-center gap-2 transition-colors hover:text-foreground',
+        'flex items-center gap-3 h-10 px-3 rounded-md transition-colors hover:bg-accent hover:text-accent-foreground',
         currentPath === href
-          ? 'text-foreground'
+          ? 'bg-accent text-accent-foreground'
           : 'text-muted-foreground'
       )}
     >
-      <Icon className="h-4 w-4" />
-      {label}
+      <Icon className="h-5 w-5" />
+      <span className="font-medium">{label}</span>
     </Link>
-);
-
-const NavDropdown = ({ label, icon: Icon, items, currentPath }: { label: string, icon: React.ElementType, items: {href: string, label: string, icon: React.ElementType}[], currentPath: string }) => (
-    <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className={cn(
-                'flex items-center gap-2 transition-colors hover:text-foreground px-2',
-                items.some(item => currentPath.startsWith(item.href))
-                    ? 'text-foreground'
-                    : 'text-muted-foreground'
-            )}>
-                <Icon className="h-4 w-4" />
-                {label}
-                <ChevronDown className="h-4 w-4" />
-            </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-            {items.map(item => (
-                 <DropdownMenuItem key={item.href} asChild>
-                    <Link href={item.href} className="flex items-center gap-2">
-                        <item.icon className="h-4 w-4" />
-                        {item.label}
-                    </Link>
-                </DropdownMenuItem>
-            ))}
-        </DropdownMenuContent>
-    </DropdownMenu>
 );
 
 
@@ -101,23 +75,136 @@ export function AdminHeader() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
           <AdminLogo />
+           <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
+            <NavLink href="/admin/analytics" label="Dashboard" icon={LayoutDashboard} currentPath={pathname} />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2 text-muted-foreground hover:text-foreground h-10 px-3">
+                  Finance
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-64" align="start">
+                <DropdownMenuItem asChild>
+                   <Link href="/admin/analytics" className="flex items-center gap-2">
+                        <BarChart className="h-4 w-4" />
+                        Revenue Analytics
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <Landmark className="mr-2 h-4 w-4"/>
+                        Payment Systems
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            <DropdownMenuItem>
+                               <CreditCard className="mr-2 h-4 w-4"/>
+                               Payment Gateways
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                               <CreditCard className="mr-2 h-4 w-4"/>
+                               Payment Methods
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link href="/admin/deposits" className="flex items-center gap-2">
+                                    <ArrowDownToLine className="mr-2 h-4 w-4"/>
+                                    Deposit Records
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <CandlestickChart className="mr-2 h-4 w-4"/>
+                        Trading Infrastructure
+                    </DropdownMenuSubTrigger>
+                     <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                             <DropdownMenuItem asChild>
+                                <Link href="/admin/market" className="flex items-center gap-2">
+                                    <LineChart className="mr-2 h-4 w-4"/>
+                                    Market Simulation
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
+                <DropdownMenuItem>
+                    <Binary className="mr-2 h-4 w-4"/>
+                    Binary Options
+                </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                    <Link href="/admin/ai/investment/plan" className="flex items-center gap-2">
+                        <BrainCircuit className="mr-2 h-4 w-4" />
+                        Investment Management
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <FileText className="mr-2 h-4 w-4"/>
+                    Order Management
+                </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                     <Link href="/admin/transactions" className="flex items-center gap-2">
+                        <Send className="mr-2 h-4 w-4" />
+                        Transaction Management
+                    </Link>
+                 </DropdownMenuItem>
+                 <DropdownMenuItem>
+                    <ArrowUpFromLine className="mr-2 h-4 w-4"/>
+                    Withdrawal Management
+                 </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                 <Button variant="ghost" className="flex items-center gap-2 text-muted-foreground hover:text-foreground h-10 px-3">
+                  Extensions
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+               <DropdownMenuContent align="start">
+                <DropdownMenuItem asChild>
+                    <Link href="/admin/users" className="flex items-center gap-2">
+                        <Users className="mr-2 h-4 w-4"/>
+                        User Management
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/admin/live-chat" className="flex items-center gap-2">
+                        <MessageSquare className="mr-2 h-4 w-4"/>
+                        Live Chat
+                    </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                 <Button variant="ghost" className="flex items-center gap-2 text-muted-foreground hover:text-foreground h-10 px-3">
+                  Design
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                 <DropdownMenuItem>
+                    <Paintbrush className="mr-2 h-4 w-4"/>
+                    Theme Customizer
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </nav>
         </div>
 
-        <nav className="hidden md:flex items-center space-x-2 text-sm font-medium">
-            <NavLink {...navLinks.dashboard} currentPath={pathname} />
-            <NavDropdown label="Finance" icon={DollarSign} items={navLinks.finance} currentPath={pathname} />
-            <NavDropdown label="Extensions" icon={Briefcase} items={navLinks.extensions} currentPath={pathname} />
-             <NavDropdown label="Design" icon={Paintbrush} items={navLinks.design} currentPath={pathname} />
-          </nav>
-
-        <div className="flex items-center gap-4">
-            <Button variant="outline">
-                <Users className="h-4 w-4 mr-2"/>
+        <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-2">
+                <User className="h-4 w-4"/>
                 User
             </Button>
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline">
+                    <Button variant="outline" size="sm">
                         English
                         <ChevronDown className="h-4 w-4 ml-2" />
                     </Button>
@@ -128,11 +215,25 @@ export function AdminHeader() {
                 </DropdownMenuContent>
             </DropdownMenu>
             <Button variant="ghost" size="icon">
-                <Bell className="h-4 w-4"/>
+                <Maximize className="h-4 w-4"/>
             </Button>
             <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-4 w-4"/>
+                <Sun className="h-4 w-4"/>
             </Button>
+             <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                        <Avatar className="h-8 w-8">
+                             <AvatarImage src="https://i.pravatar.cc/150?u=admin" />
+                             <AvatarFallback>A</AvatarFallback>
+                        </Avatar>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem>Profile</DropdownMenuItem>
+                    <DropdownMenuItem>Logout</DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
       </div>
     </header>
