@@ -57,7 +57,7 @@ const NavLink = ({ href, label, icon: Icon, currentPath }: { href: string; label
       href={href}
       className={cn(
         'flex items-center gap-3 h-10 px-3 rounded-md transition-colors hover:bg-accent hover:text-accent-foreground',
-        currentPath === href
+        currentPath.startsWith(href)
           ? 'bg-accent text-accent-foreground'
           : 'text-muted-foreground'
       )}
@@ -77,7 +77,7 @@ export function AdminHeader() {
         <div className="flex items-center gap-6">
           <AdminLogo />
            <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
-            <NavLink href="/admin/analytics" label="Dashboard" icon={LayoutDashboard} currentPath={pathname} />
+            <NavLink href="/admin/dashboard" label="Dashboard" icon={LayoutDashboard} currentPath={pathname} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-2 text-muted-foreground hover:text-foreground h-10 px-3">

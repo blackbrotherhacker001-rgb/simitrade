@@ -8,7 +8,7 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/admin/deposits');
+    router.replace('/admin/dashboard');
   }, [router]);
 
   return (
