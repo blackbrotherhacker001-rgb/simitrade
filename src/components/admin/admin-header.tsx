@@ -14,19 +14,31 @@ import {
   Bell,
   ArrowLeft,
   Circle,
+  Settings,
 } from 'lucide-react';
 import { AdminLogo } from '../common/admin-logo';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import {
+    SidebarProvider,
+    Sidebar,
+    SidebarTrigger,
+    SidebarHeader,
+    SidebarContent,
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton,
+    SidebarFooter
+} from '@/components/ui/sidebar';
 
 const navLinks = [
-  { href: '/admin/users', label: 'Users', icon: Users },
-  { href: '/admin/market', label: 'Market', icon: LineChart },
   { href: '/admin/deposits', label: 'Deposits', icon: Wallet },
   { href: '/admin/transactions', label: 'Transactions', icon: Send },
-  { href: '/admin/wallet', label: 'Wallet', icon: Wallet },
+  { href: '/admin/users', label: 'Users', icon: Users },
+  { href: '/admin/market', label: 'Market Simulation', icon: LineChart },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart },
   { href: '/admin/live-chat', label: 'Live Chat', icon: MessageSquare },
+  { href: '/admin/wallet', label: 'Wallet Settings', icon: Settings },
 ];
 
 export function AdminHeader() {
@@ -37,7 +49,9 @@ export function AdminHeader() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
           <AdminLogo />
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+        </div>
+
+        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             {navLinks.map(link => (
               <Link
                 key={link.href}
@@ -54,7 +68,6 @@ export function AdminHeader() {
               </Link>
             ))}
           </nav>
-        </div>
 
         <div className="flex items-center gap-4">
             <Badge variant="outline" className="text-green-400 border-green-400/50 gap-2">
