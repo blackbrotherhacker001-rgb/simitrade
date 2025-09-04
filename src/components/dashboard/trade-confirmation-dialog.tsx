@@ -38,7 +38,7 @@ export function TradeConfirmationDialog({
   onConfirm,
 }: TradeConfirmationDialogProps) {
   const [confirmCountdown, setConfirmCountdown] = useState(3);
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails]_ = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -113,7 +113,7 @@ export function TradeConfirmationDialog({
             className="flex justify-between items-center cursor-pointer text-sm"
             onClick={() => setShowDetails(!showDetails)}
           >
-            <span className="text-muted-foreground">{showDetails ? 'Hide' : 'Show'} details</span>
+            <span className="text-muted-foreground">{showDetails ? 'Hide details' : 'Show details'}</span>
             {showDetails ? <ChevronUp className="h-4 w-4"/> : <ChevronDown className="h-4 w-4"/>}
           </div>
 
