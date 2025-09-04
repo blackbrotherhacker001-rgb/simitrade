@@ -1,26 +1,17 @@
+
 'use client';
 
-import { BalanceCard } from "@/components/dashboard/balance-card";
-import { PortfolioOverview } from "@/components/dashboard/portfolio-overview";
 import { TradeChart } from "@/components/dashboard/trade-chart";
-import { TransactionsHistory } from "@/components/dashboard/transactions-history";
+import { TradePanel } from "@/components/dashboard/trade-panel";
 
 export default function DashboardPage() {
   return (
-    <div className="container mx-auto p-4 md:p-6">
-      <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-12 xl:col-span-9">
-          <TradeChart />
-        </div>
-        <div className="col-span-12 xl:col-span-3">
-          <div className="flex flex-col gap-6">
-            <BalanceCard />
-            <PortfolioOverview />
-          </div>
-        </div>
-        <div className="col-span-12">
-          <TransactionsHistory />
-        </div>
+    <div className="flex flex-col md:flex-row h-[calc(100vh-65px)]">
+      <div className="flex-grow h-full">
+        <TradeChart />
+      </div>
+      <div className="w-full md:w-[320px] md:border-l border-t md:border-t-0 border-border bg-card">
+        <TradePanel />
       </div>
     </div>
   );

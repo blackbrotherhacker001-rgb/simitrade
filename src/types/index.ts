@@ -1,4 +1,5 @@
 
+
 export interface User {
   walletAddress: string;
   balance: number;
@@ -9,7 +10,7 @@ export interface User {
 
 export interface Transaction {
   id: string;
-  type: 'buy' | 'sell' | 'deposit' | 'withdrawal';
+  type: 'buy' | 'sell' | 'deposit' | 'withdrawal' | 'rise' | 'fall';
   symbol: string;
   quantity: number;
   price: number;

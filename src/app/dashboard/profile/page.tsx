@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useAuth } from '@/hooks/use-auth';
@@ -13,6 +14,7 @@ import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ProfileDialog } from '@/components/dashboard/profile-dialog';
+import { TransactionsHistory } from '@/components/dashboard/transactions-history';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -175,9 +177,7 @@ export default function ProfilePage() {
 
           <div>
             <h3 className="text-xl font-semibold flex items-center gap-2 mb-4"><Activity className="h-5 w-5"/> Recent Activity</h3>
-            <div className="text-center text-muted-foreground py-8 bg-card/50 rounded-lg">
-                <p>No recent activity or messages.</p>
-            </div>
+            <TransactionsHistory />
           </div>
 
         </CardContent>

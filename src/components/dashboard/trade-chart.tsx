@@ -5,17 +5,20 @@ import {
   Card,
   CardContent,
   CardHeader,
+  CardFooter,
 } from '@/components/ui/card';
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceLine, Line, LineChart } from 'recharts';
 import useMarketData from '@/hooks/use-market-data';
 import { Badge } from '../ui/badge';
-import { TrendingUp } from 'lucide-react';
+import { Button } from '../ui/button';
+import { TrendingUp, Plus, Settings2, Undo2, Redo2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 const chartConfig = {
   price: {
@@ -68,48 +71,44 @@ export function TradeChart() {
   const { data, currentPrice } = useMarketData(mode === 'live' ? 'sideways' : trend);
 
   const priceHistory = data.map(d => d.price);
-  const high24h = Math.max(...priceHistory);
-  const low24h = Math.min(...priceHistory);
   const openPrice = priceHistory[0];
   const change = currentPrice - openPrice;
   const changePercent = (change / openPrice) * 100;
 
+  const { toast } = useToast();
+
+  const handleBuy = () => {
+    toast({
+      title: 'Order Placed',
+      description: `Bought BTC at $${currentPrice.toFixed(2)}`,
+    });
+  }
+
   return (
-    <Card>
-      <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="h-full flex flex-col">
+       <CardHeader className="flex flex-row items-center justify-between gap-4 py-2 border-b border-border">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold">BTC/USD</h2>
-            <Badge variant={change >= 0 ? 'default' : 'destructive'} className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
+                <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/btc.svg" alt="BTC" className="h-6 w-6" />
+                <h2 className="text-md font-bold">BTC/USDT</h2>
+            </div>
+            <div>
+                <p className="text-md font-bold text-green-500">${currentPrice.toFixed(2)}</p>
+            </div>
+             <Badge variant={change >= 0 ? 'default' : 'destructive'} className="flex items-center gap-1 text-xs">
               <TrendingUp className="h-3 w-3"/>
               {changePercent.toFixed(2)}%
             </Badge>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-primary">${currentPrice.toFixed(2)}</p>
-            <p className="text-sm text-muted-foreground">
-              {change.toFixed(2)} (24h)
-            </p>
-          </div>
         </div>
-        <div className="grid grid-cols-3 gap-4 text-sm text-muted-foreground">
-            <div className="text-center md:text-right">
-                <p>24h High</p>
-                <p className="font-semibold text-foreground">${high24h.toFixed(2)}</p>
-            </div>
-            <div className="text-center md:text-right">
-                <p>24h Low</p>
-                <p className="font-semibold text-foreground">${low24h.toFixed(2)}</p>
-            </div>
-             <div className="text-center md:text-right">
-                <p>24h Volume</p>
-                <p className="font-semibold text-foreground">1,234.56 BTC</p>
-            </div>
+        <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Plus className="h-4 w-4" />
+            </Button>
         </div>
       </CardHeader>
-      <CardContent className="h-96 w-full p-0">
-        <ChartContainer config={chartConfig} className="w-full h-full">
-            <AreaChart accessibilityLayer data={data} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+      <div className="flex-grow relative">
+        <ChartContainer config={chartConfig} className="w-full h-full absolute inset-0">
+            <LineChart accessibilityLayer data={data} margin={{ top: 10, right: 10, bottom: 20, left: 10 }}>
                 <defs>
                     <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
@@ -137,17 +136,28 @@ export function TradeChart() {
                 cursor={{ stroke: 'hsl(var(--border))', strokeWidth: 1, strokeDasharray: '3 3' }}
                 content={<ChartTooltipContent indicator="dot" />}
                 />
-                <Area
-                dataKey="price"
-                type="natural"
-                fill="url(#colorPrice)"
-                stroke="hsl(var(--primary))"
-                strokeWidth={2}
-                dot={false}
+                <Line
+                    dataKey="price"
+                    type="monotone"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={2}
+                    dot={false}
+                    name="Price"
                 />
-            </AreaChart>
+                 <ReferenceLine y={currentPrice} stroke="hsl(var(--primary))" strokeDasharray="3 3" />
+            </LineChart>
         </ChartContainer>
-      </CardContent>
-    </Card>
+      </div>
+      <CardFooter className="py-2 border-t border-border flex justify-between items-center">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Button variant="ghost" size="sm" className="text-xs">Trading History</Button>
+            </div>
+             <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <p>%</p>
+                <p>log</p>
+                <p>auto</p>
+            </div>
+      </CardFooter>
+    </div>
   );
 }
