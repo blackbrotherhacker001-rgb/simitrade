@@ -71,9 +71,6 @@ export function TradeConfirmationDialog({
       <DialogContent className="sm:max-w-md bg-card border-border p-0">
         <DialogHeader className="p-4 flex flex-row items-center justify-between border-b">
           <DialogTitle>Confirm Trade</DialogTitle>
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onOpenChange(false)}>
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
 
         <div className="p-6 space-y-4">
