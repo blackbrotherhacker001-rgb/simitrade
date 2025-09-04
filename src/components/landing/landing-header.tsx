@@ -16,11 +16,11 @@ import { Logo } from '../common/logo';
 import { useRouter } from 'next/navigation';
 
 export function LandingHeader() {
-  const { user, logout } = useAuth();
+  const { user, logout, setNeedsLogin } = useAuth();
   const router = useRouter();
 
   const handleLogin = () => {
-    router.push('/dashboard'); 
+    setNeedsLogin(true);
   };
 
 

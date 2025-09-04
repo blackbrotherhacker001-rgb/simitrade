@@ -65,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('crypto-sim-user');
+    setNeedsLogin(false);
     window.location.href = '/';
   }, []);
 
