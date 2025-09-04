@@ -3,13 +3,10 @@
 
 import { TradeChart } from "@/components/dashboard/trade-chart";
 import { TradePanel } from "@/components/dashboard/trade-panel";
-import { LandingHeader } from "@/components/landing/landing-header";
 
 
 export default function DashboardPage() {
   return (
-    <>
-    <LandingHeader />
     <div className="flex flex-col md:flex-row h-[calc(100vh-65px)]">
       <div className="flex-grow h-full">
         <TradeChart />
@@ -18,6 +15,5 @@ export default function DashboardPage() {
         <TradePanel />
       </div>
     </div>
-    </>
   );
 }
