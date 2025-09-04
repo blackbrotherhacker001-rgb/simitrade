@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   Circle,
   Settings,
+  BrainCircuit
 } from 'lucide-react';
 import { AdminLogo } from '../common/admin-logo';
 import { Badge } from '../ui/badge';
@@ -39,6 +40,7 @@ const navLinks = [
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart },
   { href: '/admin/live-chat', label: 'Live Chat', icon: MessageSquare },
   { href: '/admin/wallet', label: 'Wallet Settings', icon: Settings },
+  { href: '/admin/ai/investment/plan', label: 'AI Plans', icon: BrainCircuit },
 ];
 
 export function AdminHeader() {
