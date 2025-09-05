@@ -147,9 +147,11 @@ export function AdminHeader() {
                                     Binary Markets
                                 </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                               <Clock className="mr-2 h-4 w-4"/>
-                               Trading Durations
+                            <DropdownMenuItem asChild>
+                               <Link href="/admin/ai/investment/duration" className="flex items-center gap-2">
+                                    <Clock className="mr-2 h-4 w-4"/>
+                                    Trading Durations
+                               </Link>
                             </DropdownMenuItem>
                         </DropdownMenuSubContent>
                     </DropdownMenuPortal>

@@ -34,7 +34,7 @@ const prompt = ai.definePrompt({
   name: 'chatPrompt',
   input: {schema: ChatInputSchema},
   output: {schema: ChatOutputSchema},
-  prompt: `You are a helpful customer support agent for a crypto trading platform called ForgeTrader. Your name is Eva. 
+  prompt: `You are a helpful customer support agent for a crypto trading platform called Bicrypto. Your name is Eva. 
   
   You are speaking with a user. Be friendly, helpful, and concise. Keep your responses short and to the point.
 

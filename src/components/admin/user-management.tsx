@@ -66,7 +66,7 @@ const user = {
 export function UserManagement() {
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
+    <div className="space-y-6">
         <div className="flex items-center gap-4">
             <Button variant="outline" size="icon">
                 <ChevronLeft className="h-4 w-4" />

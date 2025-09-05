@@ -7,7 +7,7 @@ export function AdminLogo() {
     <div className="flex items-center gap-2">
       <Bot className="h-8 w-8 text-primary" />
       <div className="flex flex-col">
-        <h1 className="text-lg font-bold text-foreground">CryptoSim</h1>
+        <h1 className="text-lg font-bold text-foreground">Bicrypto</h1>
       </div>
     </div>
   );
