@@ -40,22 +40,11 @@ interface WalletDialogProps {
   children: React.ReactNode;
 }
 
-const DEPOSIT_WALLET_STORAGE_KEY = 'deposit-wallet-address';
-
 export function WalletDialog({ type, children }: WalletDialogProps) {
   const [open, setOpen] = useState(false);
-  const [depositAddress, setDepositAddress] = useState(ADMIN_WALLET_ADDRESS);
+  const [depositAddress] = useState(ADMIN_WALLET_ADDRESS);
   const { toast } = useToast();
   const { user, updateBalance } = useAuth();
-  
-  useEffect(() => {
-    if (type === 'deposit') {
-      const storedAddress = localStorage.getItem(DEPOSIT_WALLET_STORAGE_KEY);
-      if (storedAddress) {
-        setDepositAddress(storedAddress);
-      }
-    }
-  }, [type, open]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
