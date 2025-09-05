@@ -2,17 +2,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import {
   Card,
   CardContent,
@@ -22,231 +11,241 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Edit, ToggleLeft, ToggleRight, UserPlus, LogIn } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  RefreshCw,
+  Info,
+  Calendar,
+  BarChart2,
+  AlertTriangle,
+  User,
+  Power,
+  PowerOff,
+  ChevronLeft,
+  Mail,
+  Clock,
+  TrendingUp,
+  Shield,
+  Wallet,
+  FileText,
+  MessageSquare,
+  Lock,
+  Eye,
+  CheckCircle,
+  XCircle,
+} from 'lucide-react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
-const mockUsers = [
-    { id: '1', name: 'Satoshi Nakamoto', wallet_address: '0x1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', balance: 980000.00, is_active: true, last_login_at: '2025-08-23T14:07:03Z' },
-    { id: '2', name: 'Vitalik Buterin', wallet_address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', balance: 450000.00, is_active: true, last_login_at: '2025-08-23T13:07:03Z' },
-    { id: '3', name: 'Charles Hoskinson', wallet_address: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2', balance: 250000.00, is_active: true, last_login_at: '2025-08-22T18:30:00Z' },
-    { id: '4', name: 'Gavin Wood', wallet_address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e', balance: 150000.00, is_active: true, last_login_at: '2025-08-21T11:45:00Z' },
-    { id: '5', name: 'Barry Silbert', wallet_address: '0x503828976D22510aad0201ac7EC88293211D23Da', balance: 75000.00, is_active: false, last_login_at: '2025-08-20T09:00:00Z' },
-];
-
-const createUserSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  wallet_address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'),
-  balance: z.coerce.number().min(0, 'Balance cannot be negative'),
-});
-
-type CreateUserForm = z.infer<typeof createUserSchema>;
+const user = {
+    name: 'demo user',
+    email: 'demouser@gmail.com',
+    id: 'ID: 430669de-2bf1-40d4-aefe-5722b54db525',
+    avatar: 'https://i.pravatar.cc/150?u=demo-user',
+    isAdmin: true,
+    score: '32%',
+    lastLogin: 'Never',
+    activityScore: 32,
+    accountAge: '15 days',
+    riskLevel: 'High',
+    riskScore: '78/100 (20% confidence)',
+    joined: 'Aug 19, 2025',
+    emailVerified: false,
+    failedLogins: 0,
+};
 
 export function UserManagement() {
-  const [users, setUsers] = useState(mockUsers);
-  const [isCreateUserOpen, setCreateUserOpen] = useState(false);
-  const { toast } = useToast();
-  const { login } = useAuth();
-  const router = useRouter();
-
-  const form = useForm<CreateUserForm>({
-    resolver: zodResolver(createUserSchema),
-    defaultValues: {
-      name: '',
-      wallet_address: '',
-      balance: 0,
-    },
-  });
-
-  const toggleUserStatus = (id: string) => {
-    setUsers(users.map(user => user.id === id ? { ...user, is_active: !user.is_active } : user));
-  };
-  
-  const handleLoginAsUser = (walletAddress: string) => {
-    login(walletAddress, false);
-    router.push('/dashboard');
-  };
-
-  const handleCreateUser = (values: CreateUserForm) => {
-    const newUser = {
-      id: (users.length + 1).toString(),
-      name: values.name,
-      wallet_address: values.wallet_address,
-      balance: values.balance,
-      is_active: true,
-      last_login_at: new Date().toISOString(),
-    };
-    setUsers([...users, newUser]);
-    toast({
-      title: 'User Created',
-      description: `User ${values.name} has been created successfully.`,
-    });
-    setCreateUserOpen(false);
-    form.reset();
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString([], {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-    });
-  }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle>User Management</CardTitle>
-          <CardDescription>
-            View, manage, and adjust user accounts.
-          </CardDescription>
-        </div>
-        <Dialog open={isCreateUserOpen} onOpenChange={setCreateUserOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <UserPlus className="mr-2 h-4 w-4" />
-              Create User
+    <div className="p-4 md:p-6 space-y-6">
+        <div className="flex items-center gap-4">
+            <Button variant="outline" size="icon">
+                <ChevronLeft className="h-4 w-4" />
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create New User</DialogTitle>
-              <DialogDescription>
-                Fill in the details to create a new user account.
-              </DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleCreateUser)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>User Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g. Satoshi Nakamoto" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="wallet_address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Wallet Address</FormLabel>
-                      <FormControl>
-                        <Input placeholder="0x..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="balance"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Initial Balance (USD)</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <DialogFooter>
-                  <Button type="submit">Create User</Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Wallet Address</TableHead>
-              <TableHead>Balance</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Last Login</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map(user => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.wallet_address}</TableCell>
-                <TableCell>${user.balance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</TableCell>
-                <TableCell>
-                  <Badge variant={user.is_active ? 'default' : 'destructive'}>
-                    {user.is_active ? 'Active' : 'Suspended'}
-                  </Badge>
-                </TableCell>
-                <TableCell>{formatDate(user.last_login_at)}</TableCell>
-                <TableCell className="text-right">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleLoginAsUser(user.wallet_address)}>
-                            <LogIn className="mr-2 h-4 w-4" />
-                            Login as User
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Adjust Balance
-                        </DropdownMenuItem>
-                         <DropdownMenuItem onClick={() => toggleUserStatus(user.id)}>
-                            {user.is_active ? <ToggleLeft className="mr-2 h-4 w-4" /> : <ToggleRight className="mr-2 h-4 w-4" />}
-                            {user.is_active ? 'Suspend' : 'Activate'}
-                        </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            <h1 className="text-2xl font-semibold">User Management</h1>
+        </div>
+
+        <Card className="overflow-hidden">
+            <CardHeader className="bg-muted/30 p-4 flex flex-row items-center gap-4">
+                <Avatar className="h-16 w-16">
+                    <AvatarFallback className="text-2xl">DU</AvatarFallback>
+                </Avatar>
+                <div className="flex-grow">
+                    <div className="flex items-center gap-2">
+                        <h2 className="text-xl font-bold">{user.name}</h2>
+                        <Badge variant="outline">Admin</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                    <p className="text-xs text-muted-foreground">{user.id} | Score: {user.score}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm">
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Refresh
+                    </Button>
+                    <Badge className="bg-green-600/20 text-green-400 border-green-600 py-1 px-3">
+                        <Power className="mr-2 h-4 w-4" />
+                        ACTIVE
+                    </Badge>
+                     <Button variant="destructive" size="sm">
+                        <PowerOff className="mr-2 h-4 w-4" />
+                        Block User
+                    </Button>
+                </div>
+            </CardHeader>
+            <CardContent className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card className="bg-card/50">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground flex justify-between items-center">
+                            Last Login <Info className="h-4 w-4" />
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-2xl font-bold">{user.lastLogin}</p>
+                        <p className="text-xs text-muted-foreground">User has never logged in</p>
+                    </CardContent>
+                </Card>
+                <Card className="bg-card/50">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground flex justify-between items-center">
+                           Activity Score <Info className="h-4 w-4" />
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-2xl font-bold">{user.activityScore}%</p>
+                        <Progress value={user.activityScore} className="h-2 mt-1" />
+                        <p className="text-xs text-muted-foreground mt-2">User engagement level</p>
+                    </CardContent>
+                </Card>
+                <Card className="bg-card/50">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground flex justify-between items-center">
+                           Account Age <Calendar className="h-4 w-4" />
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-2xl font-bold">{user.accountAge}</p>
+                        <p className="text-xs text-muted-foreground">Since registration</p>
+                    </CardContent>
+                </Card>
+                <Card className="bg-card/50">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground flex justify-between items-center">
+                           Risk Level <AlertTriangle className="h-4 w-4" />
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-2xl font-bold text-destructive">{user.riskLevel}</p>
+                        <p className="text-xs text-muted-foreground">Score: {user.riskScore}</p>
+                    </CardContent>
+                </Card>
+            </CardContent>
+            <div className="px-4">
+                <Tabs defaultValue="overview">
+                    <TabsList>
+                        <TabsTrigger value="account">Account (7)</TabsTrigger>
+                        <TabsTrigger value="trading">Trading (4)</TabsTrigger>
+                        <TabsTrigger value="extensions">Extensions (6)</TabsTrigger>
+                    </TabsList>
+                    <div className="py-4">
+                         <Tabs defaultValue="overview">
+                            <TabsList className="bg-transparent border-b rounded-none p-0 h-auto">
+                                <TabsTrigger value="overview" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"><Eye className="mr-2 h-4 w-4" />Overview</TabsTrigger>
+                                <TabsTrigger value="transactions" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"><FileText className="mr-2 h-4 w-4"/>Transactions</TabsTrigger>
+                                <TabsTrigger value="wallets" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"><Wallet className="mr-2 h-4 w-4"/>Wallets</TabsTrigger>
+                                <TabsTrigger value="kyc" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"><User className="mr-2 h-4 w-4"/>KYC</TabsTrigger>
+                                <TabsTrigger value="support" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"><MessageSquare className="mr-2 h-4 w-4"/>Support</TabsTrigger>
+                                <TabsTrigger value="security" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"><Lock className="mr-2 h-4 w-4"/>Security</TabsTrigger>
+                                <TabsTrigger value="activity" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"><TrendingUp className="mr-2 h-4 w-4"/>Activity</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="overview" className="mt-4">
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                    <Card className="lg:col-span-1">
+                                        <CardHeader>
+                                            <CardTitle className="text-lg">Personal Information</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-4">
+                                            <div className="flex items-center gap-4 text-sm">
+                                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                                <span className="text-muted-foreground">Email</span>
+                                                <span className="font-medium">{user.email}</span>
+                                                {user.emailVerified ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500"/>}
+                                            </div>
+                                             <div className="flex items-center gap-4 text-sm">
+                                                <Calendar className="h-4 w-4 text-muted-foreground" />
+                                                <span className="text-muted-foreground">Joined</span>
+                                                <span className="font-medium">{user.joined}</span>
+                                            </div>
+                                             <div className="flex items-center gap-4 text-sm">
+                                                <Clock className="h-4 w-4 text-muted-foreground" />
+                                                <span className="text-muted-foreground">Last Login</span>
+                                                <span className="font-medium">{user.lastLogin}</span>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                     <Card className="lg:col-span-1">
+                                        <CardHeader>
+                                            <CardTitle className="text-lg">Account Summary</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="flex justify-around items-center">
+                                            <div className="text-center">
+                                                <p className="text-3xl font-bold">{user.activityScore}%</p>
+                                                <p className="text-sm text-muted-foreground">Activity Score</p>
+                                                <p className="text-xs text-muted-foreground">User engagement level</p>
+                                            </div>
+                                            <div className="text-center">
+                                                <p className="text-3xl font-bold text-destructive">{user.riskLevel}</p>
+                                                <p className="text-sm text-muted-foreground">Risk Level</p>
+                                                <p className="text-xs text-muted-foreground">Security assessment</p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                     <Card className="lg:col-span-1">
+                                        <CardHeader>
+                                            <CardTitle className="text-lg">Quick Stats</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <Table>
+                                                <TableBody>
+                                                    <TableRow>
+                                                        <TableCell className="text-muted-foreground">Account Age</TableCell>
+                                                        <TableCell className="text-right font-medium">{user.accountAge}</TableCell>
+                                                    </TableRow>
+                                                     <TableRow>
+                                                        <TableCell className="text-muted-foreground">Last Active</TableCell>
+                                                        <TableCell className="text-right font-medium">{user.lastLogin}</TableCell>
+                                                    </TableRow>
+                                                    <TableRow>
+                                                        <TableCell className="text-muted-foreground">Email Verified</TableCell>
+                                                        <TableCell className="text-right font-medium">
+                                                            <Badge variant={user.emailVerified ? 'default' : 'destructive'}>{user.emailVerified ? 'Yes' : 'No'}</Badge>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                     <TableRow>
+                                                        <TableCell className="text-muted-foreground">Failed Logins</TableCell>
+                                                        <TableCell className="text-right font-medium">{user.failedLogins}</TableCell>
+                                                    </TableRow>
+                                                </TableBody>
+                                            </Table>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </TabsContent>
+                         </Tabs>
+                    </div>
+                </Tabs>
+            </div>
+        </Card>
+    </div>
   );
 }
 
