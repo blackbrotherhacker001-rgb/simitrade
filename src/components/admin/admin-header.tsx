@@ -34,7 +34,8 @@ import {
   FileText,
   FileUp,
   ArrowUpFromLine,
-  Clock
+  Clock,
+  Type
 } from 'lucide-react';
 import { AdminLogo } from '../common/admin-logo';
 import { Badge } from '../ui/badge';
@@ -229,6 +230,12 @@ export function AdminHeader() {
                      <Link href="/admin/design/theme" className="flex items-center gap-2">
                         <Paintbrush className="mr-2 h-4 w-4"/>
                         Theme Customizer
+                    </Link>
+                </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                     <Link href="/admin/content" className="flex items-center gap-2">
+                        <Type className="mr-2 h-4 w-4"/>
+                        Content Management
                     </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
