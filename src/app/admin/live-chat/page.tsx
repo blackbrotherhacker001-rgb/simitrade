@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bot, Send, Sparkles } from 'lucide-react';
+import { Bot, Send, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { chat } from '@/ai/flows/chat-flow';
 
@@ -24,7 +24,11 @@ const mockUsers = [
 ];
 
 const initialMessages: Record<string, Message[]> = {
-    '1': [{ role: 'user', content: 'Hi, I have an issue with my deposit.' }],
+    '1': [
+        { role: 'user', content: 'Hi, I have an issue with my deposit.' },
+        { role: 'model', content: 'Hello Alice, I can certainly help you with that. Can you please provide the transaction ID?' },
+        { role: 'user', content: '![Uploaded Image](https://placehold.co/200x150/1F2328/FFF?text=Receipt)' },
+    ],
     '2': [{ role: 'user', content: 'What\'s the current price of BTC?' }],
     '4': [{ role: 'user', content: 'Can you help me reset my password?' }],
 };
@@ -130,10 +134,14 @@ export default function LiveChatPage() {
                         </Avatar>
                     )}
                      <div className={cn(
-                        "rounded-lg px-4 py-2 max-w-sm",
+                        "rounded-lg px-3 py-2 max-w-sm",
                         msg.role === 'model' ? "bg-primary text-primary-foreground" : "bg-muted"
                      )}>
-                       <p>{msg.content}</p>
+                       {msg.content.startsWith('![') ? (
+                          <img src="https://placehold.co/200x150/1F2328/FFF?text=Receipt" alt="uploaded" className="rounded-md max-w-full h-auto" data-ai-hint="receipt image" />
+                       ) : (
+                          <p className="text-sm">{msg.content}</p>
+                       )}
                     </div>
                      {msg.role === 'model' && (
                         <Avatar className="h-8 w-8">

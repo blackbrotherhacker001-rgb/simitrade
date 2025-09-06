@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LifeBuoy, MessageSquare, Clock, Users, Shield, Ticket } from 'lucide-react';
 import Link from 'next/link';
+import { useChat } from '@/hooks/use-chat';
 
 const supportFeatures = [
     {
@@ -35,7 +36,7 @@ const supportFeatures = [
         ],
         buttonText: 'Open Live Chat',
         buttonVariant: 'outline',
-        href: '/admin/live-chat'
+        action: 'openChat'
     }
 ]
 
@@ -58,6 +59,14 @@ const valueProps = [
 ]
 
 export default function ServicesPage() {
+  const { setOpen } = useChat();
+
+  const handleButtonClick = (action?: string, href?: string) => {
+      if (action === 'openChat') {
+          setOpen(true);
+      }
+  }
+
   return (
     <div className="container mx-auto px-4 py-10">
       <div className="text-center max-w-2xl mx-auto">
@@ -89,9 +98,15 @@ export default function ServicesPage() {
                             <li key={item}>{item}</li>
                         ))}
                     </ul>
-                    <Button className="w-full" variant={feature.buttonVariant as any} asChild>
-                      <Link href={feature.href}>{feature.buttonText}</Link>
-                    </Button>
+                     {feature.href ? (
+                        <Button className="w-full" variant={feature.buttonVariant as any} asChild>
+                            <Link href={feature.href}>{feature.buttonText}</Link>
+                        </Button>
+                    ) : (
+                        <Button className="w-full" variant={feature.buttonVariant as any} onClick={() => handleButtonClick(feature.action)}>
+                           {feature.buttonText}
+                        </Button>
+                    )}
                 </CardContent>
             </Card>
         ))}

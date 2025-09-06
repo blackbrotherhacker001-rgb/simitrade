@@ -6,6 +6,8 @@ import { ThemeProvider } from '@/hooks/use-theme';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import { LoginForm } from '@/components/auth/login-form';
+import { ChatProvider } from '@/hooks/use-chat';
+import { UserChatWidget } from '@/components/user/user-chat-widget';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -26,9 +28,12 @@ export default function RootLayout({
       <body className={`${inter.variable} font-body antialiased`}>
         <AuthProvider>
           <ThemeProvider>
-            {children}
-            <Toaster />
-            <LoginForm />
+            <ChatProvider>
+              {children}
+              <Toaster />
+              <LoginForm />
+              <UserChatWidget />
+            </ChatProvider>
           </ThemeProvider>
         </AuthProvider>
       </body>
