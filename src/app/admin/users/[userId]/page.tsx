@@ -278,21 +278,19 @@ export default function UserDetailPage() {
                              <Card className="lg:col-span-1">
                                 <CardHeader>
                                     <CardTitle className="text-lg">Trade Control</CardTitle>
+                                    <CardDescription className="text-xs">Set the outcome for the user's next trade.</CardDescription>
                                 </CardHeader>
-                                <CardContent className="flex justify-around items-center">
-                                    <div className="space-y-2 w-full">
-                                        <p className="text-sm text-muted-foreground text-center mb-2">Set the outcome for the user's next trade.</p>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            <Button variant="outline" onClick={() => handleTradeControl('win')} className="text-green-500 border-green-500 hover:bg-green-500/10 hover:text-green-600">
-                                                <TrendingUp className="mr-2 h-4 w-4" /> Force Win
-                                            </Button>
-                                            <Button variant="outline" onClick={() => handleTradeControl('loss')} className="text-red-500 border-red-500 hover:bg-red-500/10 hover:text-red-600">
-                                                <TrendingDown className="mr-2 h-4 w-4" /> Force Loss
-                                            </Button>
-                                            <Button variant="secondary" onClick={() => handleTradeControl('default')}>
-                                                <Shuffle className="mr-2 h-4 w-4" /> Default
-                                            </Button>
-                                        </div>
+                                <CardContent className="flex flex-col items-center justify-center h-full">
+                                    <div className="grid grid-cols-3 gap-2 w-full">
+                                        <Button variant="outline" onClick={() => handleTradeControl('win')} className="text-green-500 border-green-500 hover:bg-green-500/10 hover:text-green-600 flex-1">
+                                            <TrendingUp className="mr-2 h-4 w-4" /> Win
+                                        </Button>
+                                        <Button variant="outline" onClick={() => handleTradeControl('loss')} className="text-red-500 border-red-500 hover:bg-red-500/10 hover:text-red-600 flex-1">
+                                            <TrendingDown className="mr-2 h-4 w-4" /> Loss
+                                        </Button>
+                                        <Button variant="secondary" onClick={() => handleTradeControl('default')} className="flex-1">
+                                            <Shuffle className="mr-2 h-4 w-4" /> Default
+                                        </Button>
                                     </div>
                                 </CardContent>
                             </Card>
