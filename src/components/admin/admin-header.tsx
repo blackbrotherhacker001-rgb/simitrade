@@ -247,9 +247,11 @@ export function AdminHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-2" onClick={() => router.push('/')}>
-                <User className="h-4 w-4"/>
-                User
+            <Button variant="outline" size="sm" className="gap-2" asChild>
+                <Link href="/user">
+                    <User className="h-4 w-4"/>
+                    User
+                </Link>
             </Button>
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
