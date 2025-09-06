@@ -62,7 +62,7 @@ export function SpotTradePanel() {
                 <div className="space-y-1">
                     <Label htmlFor="price" className="text-xs text-muted-foreground">Price</Label>
                     <div className="relative">
-                        <Input id="price" type="number" defaultValue="110209.69" className="bg-[#1f2937] pr-12"/>
+                        <Input id="price" type="number" defaultValue={market.price.toFixed(2)} className="bg-[#1f2937] pr-12"/>
                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">USDT</span>
                     </div>
                 </div>
@@ -70,7 +70,7 @@ export function SpotTradePanel() {
                     <Label htmlFor="amount" className="text-xs text-muted-foreground">Amount</Label>
                     <div className="relative">
                          <Input id="amount" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
-                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">BTC</span>
+                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{market.symbol}</span>
                     </div>
                 </div>
 
@@ -90,7 +90,7 @@ export function SpotTradePanel() {
                 </div>
 
                 <Button className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white')}>
-                    {tradeType === 'buy' ? 'Buy BTC' : 'Sell BTC'}
+                    {tradeType === 'buy' ? `Buy ${market.symbol}` : `Sell ${market.symbol}`}
                 </Button>
             </TabsContent>
 
@@ -98,7 +98,7 @@ export function SpotTradePanel() {
                 <div className="space-y-1">
                     <div className="flex justify-between items-center">
                         <Label htmlFor="market-price" className="text-xs text-muted-foreground">Market Price</Label>
-                        <span className="text-xs text-red-500 flex items-center">
+                        <span className={cn("text-xs flex items-center", market.change >=0 ? 'text-green-500' : 'text-red-500')}>
                             <TrendingDown className="h-3 w-3 mr-1"/>
                             {market.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                         </span>
@@ -112,7 +112,7 @@ export function SpotTradePanel() {
                     <Label htmlFor="market-amount" className="text-xs text-muted-foreground">Amount</Label>
                     <div className="relative">
                          <Input id="market-amount" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
-                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">BTC</span>
+                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{market.symbol}</span>
                     </div>
                 </div>
 
@@ -134,7 +134,7 @@ export function SpotTradePanel() {
                    Market orders execute immediately at the best available price. The final execution price may differ from the estimated price.
                 </div>
                 <Button className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white')}>
-                    {tradeType === 'buy' ? 'Buy BTC at Market' : 'Sell BTC at Market'}
+                    {tradeType === 'buy' ? `Buy ${market.symbol} at Market` : `Sell ${market.symbol} at Market`}
                 </Button>
 
             </TabsContent>
@@ -161,7 +161,7 @@ export function SpotTradePanel() {
                         <div className="space-y-1">
                             <div className="flex justify-between items-center">
                                 <Label htmlFor="stop-market-price" className="text-xs text-muted-foreground">Market Price</Label>
-                                <span className="text-xs text-red-500 flex items-center">
+                                <span className={cn("text-xs flex items-center", market.change >=0 ? 'text-green-500' : 'text-red-500')}>
                                     <TrendingDown className="h-3 w-3 mr-1"/>
                                     {market.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                 </span>
@@ -172,7 +172,7 @@ export function SpotTradePanel() {
                             <Label htmlFor="stop-price" className="text-xs text-muted-foreground">Stop Price</Label>
                             <div className="relative">
                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                                <Input id="stop-price" type="text" defaultValue="115720.17" className="bg-[#1f2937] pl-6"/>
+                                <Input id="stop-price" type="text" defaultValue={market.price.toFixed(2)} className="bg-[#1f2937] pl-6"/>
                             </div>
                         </div>
 
@@ -180,7 +180,7 @@ export function SpotTradePanel() {
                             <Label htmlFor="stop-amount" className="text-xs text-muted-foreground">Amount</Label>
                             <div className="relative">
                                 <Input id="stop-amount" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">BTC</span>
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{market.symbol}</span>
                             </div>
                         </div>
                         
@@ -196,7 +196,7 @@ export function SpotTradePanel() {
                         </div>
 
                         <Button className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white')}>
-                            {tradeType === 'buy' ? 'Buy BTC Stop' : 'Sell BTC Stop'}
+                            {tradeType === 'buy' ? `Buy ${market.symbol} Stop` : `Sell ${market.symbol} Stop`}
                         </Button>
                     </>
                 )}
@@ -205,7 +205,7 @@ export function SpotTradePanel() {
                         <div className="space-y-1">
                             <div className="flex justify-between items-center">
                                 <Label htmlFor="stop-limit-market-price" className="text-xs text-muted-foreground">Market Price</Label>
-                                <span className="text-xs text-red-500 flex items-center">
+                                <span className={cn("text-xs flex items-center", market.change >=0 ? 'text-green-500' : 'text-red-500')}>
                                     <TrendingDown className="h-3 w-3 mr-1"/>
                                     {market.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                 </span>
@@ -216,7 +216,7 @@ export function SpotTradePanel() {
                             <Label htmlFor="stop-limit-stop-price" className="text-xs text-muted-foreground">Stop Price</Label>
                             <div className="relative">
                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                                <Input id="stop-limit-stop-price" type="text" defaultValue="115720.17" className="bg-[#1f2937] pl-6"/>
+                                <Input id="stop-limit-stop-price" type="text" defaultValue={market.price.toFixed(2)} className="bg-[#1f2937] pl-6"/>
                             </div>
                         </div>
                         
@@ -224,7 +224,7 @@ export function SpotTradePanel() {
                             <Label htmlFor="stop-limit-limit-price" className="text-xs text-muted-foreground">Limit Price</Label>
                             <div className="relative">
                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                                <Input id="stop-limit-limit-price" type="text" defaultValue="115720.17" className="bg-[#1f2937] pl-6"/>
+                                <Input id="stop-limit-limit-price" type="text" defaultValue={market.price.toFixed(2)} className="bg-[#1f2937] pl-6"/>
                             </div>
                         </div>
 
@@ -232,7 +232,7 @@ export function SpotTradePanel() {
                             <Label htmlFor="stop-limit-amount" className="text-xs text-muted-foreground">Amount</Label>
                             <div className="relative">
                                 <Input id="stop-limit-amount" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">BTC</span>
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{market.symbol}</span>
                             </div>
                         </div>
                         
@@ -248,7 +248,7 @@ export function SpotTradePanel() {
                         </div>
 
                         <Button className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white')}>
-                            {tradeType === 'buy' ? 'Buy BTC Stop Limit' : 'Sell BTC Stop Limit'}
+                            {tradeType === 'buy' ? `Buy ${market.symbol} Stop Limit` : `Sell ${market.symbol} Stop Limit`}
                         </Button>
                     </>
                  )}
@@ -257,3 +257,5 @@ export function SpotTradePanel() {
     </div>
   );
 }
+
+    
