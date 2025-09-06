@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useEffect } from 'react';
@@ -25,7 +26,7 @@ export default function AdminLayout({
   if (!user || !user.isAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p>Loading...</p>
+        <p>Authenticating...</p>
       </div>
     );
   }

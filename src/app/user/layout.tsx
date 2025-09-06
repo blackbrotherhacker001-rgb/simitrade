@@ -21,14 +21,14 @@ export default function UserDashboardLayout({
       router.push('/');
     } else if (user.isAdmin) {
         // Optional: redirect admin to admin dashboard if they land here.
-        // router.push('/admin');
+        router.push('/admin/dashboard');
     }
   }, [user, router]);
 
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p>Loading...</p>
+        <p>Authenticating...</p>
       </div>
     );
   }
