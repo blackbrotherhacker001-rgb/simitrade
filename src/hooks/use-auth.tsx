@@ -11,11 +11,11 @@ import {
 } from 'react';
 import { useRouter } from 'next/navigation';
 import type { User } from '@/types';
-import { MOCK_USERS } from '@/lib/constants';
+import { MOCK_USERS, ADMIN_WALLET_ADDRESS } from '@/lib/constants';
 
 interface AuthContextType {
   user: User | null;
-  login: (walletAddress: string) => void;
+  login: (walletAddress: string, isAdmin?: boolean) => void;
   logout: () => void;
   updateBalance: (newBalance: number) => void;
   updateUser: (data: Partial<User>) => void;
@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = useCallback((walletAddress: string) => {
+  const login = useCallback((walletAddress: string, isAdminOverride?: boolean) => {
     const mockUserData = MOCK_USERS[walletAddress];
 
     if (!mockUserData) {
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    const isAdmin = walletAddress === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1';
+    const isAdmin = isAdminOverride !== undefined ? isAdminOverride : walletAddress === ADMIN_WALLET_ADDRESS;
     
     const userData: User = {
       walletAddress,
@@ -73,9 +73,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('crypto-sim-user');
+    router.push('/');
     setNeedsLogin(false);
-    window.location.href = '/';
-  }, []);
+  }, [router]);
 
   const updateBalance = useCallback((newBalance: number) => {
     setUser(currentUser => {

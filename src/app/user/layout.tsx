@@ -37,11 +37,11 @@ export default function UserDashboardLayout({
     }
   }, [user, router, params, needsLogin, setNeedsLogin]);
   
-  const isTradePage = pathname.startsWith('/trade') || pathname.startsWith('/binary-trading');
+  const isTradePage = pathname.includes('/trade') || pathname.includes('/binary-trading');
   const isUserDashboardPage = pathname.startsWith('/user/');
 
   // Show a loading/authentication screen while we wait for user data
-  if (!user) {
+  if (!user || (params.userId && user.walletAddress !== params.userId)) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Authenticating...</p>
