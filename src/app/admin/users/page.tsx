@@ -40,9 +40,7 @@ export default function UserManagementPage() {
     const { login } = useAuth();
 
     const handleViewUser = (userId: string) => {
-        // For now, we navigate to a generic detail page.
-        // In a real app, this would be `/admin/users/${userId}`
-        router.push('/admin/users/detail');
+        router.push(`/admin/users/${userId}`);
     }
 
     const handleLoginAsUser = (userId: string) => {

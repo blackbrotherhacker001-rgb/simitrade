@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -43,33 +43,61 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth, MOCK_USERS } from '@/hooks/use-auth';
+import type { User as UserType } from '@/types';
 
-const user = {
-    name: 'demo user',
-    email: 'demouser@gmail.com',
-    id: 'ID: 430669de-2bf1-40d4-aefe-5722b54db525',
-    walletAddress: '0x1234567890AbCdEf1234567890aBcDeF12345678', // Example address for login
-    avatar: 'https://i.pravatar.cc/150?u=demo-user',
-    isAdmin: true,
-    score: '32%',
-    lastLogin: 'Never',
-    activityScore: 32,
-    accountAge: '15 days',
-    riskLevel: 'High',
-    riskScore: '78/100 (20% confidence)',
-    joined: 'Aug 19, 2025',
-    emailVerified: false,
-    failedLogins: 0,
-};
+type UserDetail = UserType & {
+    email: string;
+    score: string;
+    activityScore: number;
+    accountAge: string;
+    riskLevel: string;
+    riskScore: string;
+    joined: string;
+    emailVerified: boolean;
+    failedLogins: number;
+    avatar: string;
+}
 
 export default function UserDetailPage() {
     const router = useRouter();
+    const params = useParams();
     const { login } = useAuth();
+    const [user, setUser] = useState<UserDetail | null>(null);
+
+    useEffect(() => {
+        const userId = params.userId as string;
+        if (userId && MOCK_USERS[userId]) {
+            const userData = MOCK_USERS[userId];
+            // This would in a real app be a fetch to an API. Here we construct it.
+            setUser({
+                ...userData,
+                walletAddress: userId,
+                isAdmin: userId === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1',
+                email: `${userData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
+                avatar: `https://i.pravatar.cc/150?u=${userId}`,
+                score: '32%',
+                lastLogin: 'Never',
+                activityScore: 32,
+                accountAge: '15 days',
+                riskLevel: 'High',
+                riskScore: '78/100 (20% confidence)',
+                joined: 'Aug 19, 2025',
+                emailVerified: false,
+                failedLogins: 0,
+            });
+        }
+    }, [params.userId]);
+
 
     const handleLoginAsUser = () => {
-        login(user.walletAddress, false);
+        if (!user) return;
+        login(user.walletAddress, user.isAdmin);
         router.push('/user/overview');
+    }
+
+    if (!user) {
+        return <div className="flex min-h-screen items-center justify-center"><p>User not found.</p></div>
     }
 
   return (
@@ -85,15 +113,15 @@ export default function UserDetailPage() {
             <CardHeader className="bg-muted/30 p-4 flex flex-row items-center gap-4">
                 <Avatar className="h-16 w-16">
                     <AvatarImage src={user.avatar} />
-                    <AvatarFallback className="text-2xl">DU</AvatarFallback>
+                    <AvatarFallback className="text-2xl">{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow">
                     <div className="flex items-center gap-2">
                         <h2 className="text-xl font-bold">{user.name}</h2>
-                        <Badge variant="outline">Admin</Badge>
+                        {user.isAdmin && <Badge variant="outline">Admin</Badge>}
                     </div>
                     <p className="text-sm text-muted-foreground">{user.email}</p>
-                    <p className="text-xs text-muted-foreground">{user.id} | Score: {user.score}</p>
+                    <p className="text-xs text-muted-foreground">ID: {user.walletAddress.slice(0,15)}... | Score: {user.score}</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" onClick={handleLoginAsUser}>
