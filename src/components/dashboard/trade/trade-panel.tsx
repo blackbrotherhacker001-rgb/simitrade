@@ -9,13 +9,16 @@ import { TradeConfirmationDialog } from './trade-confirmation-dialog';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { Input } from '@/components/ui/input';
+import { TradeSettingsDialog } from './trade-settings-dialog';
 
 type TradeType = 'RISE' | 'FALL';
 
 export function TradePanel() {
   const [amount, setAmount] = useState(1000);
   const [expiry, setExpiry] = useState(60); // 1 minute
-  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isConfirmationOpen, setConfirmationOpen] = useState(false);
+  const [isSettingsOpen, setSettingsOpen] = useState(false);
+  const [settingsType, setSettingsType] = useState<'keys' | 'risk'>('keys');
   const [activeTrade, setActiveTrade] = useState<{ type: TradeType, amount: number, expiry: number } | null>(null);
   const [nextExpiryTime, setNextExpiryTime] = useState(50);
   const { user } = useAuth();
@@ -31,9 +34,14 @@ export function TradePanel() {
 
   const handleTrade = (type: TradeType) => {
     setActiveTrade({ type, amount, expiry });
-    setDialogOpen(true);
+    setConfirmationOpen(true);
   };
   
+  const handleSettings = (type: 'keys' | 'risk') => {
+    setSettingsType(type);
+    setSettingsOpen(true);
+  }
+
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -105,8 +113,8 @@ export function TradePanel() {
         </div>
         
         <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" className="bg-card/30 border-border/50"><Wallet className="mr-2 h-4 w-4"/> Keys</Button>
-            <Button variant="outline" className="bg-card/30 border-border/50"><Shield className="mr-2 h-4 w-4"/> Risk</Button>
+            <Button variant="outline" className="bg-card/30 border-border/50" onClick={() => handleSettings('keys')}><Wallet className="mr-2 h-4 w-4"/> Keys</Button>
+            <Button variant="outline" className="bg-card/30 border-border/50" onClick={() => handleSettings('risk')}><Shield className="mr-2 h-4 w-4"/> Risk</Button>
         </div>
 
         <Card className="bg-card/30 border-border/50">
@@ -131,9 +139,14 @@ export function TradePanel() {
 
       </div>
       <TradeConfirmationDialog 
-        isOpen={isDialogOpen}
-        onOpenChange={setDialogOpen}
+        isOpen={isConfirmationOpen}
+        onOpenChange={setConfirmationOpen}
         trade={activeTrade}
+      />
+      <TradeSettingsDialog
+        isOpen={isSettingsOpen}
+        onOpenChange={setSettingsOpen}
+        type={settingsType}
       />
     </>
   );
