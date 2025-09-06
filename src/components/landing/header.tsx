@@ -22,6 +22,7 @@ import {
   Landmark,
   Database,
   User,
+  CandlestickChart,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
@@ -55,8 +56,8 @@ export function LandingHeader() {
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link href="/trade">
-                            <LineChart className="mr-2 h-4 w-4" />
+                        <Link href="/binary-trading">
+                            <CandlestickChart className="mr-2 h-4 w-4" />
                             Binary Options
                         </Link>
                     </DropdownMenuItem>

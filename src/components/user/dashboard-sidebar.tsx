@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Progress } from "../ui/progress";
-import { BarChart2, User, Shield, Bell, Wallet, Home, Key, ArrowLeft, ChevronRight, LayoutDashboard, LineChart } from 'lucide-react';
+import { BarChart2, User, Shield, Bell, Wallet, Home, Key, ArrowLeft, ChevronRight, LayoutDashboard, LineChart, CandlestickChart } from 'lucide-react';
 import { Badge } from "../ui/badge";
 
 const navItems = [
@@ -80,7 +80,16 @@ export function DashboardSidebar() {
                             className="w-full justify-start"
                         >
                             <LineChart className="mr-3 h-5 w-5" />
-                            Trade
+                            Spot Trading
+                        </Button>
+                    </Link>
+                     <Link href="/user/binary-trading">
+                        <Button 
+                            variant={pathname === '/user/binary-trading' ? 'secondary' : 'ghost'} 
+                            className="w-full justify-start"
+                        >
+                            <CandlestickChart className="mr-3 h-5 w-5" />
+                            Binary Options
                         </Button>
                     </Link>
                 </nav>
