@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Save } from 'lucide-react';
+import { Upload, Save, Paintbrush } from 'lucide-react';
 import Image from 'next/image';
 
 const themeSchema = z.object({
@@ -41,7 +41,7 @@ export function ThemeCustomizer() {
   const form = useForm<ThemeFormValues>({
     resolver: zodResolver(themeSchema),
     defaultValues: {
-      appName: 'CryptoSim',
+      appName: 'Bicrypto',
       logo: null,
     },
   });
@@ -71,7 +71,10 @@ export function ThemeCustomizer() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardHeader>
-            <CardTitle>Theme Customizer</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+                <Paintbrush className="h-5 w-5"/>
+                Theme Customizer
+            </CardTitle>
             <CardDescription>
               Customize the look and feel of your application.
             </CardDescription>
@@ -98,11 +101,13 @@ export function ThemeCustomizer() {
                   <FormLabel>Logo</FormLabel>
                   <FormControl>
                     <div className="flex items-center gap-4">
-                      <div className="w-20 h-20 rounded-md border flex items-center justify-center bg-muted/50">
+                      <div className="w-20 h-20 rounded-md border flex items-center justify-center bg-muted/50 overflow-hidden">
                         {logoPreview ? (
                           <Image src={logoPreview} alt="Logo preview" width={64} height={64} className="object-contain" />
                         ) : (
-                          <Upload className="h-8 w-8 text-muted-foreground" />
+                           <div className="p-2 bg-primary/10 rounded-lg">
+                             <Paintbrush className="h-8 w-8 text-primary" />
+                           </div>
                         )}
                       </div>
                       <Input
