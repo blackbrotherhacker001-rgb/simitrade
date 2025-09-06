@@ -58,78 +58,141 @@ const marketStats = [
 ];
 
 const assets = [
-  {
-    symbol: 'BTC',
-    pair: 'BTC/USDT',
-    price: 110817.11,
-    change: -1.69,
-    volume: 2050000000,
-    cap: 110820000000,
-    icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/btc.svg',
-  },
-  {
-    symbol: 'ETH',
-    pair: 'ETH/USDT',
-    price: 5241.64,
-    change: 1.03,
-    volume: 850000000,
-    cap: 524160000,
-    icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/eth.svg',
-  },
-   {
-    symbol: 'SOL',
-    pair: 'SOL/USDT',
-    price: 203.14,
-    change: -2.10,
-    volume: 740170000,
-    cap: 203140000,
-    icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/sol.svg',
-  },
-  {
-    symbol: 'DOGE',
-    pair: 'DOGE/USDT',
-    price: 0.1234,
-    change: 5.12,
-    volume: 450000000,
-    cap: 123400,
-    icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/doge.svg',
-  },
-  {
-    symbol: 'XRP',
-    pair: 'XRP/USDT',
-    price: 2.8204,
-    change: -0.64,
-    volume: 292660000,
-    cap: 2820000,
-    icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/xrp.svg',
-  },
-  {
-    symbol: 'TRX',
-    pair: 'TRX/USDT',
-    price: 0.3313,
-    change: -1.72,
-    volume: 116410000,
-    cap: 331300,
-    icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/trx.svg',
-  },
-   {
-    symbol: 'SUI',
-    pair: 'SUI/USDT',
-    price: 3.3758,
-    change: -0.37,
-    volume: 107840000,
-    cap: 3380000,
-    icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/sui.svg',
-  },
-  {
-    symbol: 'ADA',
-    pair: 'ADA/USDT',
-    price: 0.8243,
-    change: -0.38,
-    volume: 100030000,
-    cap: 824300,
-    icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/ada.svg',
-  }
+    {
+        symbol: 'BTC',
+        pair: 'BTC/USDT',
+        price: 110817.01,
+        change: -1.91,
+        volume: 2000000000,
+        cap: 110820000000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/btc.svg',
+    },
+    {
+        symbol: 'ETH',
+        pair: 'ETH/USDT',
+        price: 5241.64,
+        change: 1.03,
+        volume: 850000000,
+        cap: 52416000000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/eth.svg',
+    },
+    {
+        symbol: 'SOL',
+        pair: 'SOL/USDT',
+        price: 203.06,
+        change: -2.34,
+        volume: 719440000,
+        cap: 20306000000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/sol.svg',
+    },
+    {
+        symbol: 'XRP',
+        pair: 'XRP/USDT',
+        price: 2.8624,
+        change: -0.64,
+        volume: 287240000,
+        cap: 2860000000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/xrp.svg',
+    },
+    {
+        symbol: 'TRX',
+        pair: 'TRX/USDT',
+        price: 0.3317,
+        change: -1.83,
+        volume: 114300000,
+        cap: 331700000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/trx.svg',
+    },
+    {
+        symbol: 'SUI',
+        pair: 'SUI/USDT',
+        price: 3.378,
+        change: -0.52,
+        volume: 106290000,
+        cap: 3380000000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/sui.svg',
+    },
+    {
+        symbol: 'ADA',
+        pair: 'ADA/USDT',
+        price: 0.8252,
+        change: -0.59,
+        volume: 98310000,
+        cap: 825200000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/ada.svg',
+    },
+    {
+        symbol: 'PEPE',
+        pair: 'PEPE/USDT',
+        price: 0.00000967,
+        change: -0.41,
+        volume: 79950000,
+        cap: 9670000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/pepe.svg',
+    },
+    {
+        symbol: 'OMNI',
+        pair: 'OMNI/USDT',
+        price: 3.30,
+        change: 6.45,
+        volume: 9030000,
+        cap: 3300000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/omni.svg',
+    },
+    {
+        symbol: 'TURBO',
+        pair: 'TURBO/USDT',
+        price: 0.003865,
+        change: 1.05,
+        volume: 6930000,
+        cap: 3870000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/turbo.svg',
+    },
+    {
+        symbol: 'DOGE',
+        pair: 'DOGE/USDT',
+        price: 0.1234,
+        change: 5.12,
+        volume: 450000000,
+        cap: 12340000000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/doge.svg',
+    },
+    {
+        symbol: 'SHIB',
+        pair: 'SHIB/USDT',
+        price: 0.00001789,
+        change: -2.15,
+        volume: 230000000,
+        cap: 10600000000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/shib.svg',
+    },
+    {
+        symbol: 'LINK',
+        pair: 'LINK/USDT',
+        price: 14.35,
+        change: 3.21,
+        volume: 180000000,
+        cap: 8500000000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/link.svg',
+    },
+    {
+        symbol: 'DOT',
+        pair: 'DOT/USDT',
+        price: 5.88,
+        change: -1.50,
+        volume: 150000000,
+        cap: 7700000000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/dot.svg',
+    },
+    {
+        symbol: 'MATIC',
+        pair: 'MATIC/USDT',
+        price: 0.5712,
+        change: 0.89,
+        volume: 210000000,
+        cap: 5700000000,
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/matic.svg',
+    }
 ];
 
 const formatCurrency = (value: number, decimals = 2) => {
@@ -224,7 +287,7 @@ export default function MarketsPage() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">{formatCurrency(asset.price, asset.price > 1 ? 2 : 4)}</TableCell>
+                  <TableCell className="font-medium">{formatCurrency(asset.price, asset.price > 1 ? 2 : 8)}</TableCell>
                   <TableCell>
                      <Badge
                       variant="outline"
@@ -235,7 +298,7 @@ export default function MarketsPage() {
                           : 'text-red-400 border-red-400/50 bg-red-400/10'
                       )}
                     >
-                      {asset.change.toFixed(2)}% {asset.change >= 0 ? '↗' : '↘'}
+                       {asset.change >= 0 ? '▲' : '▼'} {asset.change.toFixed(2)}%
                     </Badge>
                   </TableCell>
                   <TableCell>{formatMarketCap(asset.volume)}</TableCell>
