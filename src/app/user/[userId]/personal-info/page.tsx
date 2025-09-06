@@ -67,7 +67,7 @@ export default function PersonalInfoPage() {
             </div>
              <div>
                 <label className="text-sm font-medium">Wallet Address</label>
-                <Input defaultValue={user?.walletAddress} readOnly disabled className="mt-1"/>
+                <Input defaultValue={user?.walletAddress} className="mt-1"/>
             </div>
           </div>
         </CardContent>
