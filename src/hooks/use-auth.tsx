@@ -12,7 +12,7 @@ import {
 import type { User } from '@/types';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { MOCK_USERS } from '@/lib/constants';
+import { ADMIN_WALLET_ADDRESS, MOCK_USERS, USER_WALLET_ADDRESS } from '@/lib/constants';
 
 interface AuthContextType {
   user: User | null;
@@ -47,22 +47,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const userDocRef = doc(db, 'users', walletAddress);
         const userDoc = await getDoc(userDocRef);
 
+        let userData: User;
         if (userDoc.exists()) {
-            const userData = userDoc.data() as User;
-            setUser(userData);
-            localStorage.setItem('crypto-sim-user', JSON.stringify(userData));
+            userData = userDoc.data() as User;
         } else {
             // Fallback for demo purposes if user not in DB
             const mockData = MOCK_USERS[walletAddress] || { name: 'New User', balance: 10000, lastLoginAt: new Date().toISOString() };
-            const newUser: User = {
+            userData = {
                 walletAddress,
                 isAdmin,
                 ...mockData,
                 lastLoginAt: new Date().toISOString(),
             };
-            setUser(newUser);
-            localStorage.setItem('crypto-sim-user', JSON.stringify(newUser));
         }
+        setUser(userData);
+        localStorage.setItem('crypto-sim-user', JSON.stringify(userData));
+        // This was missing, so the login form wouldn't close.
+        setNeedsLogin(false); 
     } catch (error) {
         console.error("Error logging in:", error);
     }
