@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
 const symbolMapping: { [key: string]: string } = {
-  '/dashboard/trade': 'COINBASE:BTCUSD',
+  '/user/trade': 'COINBASE:BTCUSD',
   '/dashboard/binary-trading': 'COINBASE:BTCUSD',
   '/dashboard/forex': 'FX:EURUSD',
 };

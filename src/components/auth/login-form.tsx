@@ -24,7 +24,7 @@ export function LoginForm() {
   useEffect(() => {
     if (user && needsLogin) {
         setNeedsLogin(false);
-        router.push(user.isAdmin ? '/admin' : '/dashboard');
+        router.push(user.isAdmin ? '/admin' : '/user/overview');
     }
   }, [user, needsLogin, router, setNeedsLogin]);
   

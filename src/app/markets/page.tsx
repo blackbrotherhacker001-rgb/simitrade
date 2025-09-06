@@ -213,7 +213,7 @@ export default function MarketsPage() {
                   <TableCell>{formatMarketCap(asset.cap)}</TableCell>
                   <TableCell className="text-right">
                     <Button size="sm" asChild>
-                      <Link href="/dashboard/trade">
+                      <Link href="/user/trade">
                         Trade <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
                     </Button>

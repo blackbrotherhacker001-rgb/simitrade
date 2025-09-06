@@ -43,7 +43,7 @@ export function LandingHeader() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem asChild>
-                        <Link href="/dashboard/trade">
+                        <Link href="/user/trade">
                             <BarChart2 className="mr-2 h-4 w-4" />
                             Spot Trading
                         </Link>
@@ -132,7 +132,7 @@ export function LandingHeader() {
           </Button>
            {user ? (
                  <Button variant="ghost" asChild className="relative h-8 w-8 rounded-full">
-                    <Link href="/dashboard/overview">
+                    <Link href="/user/overview">
                         <Avatar className="h-8 w-8">
                             <AvatarImage src={`https://i.pravatar.cc/150?u=${user.walletAddress}`} alt={user.name} />
                            <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
