@@ -17,6 +17,7 @@ export function SpotTradePanel() {
   const { market } = useMarket();
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
   const [activeMainTab, setActiveMainTab] = useState('standard');
+  const [activeStopTab, setActiveStopTab] = useState('stop-market');
 
   const balance = user?.balance ?? 0;
   const btcBalance = 0.00000000;
@@ -61,8 +62,7 @@ export function SpotTradePanel() {
                 <div className="space-y-1">
                     <Label htmlFor="price" className="text-xs text-muted-foreground">Price</Label>
                     <div className="relative">
-                        <Input id="price" type="number" defaultValue="110209.69" className="bg-[#1f2937] pl-6 pr-12"/>
-                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                        <Input id="price" type="number" defaultValue="110209.69" className="bg-[#1f2937] pr-12"/>
                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">USDT</span>
                     </div>
                 </div>
@@ -84,8 +84,7 @@ export function SpotTradePanel() {
                 <div className="space-y-1">
                     <Label htmlFor="total" className="text-xs text-muted-foreground">Total</Label>
                      <div className="relative">
-                        <Input id="total" type="number" placeholder="0.00" className="bg-[#1f2937] pl-6 pr-12"/>
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                        <Input id="total" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">USDT</span>
                     </div>
                 </div>
@@ -127,8 +126,7 @@ export function SpotTradePanel() {
                 <div className="space-y-1">
                     <Label htmlFor="market-total" className="text-xs text-muted-foreground">Estimated Total</Label>
                      <div className="relative">
-                        <Input id="market-total" type="number" placeholder="0.00" className="bg-[#1f2937] pl-6 pr-12"/>
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                        <Input id="market-total" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">USDT</span>
                     </div>
                 </div>
@@ -140,8 +138,71 @@ export function SpotTradePanel() {
                 </Button>
 
             </TabsContent>
-             <TabsContent value="stop">
-                 <p className="text-center text-muted-foreground py-8">Stop trade options unavailable.</p>
+             <TabsContent value="stop" className="mt-4 space-y-4">
+                <div className="grid grid-cols-2 gap-2">
+                    <Button 
+                        variant="outline" 
+                        onClick={() => setActiveStopTab('stop-market')}
+                        className={cn(activeStopTab === 'stop-market' ? 'bg-[#1f2937] text-white border-gray-700' : 'bg-transparent text-muted-foreground border-transparent')}
+                    >
+                        Stop Market
+                    </Button>
+                    <Button 
+                        variant="outline" 
+                        onClick={() => setActiveStopTab('stop-limit')}
+                        className={cn(activeStopTab === 'stop-limit' ? 'bg-[#1f2937] text-white border-gray-700' : 'bg-transparent text-muted-foreground border-transparent')}
+                    >
+                        Stop Limit
+                    </Button>
+                </div>
+
+                {activeStopTab === 'stop-market' && (
+                    <>
+                        <div className="space-y-1">
+                            <div className="flex justify-between items-center">
+                                <Label htmlFor="stop-market-price" className="text-xs text-muted-foreground">Market Price</Label>
+                                <span className="text-xs text-red-500 flex items-center">
+                                    <TrendingDown className="h-3 w-3 mr-1"/>
+                                    {market.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <Label htmlFor="stop-price" className="text-xs text-muted-foreground">Stop Price</Label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                                <Input id="stop-price" type="text" defaultValue="115720.17" className="bg-[#1f2937] pl-6"/>
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <Label htmlFor="stop-amount" className="text-xs text-muted-foreground">Amount</Label>
+                            <div className="relative">
+                                <Input id="stop-amount" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">BTC</span>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-4 gap-2">
+                            <Button variant="outline" size="sm" className="bg-[#1f2937]">25%</Button>
+                            <Button variant="outline" size="sm" className="bg-[#1f2937]">50%</Button>
+                            <Button variant="outline" size="sm" className="bg-[#1f2937]">75%</Button>
+                            <Button variant="outline" size="sm" className="bg-[#1f2937]">100%</Button>
+                        </div>
+                        
+                        <div className="text-xs text-muted-foreground p-2 bg-black/20 rounded-md">
+                           Stop Market orders execute as market orders when the stop price is reached. The order will be filled at the best available price.
+                        </div>
+
+                        <Button className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white')}>
+                            {tradeType === 'buy' ? 'Buy BTC Stop' : 'Sell BTC Stop'}
+                        </Button>
+                    </>
+                )}
+                 {activeStopTab === 'stop-limit' && (
+                     <p className="text-center text-muted-foreground py-8">Stop-Limit order options unavailable.</p>
+                 )}
             </TabsContent>
         </Tabs>
     </div>
