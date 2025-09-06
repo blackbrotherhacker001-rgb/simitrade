@@ -31,18 +31,19 @@ export function TradingViewWidget() {
           "container_id": "tradingview-widget-container-script"
         }`;
       
-      if (container.current) {
+      const currentContainer = container.current;
+      if (currentContainer) {
         // Clear previous widget script if it exists
-        while (container.current.firstChild) {
-            container.current.removeChild(container.current.firstChild);
+        while (currentContainer.firstChild) {
+            currentContainer.removeChild(currentContainer.firstChild);
         }
-        container.current.appendChild(script);
+        currentContainer.appendChild(script);
       }
 
       return () => {
-        if (container.current) {
-            while (container.current.firstChild) {
-                container.current.removeChild(container.current.firstChild);
+        if (currentContainer) {
+            while (currentContainer.firstChild) {
+                currentContainer.removeChild(currentContainer.firstChild);
             }
         }
       };
@@ -51,8 +52,8 @@ export function TradingViewWidget() {
   );
 
   return (
-    <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }}>
-      <div id="tradingview-widget-container-script" style={{ height: "calc(100% - 32px)", width: "100%" }}></div>
+    <div className="tradingview-widget-container h-full w-full" ref={container}>
+      <div id="tradingview-widget-container-script" className="h-full w-full"></div>
     </div>
   );
 }
