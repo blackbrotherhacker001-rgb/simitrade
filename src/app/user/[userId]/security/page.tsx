@@ -5,8 +5,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from '@/components/ui/button';
 import { ShieldCheck, KeyRound, Smartphone, Mail, Eye, ShieldOff } from 'lucide-react';
 import { LoginHistory } from '@/components/dashboard/security/login-history';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SecurityPage() {
+  const { toast } = useToast();
+
+  const handleAction = (title: string, description: string) => {
+    toast({
+      title,
+      description,
+    });
+  };
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
@@ -37,7 +46,7 @@ export default function SecurityPage() {
                 </div>
             </CardContent>
             <CardFooter>
-              <Button>Enable 2FA</Button>
+              <Button onClick={() => handleAction('2FA Enabled', 'Two-factor authentication has been enabled for your account.')}>Enable 2FA</Button>
             </CardFooter>
           </Card>
           
@@ -59,7 +68,7 @@ export default function SecurityPage() {
                 </div>
             </CardContent>
             <CardFooter>
-              <Button>Update Password</Button>
+              <Button onClick={() => handleAction('Password Updated', 'Your password has been successfully changed.')}>Update Password</Button>
             </CardFooter>
           </Card>
 
@@ -84,7 +93,7 @@ export default function SecurityPage() {
                             <Smartphone className="h-5 w-5 text-muted-foreground"/>
                             <span className="font-medium">Phone Number</span>
                         </div>
-                         <Button variant="secondary" size="sm">Verify</Button>
+                         <Button variant="secondary" size="sm" onClick={() => handleAction('Verification Sent', 'A verification code has been sent to your phone.')}>Verify</Button>
                     </div>
                 </CardContent>
             </Card>

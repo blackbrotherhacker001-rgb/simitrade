@@ -25,13 +25,12 @@ const networks = [
 
 export default function WalletPage() {
   const [selectedNetwork, setSelectedNetwork] = useState(networks[0].id);
-  const [masterWallet, setMasterWallet] = useState<string | null>(null);
+  const [masterWallets, setMasterWallets] = useState<Record<string, string | null>>({});
   const { toast } = useToast();
 
   const handleGenerate = () => {
-    // In a real application, this would securely generate a new keypair
     const newAddress = `0x${[...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`;
-    setMasterWallet(newAddress);
+    setMasterWallets(prev => ({...prev, [selectedNetwork]: newAddress}));
     toast({
       title: 'Wallet Generated',
       description: `A new wallet has been generated for the ${networks.find(n => n.id === selectedNetwork)?.name} network.`,
@@ -46,6 +45,7 @@ export default function WalletPage() {
   }
 
   const selectedNetworkInfo = networks.find(n => n.id === selectedNetwork);
+  const currentMasterWallet = masterWallets[selectedNetwork];
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
@@ -88,10 +88,10 @@ export default function WalletPage() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {masterWallet ? (
+                    {currentMasterWallet ? (
                         <div>
                             <label className="text-sm font-medium">Master Wallet Address</label>
-                            <Input readOnly value={masterWallet} className="mt-1"/>
+                            <Input readOnly value={currentMasterWallet} className="mt-1"/>
                             <p className="text-xs text-muted-foreground mt-2">This wallet will handle transaction fees and native coin storage on the {selectedNetworkInfo?.name} network.</p>
                         </div>
                     ) : (

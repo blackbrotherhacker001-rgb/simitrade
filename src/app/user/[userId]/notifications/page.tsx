@@ -1,15 +1,15 @@
 
-
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Bell, CheckCheck, Mail, MessageSquare, Settings, AlertTriangle, BadgePercent } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
 
-const notifications = [
+const mockNotifications = [
     { id: 1, type: 'trade_win', title: 'Trade Won!', description: 'Your BTC/USD trade for $100 was successful. You earned $87.', time: '5 minutes ago', read: false, icon: <BadgePercent className="h-5 w-5 text-green-500" /> },
     { id: 2, type: 'security_alert', title: 'New Device Login', description: 'A new device (Chrome on Windows) has logged into your account.', time: '1 hour ago', read: false, icon: <AlertTriangle className="h-5 w-5 text-yellow-500" /> },
     { id: 3, type: 'deposit_success', title: 'Deposit Confirmed', description: 'Your deposit of $1,000 has been successfully credited to your account.', time: '3 hours ago', read: true, icon: <CheckCheck className="h-5 w-5 text-blue-500" /> },
@@ -18,6 +18,24 @@ const notifications = [
 ];
 
 export default function NotificationsPage() {
+  const [notifications, setNotifications] = useState(mockNotifications);
+  const { toast } = useToast();
+
+  const handleMarkAllRead = () => {
+    setNotifications(notifications.map(n => ({ ...n, read: true })));
+    toast({
+      title: 'Notifications Updated',
+      description: 'All notifications have been marked as read.',
+    });
+  };
+  
+  const handleSaveSettings = () => {
+      toast({
+          title: "Preferences Saved",
+          description: "Your notification settings have been updated.",
+      })
+  }
+
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
        <div className="space-y-2">
@@ -30,7 +48,7 @@ export default function NotificationsPage() {
            <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Recent Notifications</CardTitle>
-                    <Button variant="link">Mark all as read</Button>
+                    <Button variant="link" onClick={handleMarkAllRead}>Mark all as read</Button>
                 </CardHeader>
                 <CardContent className="divide-y divide-border">
                     {notifications.map(notification => (
@@ -93,7 +111,7 @@ export default function NotificationsPage() {
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button className="w-full">Save Preferences</Button>
+                    <Button className="w-full" onClick={handleSaveSettings}>Save Preferences</Button>
                 </CardFooter>
             </Card>
         </div>
