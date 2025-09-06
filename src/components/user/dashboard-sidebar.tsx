@@ -72,17 +72,6 @@ export function DashboardSidebar() {
                         </Link>
                     ))}
                 </nav>
-
-                <div className="mt-auto space-y-2">
-                     <div className="p-4 rounded-lg bg-muted/50 text-center">
-                        <Shield className="mx-auto h-8 w-8 text-primary mb-2"/>
-                        <h4 className="font-semibold text-sm">Security Tips</h4>
-                        <p className="text-xs text-muted-foreground mt-1">Enable 2FA for enhanced account protection.</p>
-                        <Link href="/user/security">
-                            <Button variant="link" size="sm" className="p-0 h-auto text-primary mt-2">Security Settings</Button>
-                        </Link>
-                     </div>
-                </div>
             </div>
         </aside>
     );
