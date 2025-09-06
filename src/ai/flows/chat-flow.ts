@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -26,25 +27,23 @@ const ChatOutputSchema = z.object({
 
 export type ChatOutput = z.infer<typeof ChatOutputSchema>;
 
-const FormattedChatHistorySchema = z.object({
-    formattedHistory: z.string(),
-});
-
-
 export async function chat(input: ChatInput): Promise<ChatOutput> {
   return chatFlow(input);
 }
 
 const prompt = ai.definePrompt({
   name: 'chatPrompt',
-  input: {schema: FormattedChatHistorySchema},
+  input: {schema: ChatInputSchema},
   output: {schema: ChatOutputSchema},
   prompt: `You are a helpful customer support agent for a crypto trading platform called CryptoSim. Your name is Eva. 
   
   You are speaking with a user. Be friendly, helpful, and concise. Keep your responses short and to the point.
 
   Chat History:
-  {{{formattedHistory}}}
+  {{#each history}}
+    {{#if (eq this.role 'user')}}User: {{this.content}}{{/if}}
+    {{#if (eq this.role 'model')}}Eva: {{this.content}}{{/if}}
+  {{/each}}
   
   Eva:`,
 });
@@ -56,12 +55,7 @@ const chatFlow = ai.defineFlow(
     outputSchema: ChatOutputSchema,
   },
   async input => {
-    const formattedHistory = input.history.map(msg => {
-        if (msg.role === 'user') return `User: ${msg.content}`;
-        return `Eva: ${msg.content}`;
-    }).join('\n');
-
-    const {output} = await prompt({ formattedHistory });
+    const {output} = await prompt(input);
     return output!;
   }
 );
