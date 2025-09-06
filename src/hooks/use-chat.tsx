@@ -24,6 +24,8 @@ interface ChatContextType {
   addMessage: (message: Message) => void;
 }
 
+const getChatHistoryKey = (userId: string) => `chat_history_${userId}`;
+
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
@@ -31,16 +33,41 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const { user } = useAuth();
   
+  // Load messages from localStorage when user changes
   useEffect(() => {
-      if (!user) {
+    if (user) {
+        const chatKey = getChatHistoryKey(user.walletAddress);
+        const storedHistory = localStorage.getItem(chatKey);
+        if (storedHistory) {
+            setMessages(JSON.parse(storedHistory));
+        } else {
+            const initialMessage = { role: 'model', content: `Hello ${user.name}! How can I help you today?` };
+            setMessages([initialMessage]);
+            localStorage.setItem(chatKey, JSON.stringify([initialMessage]));
+        }
+    } else {
         setMessages([{ role: 'model', content: 'Hello! Please log in to start a chat.' }]);
-      } else {
-        setMessages([{ role: 'model', content: `Hello ${user.name}! How can I help you today?` }]);
-      }
+    }
   }, [user]);
+
+  // Sync messages with localStorage when they change
+  useEffect(() => {
+    if (user) {
+        const chatKey = getChatHistoryKey(user.walletAddress);
+        const storedHistory = localStorage.getItem(chatKey);
+        const currentHistory = JSON.stringify(messages);
+        
+        // Prevent overwriting initial state or empty arrays from other tabs
+        if(storedHistory !== currentHistory && messages.length > 0) {
+            localStorage.setItem(chatKey, currentHistory);
+        }
+    }
+  }, [messages, user]);
 
 
   const addMessage = useCallback(async (message: Message) => {
+    if (!user) return; // Don't add messages if user is not logged in
+
     // Optimistically update the UI
     const updatedMessages = [...messages, message];
     setMessages(updatedMessages);
@@ -55,7 +82,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setMessages(prev => [...prev, { role: 'model', content: "Sorry, I'm having trouble connecting. Please try again later." }]);
       }
     }
-  }, [messages]);
+  }, [messages, user]);
 
   return (
     <ChatContext.Provider value={{ isOpen, setOpen, messages, addMessage }}>

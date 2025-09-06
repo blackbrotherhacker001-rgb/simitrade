@@ -25,6 +25,8 @@ type ChatUser = {
   online: boolean;
 };
 
+const getChatHistoryKey = (userId: string) => `chat_history_${userId}`;
+
 export default function LiveChatPage() {
   const [chatUsers, setChatUsers] = useState<ChatUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
@@ -50,15 +52,20 @@ export default function LiveChatPage() {
   }, []);
 
 
-  // Effect to load messages
+  // Effect to load messages from localStorage
   useEffect(() => {
     if (!selectedUser) {
         setMessages([]);
         return;
     };
-    // For this reverted version, we'll just show a welcome message.
-    // A more complex implementation could use localStorage per-user.
-    setMessages([{ role: 'model', content: `You are now chatting with ${selectedUser.name}.` }]);
+    
+    const chatKey = getChatHistoryKey(selectedUser.id);
+    const storedHistory = localStorage.getItem(chatKey);
+    if (storedHistory) {
+      setMessages(JSON.parse(storedHistory));
+    } else {
+      setMessages([{ role: 'model', content: `You are now chatting with ${selectedUser.name}.` }]);
+    }
   }, [selectedUser]);
 
   const handleUserSelect = (user: ChatUser) => {
@@ -69,15 +76,18 @@ export default function LiveChatPage() {
     if (input.trim() === '' || !selectedUser) return;
     const newMessages: Message[] = [...messages, { role: 'model', content: input }];
     setMessages(newMessages);
-    // In this reverted version, we don't persist to Firestore.
+
+    // Save to localStorage
+    const chatKey = getChatHistoryKey(selectedUser.id);
+    localStorage.setItem(chatKey, JSON.stringify(newMessages));
+    
     setInput('');
   };
 
   const handleGenerateSuggestion = async () => {
     setLoadingSuggestion(true);
     try {
-      // Create a history that looks like a real conversation for the AI
-      const historyForAI = [...messages, { role: 'user', content: "..." }]; // Dummy user message
+      const historyForAI = messages.length > 0 ? messages : [{ role: 'user', content: "Hello!" }];
       const result = await chat({ history: historyForAI });
       setInput(result.reply);
     } catch (error) {
@@ -148,9 +158,6 @@ export default function LiveChatPage() {
                         </Avatar>
                         {selectedUser.name}
                     </CardTitle>
-                    <Button variant="ghost" size="icon">
-                        <Bot />
-                    </Button>
                 </CardHeader>
 
                 <CardContent ref={scrollAreaRef} className="flex-grow overflow-y-auto p-4">
