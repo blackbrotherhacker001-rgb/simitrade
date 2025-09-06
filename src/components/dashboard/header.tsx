@@ -5,9 +5,18 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/common/logo';
-import { LogOut, Wallet, User as UserIcon } from 'lucide-react';
+import { LogOut, Wallet, User as UserIcon, Bell, Settings } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const { user, logout } = useAuth();
@@ -20,49 +29,49 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
-        <div className="mr-auto hidden md:flex">
-          <Logo />
+    <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-[#161A25]">
+      <div className="container-fluid flex h-16 items-center px-6">
+        <div className="flex-1">
+          {/* We can add a search bar here if needed in the future */}
         </div>
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium mr-6">
-            <Link
-                href="/dashboard"
-                className={cn(
-                  'flex items-center gap-2 transition-colors hover:text-foreground',
-                  pathname === '/dashboard'
-                    ? 'text-foreground'
-                    : 'text-muted-foreground'
-                )}
-              >
-                Trading
-              </Link>
-             <Link
-                href="/dashboard/profile"
-                className={cn(
-                  'flex items-center gap-2 transition-colors hover:text-foreground',
-                  pathname === '/dashboard/profile'
-                    ? 'text-foreground'
-                    : 'text-muted-foreground'
-                )}
-              >
-                Profile
-              </Link>
-        </nav>
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          {user && (
-            <div className="flex items-center gap-4">
-               <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
-                <Wallet className="w-4 h-4 text-primary" />
-                <span>{formatAddress(user.walletAddress)}</span>
-              </div>
-              <div className="text-sm font-semibold">{formatBalance(user.balance)}</div>
-              <Button variant="ghost" size="icon" onClick={logout}>
-                <LogOut className="h-4 w-4" />
-                <span className="sr-only">Logout</span>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon">
+            <Bell className="h-5 w-5" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                <Avatar className="h-9 w-9">
+                  <AvatarImage src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt={user?.name} />
+                  <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+                </Avatar>
               </Button>
-            </div>
-          )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{user?.name}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user?.walletAddress ? formatAddress(user.walletAddress) : 'No wallet'}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <UserIcon className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={logout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
