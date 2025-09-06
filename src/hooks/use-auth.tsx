@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (!mockUserData) {
       console.error('Login failed: User not found in mock data.');
-      setNeedsLogin(false);
+      // Do not set needsLogin to false, so the dialog remains open on failure
       return;
     }
     
@@ -63,12 +63,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     setUser(userData);
     localStorage.setItem('crypto-sim-user', JSON.stringify(userData));
-    setNeedsLogin(false);
-    
-    const targetPath = isAdmin ? '/admin/dashboard' : `/user/${walletAddress}/overview`;
-    router.push(targetPath);
+    // Important: set needsLogin to true here. The useEffect in the LoginForm
+    // will detect this change along with the `user` object and handle the redirect.
+    // This creates a more reliable "login -> redirect" flow.
+    setNeedsLogin(true); 
 
-  }, [router]);
+  }, []);
 
   const logout = useCallback(() => {
     setUser(null);

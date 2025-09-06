@@ -91,7 +91,7 @@ export default function UserDetailPage() {
                     email: `${mockUserData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
                     avatar: `https://i.pravatar.cc/150?u=${userId}`,
                     score: '32%',
-                    lastLogin: mockUserData.lastLoginAt ? new Date(mockUserData.lastLoginAt).toLocaleDateString() : 'Never',
+                    lastLoginAt: mockUserData.lastLoginAt ? new Date(mockUserData.lastLoginAt).toLocaleDateString() : 'Never',
                     activityScore: 32,
                     accountAge: '15 days',
                     riskLevel: 'High',
@@ -214,7 +214,7 @@ export default function UserDetailPage() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-2xl font-bold">{user.lastLogin}</p>
+                        <p className="text-2xl font-bold">{user.lastLoginAt}</p>
                         <p className="text-xs text-muted-foreground">User has never logged in</p>
                     </CardContent>
                 </Card>
@@ -284,7 +284,7 @@ export default function UserDetailPage() {
                                      <div className="flex items-center gap-4 text-sm">
                                         <Clock className="h-4 w-4 text-muted-foreground" />
                                         <span className="text-muted-foreground">Last Login</span>
-                                        <span className="font-medium">{user.lastLogin}</span>
+                                        <span className="font-medium">{user.lastLoginAt}</span>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -320,7 +320,7 @@ export default function UserDetailPage() {
                                             </TableRow>
                                              <TableRow>
                                                 <TableCell className="text-muted-foreground">Last Active</TableCell>
-                                                <TableCell className="text-right font-medium">{user.lastLogin}</TableCell>
+                                                <TableCell className="text-right font-medium">{user.lastLoginAt}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell className="text-muted-foreground">Email Verified</TableCell>

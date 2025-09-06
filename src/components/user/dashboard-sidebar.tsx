@@ -76,16 +76,16 @@ export function DashboardSidebar() {
                     ))}
                      <Link href="/trade">
                         <Button 
-                            variant={pathname === '/trade' ? 'secondary' : 'ghost'} 
+                            variant={pathname.includes('/trade') ? 'secondary' : 'ghost'} 
                             className="w-full justify-start"
                         >
                             <LineChart className="mr-3 h-5 w-5" />
                             Spot Trading
                         </Button>
                     </Link>
-                     <Link href="/binary-trading">
+                     <Link href={`${baseUserPath}/binary-trading`}>
                         <Button 
-                            variant={pathname === '/binary-trading' ? 'secondary' : 'ghost'} 
+                            variant={pathname.includes('/binary-trading') ? 'secondary' : 'ghost'} 
                             className="w-full justify-start"
                         >
                             <CandlestickChart className="mr-3 h-5 w-5" />

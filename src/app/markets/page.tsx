@@ -218,7 +218,7 @@ const assets = [
         change: 0.55,
         volume: 300000000,
         cap: 6000000000,
-        icon: 'https://cdn.jsdelivrnet/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/ltc.svg',
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/ltc.svg',
     },
     {
         symbol: 'UNI',
@@ -335,7 +335,7 @@ const assets = [
         change: 4.15,
         volume: 60000000,
         cap: 1250000000,
-        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f_icon/svg/color/theta.svg',
+        icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/theta.svg',
     },
     {
         symbol: 'MANA',
@@ -586,7 +586,7 @@ export default function MarketsPage() {
             </TableHeader>
             <TableBody>
               {assets.map((asset) => (
-                <TableRow key={asset.symbol}>
+                <TableRow key={asset.symbol} className="transition-colors hover:bg-muted/50">
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Image
@@ -619,7 +619,7 @@ export default function MarketsPage() {
                   <TableCell>{formatMarketCap(asset.volume)}</TableCell>
                   <TableCell>{formatMarketCap(asset.cap)}</TableCell>
                   <TableCell className="text-right">
-                    <Button size="sm" asChild className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white">
+                    <Button size="sm" asChild>
                       <Link href="/trade">
                         <Zap className="mr-2 h-4 w-4" />
                         Trade

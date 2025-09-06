@@ -32,8 +32,8 @@ export function LandingHeader() {
   const { user, setNeedsLogin } = useAuth();
   
   const getTradeLink = (defaultPath: string) => {
-    if (!user) return '/trade';
-    return `/user/${user.walletAddress}${defaultPath.replace('/dashboard', '')}`;
+    if (!user) return defaultPath;
+    return `/user/${user.walletAddress}${defaultPath.replace('/trade', '/binary-trading').replace('/dashboard', '')}`;
   }
 
   return (
@@ -72,7 +72,7 @@ export function LandingHeader() {
                 </DropdownMenuContent>
             </DropdownMenu>
             <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
-                <Link href={user ? `/user/${user.walletAddress}/wallet` : '/# '}>Portfolio</Link>
+                <Link href={user ? `/user/${user.walletAddress}/wallet` : '#'}>Portfolio</Link>
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>

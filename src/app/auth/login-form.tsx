@@ -1,9 +1,9 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { QrCode, User, Shield } from 'lucide-react';
+import { User, Shield } from 'lucide-react';
 
 import { useAuth } from '@/hooks/use-auth';
 import { ADMIN_WALLET_ADDRESS, USER_WALLET_ADDRESS } from '@/lib/constants';
@@ -22,10 +22,12 @@ export function LoginForm() {
   const router = useRouter();
 
   useEffect(() => {
+    // This effect runs when 'user' changes. If a user object exists
+    // and the login dialog was open, it means a login just happened.
     if (user && needsLogin) {
-        setNeedsLogin(false);
-        const targetPath = user.isAdmin ? '/admin/dashboard' : `/user/${user.walletAddress}/overview`;
-        router.push(targetPath);
+        setNeedsLogin(false); // Close the dialog
+        const targetPath = user.isAdmin ? '/admin' : `/user/${user.walletAddress}/overview`;
+        router.push(targetPath); // Redirect to the correct page
     }
   }, [user, needsLogin, router, setNeedsLogin]);
   

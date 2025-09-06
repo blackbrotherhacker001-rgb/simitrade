@@ -29,12 +29,14 @@ export function MarketsHeader() {
           <Button variant="ghost" size="icon">
             <Sun className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-2 right-2 flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-            </span>
+          <Button variant="ghost" size="icon" asChild>
+            <Link href={user ? `/user/${user.walletAddress}/notifications` : '#'}>
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-2 right-2 flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+              </span>
+            </Link>
           </Button>
            {user ? (
                  <Button variant="ghost" asChild className="relative h-8 w-8 rounded-full">

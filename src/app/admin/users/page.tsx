@@ -224,7 +224,7 @@ export default function UserManagementPage() {
                         </TableRow>
                     ) : (
                         users.map(user => (
-                            <TableRow key={user.walletAddress} className="transition-all hover:shadow-lg hover:scale-[1.02] hover:bg-muted/50">
+                            <TableRow key={user.walletAddress} className="transition-all hover:bg-muted/50">
                                 <TableCell>
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-9 w-9">
