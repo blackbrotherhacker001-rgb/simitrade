@@ -7,15 +7,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
-import { ArrowUp, ArrowDown, Timer, Target, DollarSign, Check, X } from 'lucide-react';
+import { ArrowUp, ArrowDown, ChevronUp, ChevronDown, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Progress } from '@/components/ui/progress';
+import { Separator } from '../ui/separator';
 
 interface TradeConfirmationDialogProps {
   isOpen: boolean;
@@ -28,39 +27,18 @@ interface TradeConfirmationDialogProps {
 }
 
 export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeConfirmationDialogProps) {
-  const [countdown, setCountdown] = useState(3);
-  const [isConfirming, setIsConfirming] = useState(false);
+  const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const { toast } = useToast();
   const { user, updateBalance } = useAuth();
   
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isOpen && trade && !isConfirming) {
-      setCountdown(3);
-      timer = setInterval(() => {
-        setCountdown(prev => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            handleConfirm();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [isOpen, trade, isConfirming]);
-
-  if (!trade) return null;
-  
   const handleConfirm = () => {
-    if (!user) return;
-    setIsConfirming(true);
+    if (!user || !trade) return;
 
     const isWin = Math.random() > 0.4; // 60% chance to win
-    const payout = trade.amount * 0.85; // 85% payout
+    const payout = trade.amount * 0.80; // 80% payout
     
-    setTimeout(() => {
+    // The timeout should be based on the trade expiry
+    const confirmationTimeout = setTimeout(() => {
         if (isWin) {
             updateBalance(user.balance + payout);
             toast({
@@ -76,69 +54,119 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
             });
         }
         onOpenChange(false);
-        setIsConfirming(false);
     }, trade.expiry * 1000);
+
+    // Give immediate feedback
+    toast({
+        title: "Trade Placed",
+        description: `Your ${trade.type} trade for $${trade.amount} has been placed.`
+    });
+
+    onOpenChange(false);
   };
   
   const handleCancel = () => {
       onOpenChange(false);
-      setIsConfirming(false);
       toast({
           title: "Trade Cancelled",
           description: "Your trade has been cancelled.",
           variant: 'default',
       })
   }
+  
+  if (!trade) return null;
+
+  const expiryDate = new Date(Date.now() + trade.expiry * 1000);
+  const expiryTime = expiryDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true});
+  const expiryMinutes = Math.round(trade.expiry / 60);
+
+  const potentialProfit = trade.amount * 0.80;
+  const potentialLoss = trade.amount;
+  const profitPercentage = 80;
+  const lossPercentage = 100;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-[#1F2328] border-gray-700">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl">Confirm Trade</DialogTitle>
-          <DialogDescription className="text-center">
-            You are about to place a trade.
-          </DialogDescription>
+          <DialogTitle className="text-white text-center text-lg">Confirm Trade</DialogTitle>
         </DialogHeader>
-        <div className="space-y-6 py-6">
-            <div className={cn(
-                "flex justify-center items-center gap-4 text-3xl font-bold",
-                trade.type === 'RISE' ? 'text-green-500' : 'text-red-500'
-            )}>
-                {trade.type === 'RISE' ? <ArrowUp /> : <ArrowDown />}
-                <span>{trade.type}</span>
-            </div>
-            <div className="grid grid-cols-2 gap-4 text-center">
-                <div>
-                    <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><DollarSign className="h-4 w-4"/> Amount</p>
-                    <p className="text-lg font-semibold">${trade.amount.toLocaleString()}</p>
+        <div className="space-y-4 pt-4">
+            <div className="flex justify-between items-center px-2">
+                <div className="flex items-center gap-3">
+                    <div className={cn(
+                        "flex items-center justify-center h-8 w-8 rounded-full",
+                        trade.type === 'RISE' ? 'bg-green-500/20' : 'bg-red-500/20'
+                    )}>
+                        {trade.type === 'RISE' ? <ArrowUp className="h-5 w-5 text-green-500"/> : <ArrowDown className="h-5 w-5 text-red-500"/>}
+                    </div>
+                    <div>
+                        <p className="font-semibold text-white">BTC/USD</p>
+                        <p className="text-sm text-muted-foreground">{trade.type === 'RISE' ? 'CALL (Up)' : 'PUT (Down)'}</p>
+                    </div>
                 </div>
-                <div>
-                    <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><Timer className="h-4 w-4"/> Expiry</p>
-                    <p className="text-lg font-semibold">{trade.expiry} seconds</p>
-                </div>
-                 <div>
-                    <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><Target className="h-4 w-4"/> Payout</p>
-                    <p className="text-lg font-semibold">${(trade.amount * 1.85).toLocaleString()}</p>
-                </div>
-                 <div>
-                    <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><DollarSign className="h-4 w-4"/> Profit</p>
-                    <p className="text-lg font-semibold">${(trade.amount * 0.85).toLocaleString()}</p>
+                <div className="text-right">
+                    <p className="text-sm text-muted-foreground">Amount</p>
+                    <p className="font-semibold text-white">${trade.amount.toLocaleString()}</p>
                 </div>
             </div>
-            <div className="space-y-2">
-                <Progress value={(countdown / 3) * 100} className="h-2" />
-                <p className="text-center text-sm text-muted-foreground">
-                    Confirming in {countdown}s...
-                </p>
+            
+            <div className="bg-card/30 border-y border-gray-700 px-4 py-4 space-y-3">
+                <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Entry Price:</span>
+                    <span className="text-white font-mono">$69,221.08</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Expiry Time:</span>
+                    <span className="text-white">{expiryTime} ({expiryMinutes} min)</span>
+                </div>
+                 <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Potential Profit:</span>
+                    <span className="text-green-500 font-semibold">${potentialProfit.toFixed(2)} ({profitPercentage}%)</span>
+                </div>
+                 <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Potential Loss:</span>
+                    <span className="text-red-500 font-semibold">${potentialLoss.toFixed(2)} ({lossPercentage}%)</span>
+                </div>
             </div>
+
+            <div 
+                className="flex justify-between items-center cursor-pointer px-4 text-sm text-muted-foreground hover:text-white"
+                onClick={() => setIsDetailsVisible(!isDetailsVisible)}
+            >
+                <span>{isDetailsVisible ? 'Hide details' : 'Show details'}</span>
+                {isDetailsVisible ? <ChevronUp className="h-4 w-4"/> : <ChevronDown className="h-4 w-4"/>}
+            </div>
+
+            {isDetailsVisible && (
+                 <div className="px-4 space-y-3 pt-2">
+                    <Separator className="bg-gray-700"/>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Trade Type:</span>
+                        <span className="text-white">Binary Option</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Risk/Reward Ratio:</span>
+                        <span className="text-white">1:0.80</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Execution:</span>
+                        <span className="text-white">Market</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Fees:</span>
+                        <span className="text-white">Included</span>
+                    </div>
+                 </div>
+            )}
         </div>
-        <DialogFooter className="grid grid-cols-2 gap-2">
-          <Button variant="outline" onClick={handleCancel}>
+        <DialogFooter className="grid grid-cols-2 gap-2 pt-4">
+          <Button variant="secondary" onClick={handleCancel} className="bg-gray-600 hover:bg-gray-700 text-white border-none">
             <X className="mr-2 h-4 w-4"/>
             Cancel
           </Button>
           <Button 
-            className={cn(trade.type === 'RISE' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700', "text-white")}
+            className="bg-green-600 hover:bg-green-700 text-white border-none"
             onClick={handleConfirm}
           >
              <Check className="mr-2 h-4 w-4"/>
