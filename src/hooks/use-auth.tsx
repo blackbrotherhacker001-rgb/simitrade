@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { User } from '@/types';
-import { ADMIN_WALLET_ADDRESS, MOCK_USERS } from '@/lib/constants';
+import { MOCK_USERS } from '@/lib/constants';
 
 interface AuthContextType {
   user: User | null;
