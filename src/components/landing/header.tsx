@@ -92,7 +92,9 @@ export function LandingHeader() {
             <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
               <Link href="/markets">Marketplace</Link>
             </Button>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Services</Button>
+            <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+                <Link href="/services">Services</Link>
+            </Button>
             <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
                 <Link href="/markets">Insights</Link>
             </Button>
