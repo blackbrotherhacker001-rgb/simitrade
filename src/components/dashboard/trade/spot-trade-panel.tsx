@@ -18,7 +18,7 @@ export function SpotTradePanel() {
   const btcBalance = 0.00000000;
   
   return (
-    <div className="w-80 flex-shrink-0 bg-[#111318] p-4 space-y-4">
+    <div className="w-80 flex-shrink-0 bg-[#111827] p-4 space-y-4">
         <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Standard Trading</h3>
             <div className="flex items-center space-x-2">
@@ -29,17 +29,17 @@ export function SpotTradePanel() {
 
         <Tabs defaultValue="limit">
             <div className="flex">
-                <TabsList className={cn("grid w-full grid-cols-2 p-0 h-auto rounded-md bg-card/50")}>
+                <TabsList className={cn("grid w-full grid-cols-2 p-0 h-auto rounded-md bg-[#1f2937]")}>
                     <TabsTrigger 
                         value="buy" 
-                        className={cn("data-[state=active]:bg-green-600 data-[state=active]:text-white rounded-md", tradeType === 'buy' ? 'bg-green-600 text-white' : 'bg-transparent text-muted-foreground')}
+                        className={cn("data-[state=active]:bg-[#10b981] data-[state=active]:text-white rounded-md", tradeType === 'buy' ? 'bg-[#10b981] text-white' : 'bg-transparent text-muted-foreground')}
                         onClick={() => setTradeType('buy')}
                     >
                         Buy
                     </TabsTrigger>
                     <TabsTrigger 
                         value="sell"
-                        className={cn("data-[state=active]:bg-red-600 data-[state=active]:text-white rounded-md", tradeType === 'sell' ? 'bg-red-600 text-white' : 'bg-transparent text-muted-foreground')}
+                        className={cn("data-[state=active]:bg-[#ef4444] data-[state=active]:text-white rounded-md", tradeType === 'sell' ? 'bg-[#ef4444] text-white' : 'bg-transparent text-muted-foreground')}
                         onClick={() => setTradeType('sell')}
                     >
                         Sell
@@ -62,34 +62,34 @@ export function SpotTradePanel() {
                 <div className="space-y-1">
                     <Label htmlFor="price" className="text-xs">Price</Label>
                     <div className="relative">
-                        <Input id="price" type="number" defaultValue="110856.00" className="bg-card/50 pr-12"/>
+                        <Input id="price" type="number" defaultValue="110856.00" className="bg-[#1f2937] pr-12"/>
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">USDT</span>
                     </div>
                 </div>
                 <div className="space-y-1">
                     <Label htmlFor="amount" className="text-xs">Amount</Label>
                     <div className="relative">
-                         <Input id="amount" type="number" placeholder="0.00" className="bg-card/50 pr-12"/>
+                         <Input id="amount" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">BTC</span>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-4 gap-2">
-                    <Button variant="outline" size="sm" className="bg-card/50">25%</Button>
-                    <Button variant="outline" size="sm" className="bg-card/50">50%</Button>
-                    <Button variant="outline" size="sm" className="bg-card/50">75%</Button>
-                    <Button variant="outline" size="sm" className="bg-card/50">100%</Button>
+                    <Button variant="outline" size="sm" className="bg-[#1f2937]">25%</Button>
+                    <Button variant="outline" size="sm" className="bg-[#1f2937]">50%</Button>
+                    <Button variant="outline" size="sm" className="bg-[#1f2937]">75%</Button>
+                    <Button variant="outline" size="sm" className="bg-[#1f2937]">100%</Button>
                 </div>
 
                 <div className="space-y-1">
                     <Label htmlFor="total" className="text-xs">Total</Label>
                      <div className="relative">
-                        <Input id="total" type="number" placeholder="0.00" className="bg-card/50 pr-12"/>
+                        <Input id="total" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">USDT</span>
                     </div>
                 </div>
 
-                <Button className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700')}>
+                <Button className={cn("w-full", tradeType === 'buy' ? 'bg-[#10b981] hover:bg-green-700' : 'bg-[#ef4444] hover:bg-red-700')}>
                     {tradeType === 'buy' ? 'Buy BTC' : 'Sell BTC'}
                 </Button>
 

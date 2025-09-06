@@ -33,7 +33,7 @@ export function OrderBook() {
         <div>
             <Table>
                 <TableHeader>
-                    <TableRow className="border-b-border/60">
+                    <TableRow className="border-b-transparent">
                         <TableHead className="text-left text-muted-foreground h-8">Price (USDT)</TableHead>
                         <TableHead className="text-right text-muted-foreground h-8">Amount (BTC)</TableHead>
                         <TableHead className="text-right text-muted-foreground h-8">Total</TableHead>
@@ -42,7 +42,7 @@ export function OrderBook() {
                  <TableBody>
                     {asks.map((ask) => (
                     <TableRow key={ask.price} className="border-none relative">
-                        <TableCell className="p-1 text-red-500">{ask.price.toFixed(2)}</TableCell>
+                        <TableCell className="p-1 text-[#ef4444]">{ask.price.toFixed(2)}</TableCell>
                         <TableCell className="p-1 text-right">{ask.amount.toFixed(4)}</TableCell>
                         <TableCell className="p-1 text-right">
                             {ask.total.toFixed(4)}
@@ -59,7 +59,7 @@ export function OrderBook() {
         <div>
             <Table>
                 <TableHeader>
-                     <TableRow className="border-b-border/60">
+                     <TableRow className="border-b-transparent">
                         <TableHead className="text-left text-muted-foreground h-8">Price (USDT)</TableHead>
                         <TableHead className="text-right text-muted-foreground h-8">Amount (BTC)</TableHead>
                         <TableHead className="text-right text-muted-foreground h-8">Total</TableHead>
@@ -68,7 +68,7 @@ export function OrderBook() {
                 <TableBody>
                     {bids.map((bid) => (
                     <TableRow key={bid.price} className="border-none relative">
-                        <TableCell className="p-1 text-green-500">{bid.price.toFixed(2)}</TableCell>
+                        <TableCell className="p-1 text-[#10b981]">{bid.price.toFixed(2)}</TableCell>
                         <TableCell className="p-1 text-right">{bid.amount.toFixed(4)}</TableCell>
                         <TableCell className="p-1 text-right">
                            {bid.total.toFixed(4)}

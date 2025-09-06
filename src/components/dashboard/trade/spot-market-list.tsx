@@ -33,7 +33,7 @@ const markets = [
 
 export function SpotMarketList() {
   return (
-    <div className="w-80 flex-shrink-0 bg-[#111318] flex flex-col">
+    <div className="w-80 flex-shrink-0 bg-[#111827] flex flex-col">
        <Tabs defaultValue="spot">
          <TabsList className="bg-transparent px-4 justify-start rounded-none">
             <TabsTrigger value="watchlist" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"><Star className="h-4 w-4 mr-2"/>Watchlist</TabsTrigger>
@@ -52,21 +52,22 @@ export function SpotMarketList() {
              <ScrollArea className="h-full">
                 <Table>
                 <TableHeader>
-                    <TableRow className="border-b-border/60">
-                    <TableHead className="text-xs">Symbol</TableHead>
-                    <TableHead className="text-right text-xs">24h Change</TableHead>
+                    <TableRow className="border-b-[#1f2937]">
+                    <TableHead className="text-xs text-muted-foreground">Symbol</TableHead>
+                    <TableHead className="text-right text-xs text-muted-foreground">Volume</TableHead>
+                    <TableHead className="text-right text-xs text-muted-foreground">24h Change</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {markets.map(market => (
-                    <TableRow key={market.symbol} className="border-b-border/60 cursor-pointer hover:bg-card/50">
+                    <TableRow key={market.symbol} className="border-b-transparent cursor-pointer hover:bg-card/50">
                         <TableCell className="p-2">
                             <div className="text-sm font-medium">{market.symbol}</div>
-                            <div className="text-xs text-muted-foreground">Vol: {market.vol}</div>
                         </TableCell>
+                        <TableCell className="p-2 text-right text-muted-foreground">{market.vol}</TableCell>
                         <TableCell className={cn(
                             "p-2 text-right font-medium",
-                            market.change >= 0 ? 'text-green-500' : 'text-red-500'
+                            market.change >= 0 ? 'text-[#10b981]' : 'text-[#ef4444]'
                         )}>
                             {market.change.toFixed(2)}%
                         </TableCell>

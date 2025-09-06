@@ -8,10 +8,7 @@ import { useRouter } from 'next/navigation';
 export function SpotHeader() {
   const router = useRouter();
   return (
-    <div className="h-16 flex-shrink-0 flex items-center px-4 border-b border-border/60">
-      <Button variant="ghost" size="icon" onClick={() => router.back()}>
-        <ArrowLeft />
-      </Button>
+    <div className="h-16 flex-shrink-0 flex items-center px-4 border-b border-[#1f2937]">
       <div className="ml-4">
         <h2 className="text-xl font-bold">BTC/USDT <span className="text-sm font-normal text-muted-foreground">Spot</span></h2>
       </div>
@@ -24,12 +21,6 @@ export function SpotHeader() {
             <p className="text-muted-foreground">24h Vol</p>
             <p>2324.0M</p>
         </div>
-        <Button variant="outline">
-            Trading Pro
-        </Button>
-        <Button variant="ghost" size="icon">
-            <RefreshCw />
-        </Button>
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ export default function TradeLayout({
   return (
     <div className="flex flex-col h-screen">
       <Header />
-      <main className="flex-1 bg-[#161A25] overflow-hidden">
+      <main className="flex-1 bg-[#0b0b0d] overflow-hidden">
         {children}
       </main>
     </div>

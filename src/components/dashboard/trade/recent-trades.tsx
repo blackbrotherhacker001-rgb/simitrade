@@ -23,7 +23,7 @@ export function RecentTrades() {
     <div className="p-2 text-xs">
         <Table>
             <TableHeader>
-                <TableRow className="border-b-border/60">
+                <TableRow className="border-b-transparent">
                     <TableHead className="text-left text-muted-foreground h-8">Price (USDT)</TableHead>
                     <TableHead className="text-right text-muted-foreground h-8">Amount (BTC)</TableHead>
                     <TableHead className="text-right text-muted-foreground h-8">Time</TableHead>
@@ -32,7 +32,7 @@ export function RecentTrades() {
             <TableBody>
                 {trades.map((trade, index) => (
                 <TableRow key={index} className="border-none">
-                    <TableCell className={`p-1 ${trade.type === 'buy' ? 'text-green-500' : 'text-red-500'}`}>{trade.price.toFixed(2)}</TableCell>
+                    <TableCell className={`p-1 ${trade.type === 'buy' ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>{trade.price.toFixed(2)}</TableCell>
                     <TableCell className="p-1 text-right">{trade.amount.toFixed(4)}</TableCell>
                     <TableCell className="p-1 text-right text-muted-foreground">{trade.time}</TableCell>
                 </TableRow>
