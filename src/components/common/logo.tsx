@@ -1,5 +1,5 @@
 
-import { Bot, Mountain } from 'lucide-react';
+import { Mountain } from 'lucide-react';
 
 export function Logo() {
   return (

@@ -1,70 +1,122 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowUp, ArrowDown, DollarSign, Timer, Copy, HardDrive, AlertTriangle } from 'lucide-react';
+import { ArrowUp, ArrowDown, Minus, Plus, Wallet, Shield } from 'lucide-react';
 import { TradeConfirmationDialog } from './trade-confirmation-dialog';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
+import { Input } from '@/components/ui/input';
 
 type TradeType = 'RISE' | 'FALL';
 
 export function TradePanel() {
-  const [amount, setAmount] = useState(100);
-  const [expiry, setExpiry] = useState(30);
+  const [amount, setAmount] = useState(1000);
+  const [expiry, setExpiry] = useState(60); // 1 minute
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [activeTrade, setActiveTrade] = useState<{ type: TradeType, amount: number, expiry: number } | null>(null);
+  const [nextExpiryTime, setNextExpiryTime] = useState(50);
+  const { user } = useAuth();
+  const balance = user?.balance ?? 0;
 
-  const amountOptions = [10, 25, 50, 100, 250, 500, 1000];
-  const expiryOptions = [15, 30, 60, 120, 300];
+  useEffect(() => {
+    const timer = setInterval(() => {
+        setNextExpiryTime(prev => (prev > 0 ? prev - 1 : 59));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
 
   const handleTrade = (type: TradeType) => {
     setActiveTrade({ type, amount, expiry });
     setDialogOpen(true);
   };
+  
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    if (m > 0) return `${m} minute${m > 1 ? 's' : ''}`;
+    return `${s} seconds`;
+  }
+
+  const formatTimer = (seconds: number) => {
+      const m = Math.floor(seconds / 60).toString().padStart(2,'0');
+      const s = (seconds % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+  }
 
   return (
     <>
-      <div className="p-4 space-y-4">
-        <Tabs defaultValue="standard" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="standard">Standard Trading</TabsTrigger>
-                <TabsTrigger value="ai">AI Investment</TabsTrigger>
-            </TabsList>
-        </Tabs>
-
-        <Card>
-            <CardContent className="p-4 space-y-4">
-                <div>
-                    <label className="text-xs text-muted-foreground flex items-center justify-between">
-                        <span><DollarSign className="inline-block mr-1 h-3 w-3"/>Amount</span>
-                        <span>Balance: $10,000.00</span>
-                    </label>
-                    <div className="grid grid-cols-4 gap-2 mt-1">
-                        {amountOptions.slice(0, 3).map(opt => (
-                            <Button key={opt} variant={amount === opt ? 'secondary' : 'outline'} size="sm" onClick={() => setAmount(opt)}>${opt}</Button>
-                        ))}
-                         <Button variant="outline" size="sm" className="col-span-1" onClick={() => setAmount(prev => prev + 10)}>+</Button>
-                    </div>
+      <div className="p-4 space-y-4 bg-[#161A25] h-full flex flex-col">
+        <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">Amount</label>
+                <div className="flex items-center border border-input rounded-md">
+                     <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setAmount(p => Math.max(10, p-10))}><Minus className="h-4 w-4"/></Button>
+                     <Input 
+                        value={`$${amount.toLocaleString()}`} 
+                        onChange={(e) => {
+                            const val = parseInt(e.target.value.replace(/[^0-9]/g, ''));
+                            if (!isNaN(val)) setAmount(val);
+                        }}
+                        className="w-full text-center border-none focus-visible:ring-0 shadow-none" 
+                     />
+                    <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setAmount(p => p+10)}><Plus className="h-4 w-4"/></Button>
                 </div>
+                <p className="text-xs text-muted-foreground">{((amount / balance) * 100).toFixed(1)}% of balance</p>
+            </div>
+             <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">Expiry</label>
+                <div className="flex items-center border border-input rounded-md">
+                     <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setExpiry(p => Math.max(15, p-15))}><Minus className="h-4 w-4"/></Button>
+                     <div className="w-full text-center text-sm py-2">{new Date(Date.now() + expiry * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})} PM</div>
+                    <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setExpiry(p => p+15)}><Plus className="h-4 w-4"/></Button>
+                </div>
+                <p className="text-xs text-muted-foreground">{formatTime(expiry)}</p>
+            </div>
+        </div>
 
-                <div>
-                    <label className="text-xs text-muted-foreground"><Timer className="inline-block mr-1 h-3 w-3"/>Expiry</label>
-                    <div className="grid grid-cols-5 gap-2 mt-1">
-                        {expiryOptions.map(opt => (
-                            <Button key={opt} variant={expiry === opt ? 'secondary' : 'outline'} size="sm" onClick={() => setExpiry(opt)}>{opt}s</Button>
-                        ))}
-                    </div>
+        <Card className="bg-card/30 border-border/50">
+            <CardContent className="p-3 space-y-2 text-sm">
+                <div className="flex justify-between items-center">
+                    <p className="text-muted-foreground">Profit</p>
+                    <p className="font-semibold text-green-500">+87%</p>
+                </div>
+                 <div className="flex justify-between items-center">
+                    <p className="text-muted-foreground">Potential</p>
+                    <p className="font-semibold text-green-500">+${(amount * 0.87).toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                </div>
+                 <div className="flex justify-between items-center">
+                    <p className="text-muted-foreground">Loss</p>
+                    <p className="font-semibold text-red-500">-${amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
                 </div>
             </CardContent>
         </Card>
-        
-        <div className="flex justify-end gap-2">
-            <Button variant="outline"><Copy className="mr-2 h-4 w-4"/> Templates</Button>
-            <Button variant="outline"><AlertTriangle className="mr-2 h-4 w-4"/> Keys/Risk</Button>
+
+         <div>
+            <label className="text-xs text-muted-foreground">Templates</label>
+            <div className="grid grid-cols-3 gap-2 mt-1">
+                <Button variant="outline" size="sm" className="bg-card/30 border-border/50">Conservative</Button>
+                <Button variant="outline" size="sm" className="bg-card/30 border-border/50">Balanced</Button>
+                <Button variant="outline" size="sm" className="bg-card/30 border-border/50">Aggressive</Button>
+            </div>
         </div>
+        
+        <div className="grid grid-cols-2 gap-2">
+            <Button variant="outline" className="bg-card/30 border-border/50"><Wallet className="mr-2 h-4 w-4"/> Keys</Button>
+            <Button variant="outline" className="bg-card/30 border-border/50"><Shield className="mr-2 h-4 w-4"/> Risk</Button>
+        </div>
+
+        <Card className="bg-card/30 border-border/50">
+            <CardContent className="p-3 flex justify-between items-center">
+                <p className="text-sm text-muted-foreground">Next expiry in:</p>
+                <p className="text-lg font-mono font-semibold">{formatTimer(nextExpiryTime)}</p>
+            </CardContent>
+        </Card>
+       
+        <div className="flex-grow"></div>
 
         <div className="grid grid-cols-2 gap-4">
             <Button className="h-16 text-lg bg-green-600 hover:bg-green-700 text-white" onClick={() => handleTrade('RISE')}>
@@ -77,18 +129,6 @@ export function TradePanel() {
             </Button>
         </div>
 
-        <Tabs defaultValue="positions" className="w-full">
-            <TabsList>
-                <TabsTrigger value="positions">Positions</TabsTrigger>
-                <TabsTrigger value="orders">Orders</TabsTrigger>
-                <TabsTrigger value="history">History</TabsTrigger>
-            </TabsList>
-            <TabsContent value="positions" className="mt-4">
-                 <div className="text-center text-muted-foreground py-8">
-                    You have no open positions.
-                </div>
-            </TabsContent>
-        </Tabs>
       </div>
       <TradeConfirmationDialog 
         isOpen={isDialogOpen}

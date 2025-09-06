@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 
 type MarketTrend = 'bullish' | 'bearish' | 'sideways' | 'volatile';
 
-const REALISTIC_STARTING_PRICE = 68185.60;
+const REALISTIC_STARTING_PRICE = 109562.00;
 
 const generateInitialData = (count = 100) => {
   const data = [];
@@ -81,5 +81,18 @@ export default function useMarketData(trend: MarketTrend) {
     return () => clearInterval(interval);
   }, []);
 
-  return { data, currentPrice };
+  const ohlc = useMemo(() => {
+    if (data.length === 0) {
+        return { open: 0, high: 0, low: 0, close: 0 };
+    }
+    const prices = data.map(d => d.price);
+    return {
+        open: data[0].price,
+        high: Math.max(...prices),
+        low: Math.min(...prices),
+        close: data[data.length-1].price,
+    }
+  }, [data])
+
+  return { data, currentPrice, ohlc };
 }
