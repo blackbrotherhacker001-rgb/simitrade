@@ -1,6 +1,7 @@
 
 'use client';
 
+import Link from 'next/link';
 import { AccountSummaryCard } from '@/components/dashboard/account-summary-card';
 import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { SecurityOverview } from '@/components/dashboard/security-overview';
@@ -58,14 +59,16 @@ export default function DashboardOverviewPage() {
           iconBg="bg-green-400/10"
           borderColor="border-green-400/50"
         />
-        <StatCard
-          title="Wallet Status"
-          value="Not Connected"
-          description="Connect your wallet"
-          icon={<Wallet className="h-6 w-6 text-orange-400" />}
-          iconBg="bg-orange-400/10"
-          borderColor="border-orange-400/50"
-        />
+        <Link href="/dashboard/wallet">
+          <StatCard
+            title="Wallet Status"
+            value="Not Connected"
+            description="Connect your wallet"
+            icon={<Wallet className="h-6 w-6 text-orange-400" />}
+            iconBg="bg-orange-400/10"
+            borderColor="border-orange-400/50"
+          />
+        </Link>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
