@@ -39,6 +39,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!chatDocumentId) {
+        // If there's no user, we don't need to fetch from firestore.
+        // We can show a generic welcome message.
         setMessages([{ role: 'model', content: 'Hello! Please log in to start a chat.' }]);
         return;
     };
@@ -50,15 +52,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             const data = docSnap.data();
             setMessages(data.messages || []);
         } else {
+            // Document doesn't exist, so create it with an initial message.
             const initialMessage = [{ role: 'model', content: 'Hello! How can I help you today?' }];
             setMessages(initialMessage);
             setDoc(docRef, { messages: initialMessage });
         }
     }, (error) => {
         console.error("Error listening to chat document:", error);
+        // Handle error case, e.g. show an error message in chat.
         setMessages([{ role: 'model', content: 'Could not load chat history.' }]);
     });
 
+    // Cleanup subscription on unmount
     return () => unsubscribe();
 
   }, [chatDocumentId]);
@@ -67,9 +72,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const addMessage = useCallback(async (message: Message) => {
     if (!chatDocumentId) return;
     
+    // Optimistically update the UI
     const updatedMessages = [...messages, message];
     setMessages(updatedMessages);
 
+    // Persist to Firestore
     const docRef = doc(db, CHATS_COLLECTION, chatDocumentId);
     await setDoc(docRef, { messages: updatedMessages });
     
