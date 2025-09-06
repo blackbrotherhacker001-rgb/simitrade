@@ -6,9 +6,11 @@ import { LandingHeader } from '@/components/landing/header';
 import { MarketCard } from '@/components/landing/market-card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, ArrowRight } from 'lucide-react';
+import { useTheme } from '@/hooks/use-theme';
 
 export default function LandingPage() {
   const { setNeedsLogin } = useAuth();
+  const { theme } = useTheme();
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground">
@@ -19,13 +21,9 @@ export default function LandingPage() {
             <div className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
               #1 Crypto Trading Platform
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-              Trade Crypto <br />
-              <span className="text-primary">like a pro</span>
-            </h1>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight" dangerouslySetInnerHTML={{ __html: theme.landingHeadline }} />
             <p className="text-lg text-muted-foreground">
-              Advanced trading tools, lightning-fast execution, and unmatched
-              security. Join millions of traders worldwide.
+              {theme.landingSubheadline}
             </p>
             <div className="flex gap-4">
                 <Button size="lg" className="rounded-full px-8 py-6 text-lg" onClick={() => setNeedsLogin(true)}>

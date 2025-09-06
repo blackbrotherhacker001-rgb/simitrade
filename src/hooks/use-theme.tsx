@@ -13,6 +13,9 @@ import {
 interface ThemeData {
     name: string;
     logo: string | null;
+    landingHeadline: string;
+    landingSubheadline: string;
+    landingMarketCardImage: string | null;
 }
 
 interface ThemeContextType {
@@ -23,6 +26,9 @@ interface ThemeContextType {
 const defaultTheme: ThemeData = {
     name: 'Bicrypto',
     logo: null,
+    landingHeadline: 'Trade Crypto <br /> <span class="text-primary">like a pro</span>',
+    landingSubheadline: 'Advanced trading tools, lightning-fast execution, and unmatched security. Join millions of traders worldwide.',
+    landingMarketCardImage: null,
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -34,7 +40,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       const storedTheme = localStorage.getItem('crypto-sim-theme');
       if (storedTheme) {
-        setThemeState(JSON.parse(storedTheme));
+        // Merge stored theme with defaults to prevent breakages if new fields are added
+        setThemeState(prevTheme => ({...prevTheme, ...JSON.parse(storedTheme)}));
       }
     } catch (error) {
       console.error('Failed to parse theme from localStorage', error);

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -27,6 +27,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Upload, Save, Type } from 'lucide-react';
 import Image from 'next/image';
 import { Textarea } from '../ui/textarea';
+import { useTheme } from '@/hooks/use-theme';
 
 const contentSchema = z.object({
   headline: z.string().min(1, 'Headline is required'),
@@ -37,32 +38,44 @@ const contentSchema = z.object({
 type ContentFormValues = z.infer<typeof contentSchema>;
 
 export function ContentManager() {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const { theme, setTheme } = useTheme();
+  const [imagePreview, setImagePreview] = useState<string | null>(theme.landingMarketCardImage);
   const { toast } = useToast();
 
   const form = useForm<ContentFormValues>({
     resolver: zodResolver(contentSchema),
     defaultValues: {
-      headline: 'Trade Crypto like a pro',
-      subheadline: 'Advanced trading tools, lightning-fast execution, and unmatched security. Join millions of traders worldwide.',
+      headline: '',
+      subheadline: '',
       marketCardImage: null,
     },
   });
+
+  useEffect(() => {
+    form.setValue('headline', theme.landingHeadline.replace(/<br \/>/g, '').replace(/<span class="text-primary">/g, '').replace(/<\/span>/g, ''));
+    form.setValue('subheadline', theme.landingSubheadline);
+    setImagePreview(theme.landingMarketCardImage);
+  }, [theme, form]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        const result = reader.result as string;
+        setImagePreview(result);
+        form.setValue('marketCardImage', result);
       };
       reader.readAsDataURL(file);
-      form.setValue('marketCardImage', file);
     }
   };
 
   const onSubmit = (values: ContentFormValues) => {
-    console.log(values);
+    setTheme({
+      landingHeadline: values.headline,
+      landingSubheadline: values.subheadline,
+      landingMarketCardImage: (values.marketCardImage as string | null) || theme.landingMarketCardImage,
+    });
     toast({
       title: 'Content Saved',
       description: 'Your new content has been saved and is now live.',
