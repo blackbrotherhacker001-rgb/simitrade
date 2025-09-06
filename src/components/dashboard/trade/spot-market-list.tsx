@@ -14,24 +14,10 @@ import { Search, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-const markets = [
-  { symbol: 'ACH/USDT', change: 0.47, price: '0.01933', vol: '1.5M' },
-  { symbol: 'ACM/USDT', change: 1.87, price: '0.928', vol: '854.8k' },
-  { symbol: 'ADA/USDT', change: 1.19, price: '0.8282', vol: '104.5M' },
-  { symbol: 'BTC/USDT', change: -14.08, price: '110855.99', vol: '2.3B' },
-  { symbol: 'KAVA/USDT', change: -0.22, price: '0.3693', vol: '2.1M' },
-  { symbol: 'KSM/USDT', change: 2.13, price: '15.33', vol: '1.2M' },
-  { symbol: 'LDO/USDT', change: -0.68, price: '1.173', vol: '20.3M' },
-  { symbol: 'LISTA/USDT', change: -0.60, price: '0.2438', vol: '1.5M' },
-  { symbol: 'LPT/USDT', change: 2.80, price: '6.905', vol: '4.8M' },
-  { symbol: 'LSK/USDT', change: -0.83, price: '0.360', vol: '371.8k' },
-  { symbol: 'LTC/USDT', change: -0.03, price: '111.65', vol: '39.4M' },
-  { symbol: 'MANA/USDT', change: 3.33, price: '0.3133', vol: '8.7M' },
-];
-
+import { markets, useMarket } from '@/hooks/use-market';
 
 export function SpotMarketList() {
+    const { setMarket } = useMarket();
   return (
     <div className="w-80 flex-shrink-0 bg-[#111827] flex flex-col">
        <Tabs defaultValue="spot">
@@ -60,11 +46,11 @@ export function SpotMarketList() {
                 </TableHeader>
                 <TableBody>
                     {markets.map(market => (
-                    <TableRow key={market.symbol} className="border-b-transparent cursor-pointer hover:bg-card/50">
+                    <TableRow key={market.symbol} className="border-b-transparent cursor-pointer hover:bg-card/50" onClick={() => setMarket(market)}>
                         <TableCell className="p-2">
-                            <div className="text-sm font-medium">{market.symbol}</div>
+                            <div className="text-sm font-medium">{market.pair}</div>
                         </TableCell>
-                        <TableCell className="p-2 text-right text-muted-foreground">{market.vol}</TableCell>
+                        <TableCell className="p-2 text-right text-muted-foreground">{ (market.volume / 1_000_000).toFixed(1) }M</TableCell>
                         <TableCell className={cn(
                             "p-2 text-right font-medium",
                             market.change >= 0 ? 'text-[#10b981]' : 'text-[#ef4444]'
