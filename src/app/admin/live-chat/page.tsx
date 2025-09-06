@@ -11,7 +11,8 @@ import { Bot, Send, Sparkles, Image as ImageIcon, MessageSquare } from 'lucide-r
 import { cn } from '@/lib/utils';
 import { chat } from '@/ai/flows/chat-flow';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth, MOCK_USERS } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
+import { MOCK_USERS } from '@/lib/constants';
 
 type Message = {
   role: 'user' | 'model';
