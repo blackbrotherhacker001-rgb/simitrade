@@ -1,7 +1,8 @@
 
+
 'use client';
 
-import { Header } from '@/components/user/header';
+import { Header } from '@/components/dashboard/header';
 
 export default function TradeLayout({
   children,
