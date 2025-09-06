@@ -13,26 +13,35 @@ export default function UserDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useAuth();
+  const { user, needsLogin, setNeedsLogin } = useAuth();
   const router = useRouter();
   const params = useParams();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (user === null) {
-      router.push('/');
-    } else if (user.isAdmin) {
-        router.push('/admin/dashboard');
-    } else if (params.userId && user.walletAddress !== params.userId) {
-        // If the logged-in user is not the one in the URL, redirect to their own dashboard
-        router.push(`/user/${user.walletAddress}/overview`);
+    // If no user is loaded yet and login is not prompted, prompt it.
+    if (!user && !needsLogin) {
+        setNeedsLogin(true);
     }
-  }, [user, router, params]);
+
+    if (user) {
+        // Redirect admins away from user pages
+        if (user.isAdmin) {
+            router.push('/admin/dashboard');
+            return;
+        }
+        // Redirect to their own dashboard if they try to access another user's
+        if (params.userId && user.walletAddress !== params.userId) {
+            router.push(`/user/${user.walletAddress}/overview`);
+        }
+    }
+  }, [user, router, params, needsLogin, setNeedsLogin]);
   
-  const isUserPageButNotTrade = pathname.startsWith('/user') && !pathname.includes('/trade') && !pathname.includes('/binary-trading');
+  const isTradePage = pathname.startsWith('/trade') || pathname.startsWith('/binary-trading');
+  const isUserDashboardPage = pathname.startsWith('/user/');
 
-
-  if (!user || (params.userId && user.walletAddress !== params.userId)) {
+  // Show a loading/authentication screen while we wait for user data
+  if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Authenticating...</p>
@@ -40,23 +49,26 @@ export default function UserDashboardLayout({
     );
   }
 
-  if (isUserPageButNotTrade) {
+  // For dedicated trade pages, show only the children (which have their own trade-specific layout)
+  if (isTradePage) {
+     return <>{children}</>;
+  }
+  
+  // For standard user dashboard pages, show the sidebar and header
+  if (isUserDashboardPage) {
      return (
         <div className="flex min-h-screen">
-        <DashboardSidebar />
-        <div className="flex-1 flex flex-col">
-            <Header />
-            <main className="flex-1 bg-[#161A25] overflow-y-auto">
-            {children}
-            </main>
-        </div>
+            <DashboardSidebar />
+            <div className="flex-1 flex flex-col">
+                <Header />
+                <main className="flex-1 bg-[#161A25] overflow-y-auto">
+                    {children}
+                </main>
+            </div>
         </div>
     );
   }
 
-  return (
-    <>
-      {children}
-    </>
-  );
+  // Fallback for any other case
+  return <>{children}</>;
 }

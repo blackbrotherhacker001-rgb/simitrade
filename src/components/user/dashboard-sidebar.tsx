@@ -83,9 +83,9 @@ export function DashboardSidebar() {
                             Spot Trading
                         </Button>
                     </Link>
-                     <Link href="/user/binary-trading">
+                     <Link href="/binary-trading">
                         <Button 
-                            variant={pathname === '/user/binary-trading' ? 'secondary' : 'ghost'} 
+                            variant={pathname === '/binary-trading' ? 'secondary' : 'ghost'} 
                             className="w-full justify-start"
                         >
                             <CandlestickChart className="mr-3 h-5 w-5" />

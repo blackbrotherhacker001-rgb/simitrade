@@ -10,7 +10,7 @@ export default function UserOverviewRedirect() {
     const { user } = useAuth();
 
     useEffect(() => {
-        if(user) {
+        if (user) {
             router.replace(`/user/${user.walletAddress}/overview`);
         } else {
             router.replace('/');
