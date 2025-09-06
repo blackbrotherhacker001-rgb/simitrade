@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { CandlestickChart, HardDrive, LineChart, MessageSquare, Repeat, Settings, Undo, Upload } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, Pie, PieChart, ReferenceLine, Tooltip, XAxis, YAxis, ComposedChart, Area, Candlestick } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, Pie, PieChart, ReferenceLine, Tooltip, XAxis, YAxis, ComposedChart, Area } from 'recharts';
 import { useMemo } from 'react';
 
 const generateCandlestickData = () => {
@@ -73,7 +73,7 @@ export function SpotTradeChart() {
                 <XAxis dataKey="x" scale="band" hide/>
                 <YAxis orientation="right" domain={['auto', 'auto']} />
                 <Tooltip />
-                <Candlestick dataKey="y" fill="rgb(34,139,34)" stroke="rgb(139,0,0)" isAnimationActive={false} />
+                <Area dataKey="y" fill="rgb(34,139,34)" stroke="rgb(139,0,0)" isAnimationActive={false} />
             </ComposedChart>
         </ChartContainer>
       </div>
@@ -96,4 +96,6 @@ export function SpotTradeChart() {
     </div>
   );
 }
+
+
 
