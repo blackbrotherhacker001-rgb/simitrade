@@ -1,8 +1,9 @@
 
+
 'use client';
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -21,12 +22,13 @@ const navItems = [
 
 export function DashboardSidebar() {
     const pathname = usePathname();
+    const router = useRouter();
     const { user, logout } = useAuth();
     
     return (
         <aside className="w-64 flex-shrink-0 bg-background border-r border-border/60 flex flex-col">
             <div className="h-16 flex items-center px-6 gap-2">
-                 <Button variant="ghost" size="icon" className="h-8 w-8">
+                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => router.push('/')}>
                      <ArrowLeft className="h-4 w-4"/>
                  </Button>
                 <h1 className="text-lg font-semibold">Home</h1>
@@ -55,7 +57,7 @@ export function DashboardSidebar() {
                              <p>9/4/2025</p>
                         </div>
                          <div className="text-right flex items-end">
-                            <Link href="#" className="flex items-center text-primary hover:underline">
+                            <Link href="/dashboard/personal-info" className="flex items-center text-primary hover:underline">
                                 Complete Profile <ChevronRight className="h-4 w-4"/>
                             </Link>
                          </div>
@@ -82,7 +84,9 @@ export function DashboardSidebar() {
                         <Shield className="mx-auto h-8 w-8 text-primary mb-2"/>
                         <h4 className="font-semibold text-sm">Security Tips</h4>
                         <p className="text-xs text-muted-foreground mt-1">Enable 2FA for enhanced account protection.</p>
-                        <Button variant="link" size="sm" className="p-0 h-auto text-primary mt-2">Security Settings</Button>
+                        <Link href="/dashboard/security">
+                            <Button variant="link" size="sm" className="p-0 h-auto text-primary mt-2">Security Settings</Button>
+                        </Link>
                      </div>
                 </div>
             </div>
