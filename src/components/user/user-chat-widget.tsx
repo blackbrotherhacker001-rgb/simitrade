@@ -17,6 +17,11 @@ export function UserChatWidget() {
   const { user } = useAuth();
   const [input, setInput] = useState('');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   const handleSendMessage = () => {
     if (input.trim() === '') return;
@@ -39,8 +44,11 @@ export function UserChatWidget() {
     }
   }, [messages]);
 
+  if (!isClient) {
+    return null;
+  }
 
-  if (!isOpen && !user) {
+  if (!isOpen) {
     return (
         <Button 
             className="fixed bottom-4 right-4 h-16 w-16 rounded-full shadow-lg"
@@ -51,7 +59,6 @@ export function UserChatWidget() {
     )
   }
 
-  if(!isOpen) return null;
 
   return (
     <Card className="fixed bottom-4 right-4 w-96 h-[600px] flex flex-col shadow-2xl z-50">
@@ -120,4 +127,3 @@ export function UserChatWidget() {
     </Card>
   );
 }
-
