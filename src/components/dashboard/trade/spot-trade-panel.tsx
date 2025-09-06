@@ -41,13 +41,13 @@ export function SpotTradePanel() {
             
             <div className="grid grid-cols-2 gap-2 mt-4">
                 <Button 
-                    className={cn("w-full", tradeType === 'buy' ? 'bg-[#10b981] hover:bg-green-700 text-white' : 'bg-[#1f2937] text-muted-foreground hover:bg-gray-700')}
+                    className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-[#1f2937] text-muted-foreground hover:bg-gray-700')}
                     onClick={() => setTradeType('buy')}
                 >
                     Buy
                 </Button>
                 <Button 
-                    className={cn("w-full", tradeType === 'sell' ? 'bg-[#ef4444] hover:bg-red-700 text-white' : 'bg-[#1f2937] text-muted-foreground hover:bg-gray-700')}
+                    className={cn("w-full", tradeType === 'sell' ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-[#1f2937] text-muted-foreground hover:bg-gray-700')}
                     onClick={() => setTradeType('sell')}
                 >
                     Sell
@@ -59,7 +59,7 @@ export function SpotTradePanel() {
                     <Label htmlFor="price" className="text-xs text-muted-foreground">Price</Label>
                     <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                        <Input id="price" type="number" defaultValue="110209.69" className="bg-[#1f2937] pl-6 pr-12"/>
+                        <Input id="price" type="number" defaultValue="110209.69" className="bg-[#1f2937] pl-6"/>
                     </div>
                 </div>
                 <div className="space-y-1">
@@ -86,7 +86,7 @@ export function SpotTradePanel() {
                     </div>
                 </div>
 
-                <Button className={cn("w-full", tradeType === 'buy' ? 'bg-[#10b981] hover:bg-green-700' : 'bg-[#ef4444] hover:bg-red-700')}>
+                <Button className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white')}>
                     {tradeType === 'buy' ? 'Buy BTC' : 'Sell BTC'}
                 </Button>
 
