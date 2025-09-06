@@ -48,7 +48,7 @@ export function OrderBook() {
                             {ask.total.toFixed(4)}
                              <div
                                 className="absolute top-0 right-0 h-full bg-red-500/20"
-                                style={{ width: `${(ask.total / 10) * 100}%`, zIndex: 0 }}
+                                style={{ width: `${(ask.total / 10) * 100}%`, zIndex: -1 }}
                             />
                         </TableCell>
                     </TableRow>
@@ -74,7 +74,7 @@ export function OrderBook() {
                            {bid.total.toFixed(4)}
                             <div
                                 className="absolute top-0 right-0 h-full bg-green-500/20"
-                                style={{ width: `${(bid.total / 10) * 100}%`, zIndex: 0 }}
+                                style={{ width: `${(bid.total / 10) * 100}%`, zIndex: -1 }}
                             />
                         </TableCell>
                     </TableRow>
