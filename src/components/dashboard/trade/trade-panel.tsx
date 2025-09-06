@@ -214,11 +214,11 @@ export function TradePanel() {
         <div className="flex-grow"></div>
 
         <div className="grid grid-cols-2 gap-4">
-            <Button className="h-16 text-lg bg-green-600 hover:bg-green-700 text-white" onClick={() => handleTrade('RISE')}>
+            <Button className="h-16 text-lg bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/30 hover:shadow-green-600/40" onClick={() => handleTrade('RISE')}>
                 <ArrowUp className="mr-2 h-6 w-6"/>
                 RISE
             </Button>
-            <Button className="h-16 text-lg bg-red-600 hover:bg-red-700 text-white" onClick={() => handleTrade('FALL')}>
+            <Button className="h-16 text-lg bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/30 hover:shadow-red-600/40" onClick={() => handleTrade('FALL')}>
                 <ArrowDown className="mr-2 h-6 w-6"/>
                 FALL
             </Button>
