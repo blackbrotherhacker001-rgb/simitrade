@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bot, Send, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { chat } from '@/ai/flows/chat-flow';
+import { useToast } from '@/hooks/use-toast';
 
 type Message = {
   role: 'user' | 'model';
@@ -17,39 +18,72 @@ type Message = {
 };
 
 const mockUsers = [
-  { id: '1', name: 'Alice', online: true },
-  { id: '2', name: 'Bob', online: true },
-  { id: '3', name: 'Charlie', online: false },
-  { id: '4', name: 'David', online: true },
+  { id: '1', name: 'Alice', online: true, wallet: '0x1234567890AbCdEf1234567890aBcDeF12345678' },
+  { id: '2', name: 'Bob', online: true, wallet: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045' },
+  { id: '3', name: 'Charlie', online: false, wallet: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2' },
+  { id: '4', name: 'David', online: true, wallet: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e' },
 ];
 
-const initialMessages: Record<string, Message[]> = {
-    '1': [
-        { role: 'user', content: 'Hi, I have an issue with my deposit.' },
-        { role: 'model', content: 'Hello Alice, I can certainly help you with that. Can you please provide the transaction ID?' },
-        { role: 'user', content: '![Uploaded Image](https://placehold.co/200x150/1F2328/FFF?text=Receipt)' },
-    ],
-    '2': [{ role: 'user', content: 'What\'s the current price of BTC?' }],
-    '4': [{ role: 'user', content: 'Can you help me reset my password?' }],
-};
+const CHAT_STORAGE_PREFIX = 'chat-history-';
 
 
 export default function LiveChatPage() {
   const [selectedUser, setSelectedUser] = useState(mockUsers[0]);
-  const [messages, setMessages] = useState<Message[]>(initialMessages[selectedUser.id] || []);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loadingSuggestion, setLoadingSuggestion] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
+
+  const getStorageKey = (wallet: string) => `${CHAT_STORAGE_PREFIX}${wallet}`;
+
+  // Function to load messages from localStorage
+  const loadMessages = (wallet: string) => {
+    try {
+      const storedMessages = localStorage.getItem(getStorageKey(wallet));
+      if (storedMessages) {
+        setMessages(JSON.parse(storedMessages));
+      } else {
+        // Set some initial message if none exist
+        const initialMessage = [{ role: 'user', content: `Hello, I'm ${selectedUser.name}. Can you help me?` }];
+        setMessages(initialMessage);
+        localStorage.setItem(getStorageKey(wallet), JSON.stringify(initialMessage));
+      }
+    } catch (e) {
+      console.error("Failed to load messages from localStorage", e);
+      setMessages([]);
+    }
+  };
+
+  // Effect to load messages when user changes
+  useEffect(() => {
+    loadMessages(selectedUser.wallet);
+  }, [selectedUser]);
+
+  // Effect to listen for storage changes from other tabs/windows
+   useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === getStorageKey(selectedUser.wallet) && event.newValue) {
+        setMessages(JSON.parse(event.newValue));
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [selectedUser.wallet]);
+
 
   const handleUserSelect = (user: typeof mockUsers[0]) => {
     setSelectedUser(user);
-    setMessages(initialMessages[user.id] || []);
   };
 
   const handleSendMessage = () => {
     if (input.trim() === '') return;
     const newMessages: Message[] = [...messages, { role: 'model', content: input }];
     setMessages(newMessages);
+    localStorage.setItem(getStorageKey(selectedUser.wallet), JSON.stringify(newMessages));
     setInput('');
   };
 
@@ -60,7 +94,11 @@ export default function LiveChatPage() {
       setInput(result.reply);
     } catch (error) {
       console.error("Failed to generate suggestion:", error);
-      setInput("Sorry, I couldn't generate a response right now.");
+       toast({
+        variant: "destructive",
+        title: "AI Error",
+        description: "Sorry, I couldn't generate a response right now.",
+      });
     } finally {
       setLoadingSuggestion(false);
     }
