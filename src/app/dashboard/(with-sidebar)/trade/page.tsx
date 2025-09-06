@@ -15,10 +15,10 @@ export default function TradePage() {
       <SpotMarketList />
       <div className="flex flex-col flex-1 border-l border-r border-border/60">
         <SpotHeader />
-        <div className="flex-grow h-[60%]">
+        <div className="flex-grow h-[calc(100%-300px)]">
           <TradingViewWidget />
         </div>
-        <div className="flex-grow h-[40%] border-t border-border/60">
+        <div className="flex-grow h-[300px] border-t border-border/60">
            <Tabs defaultValue="order-book" className="h-full flex flex-col">
               <TabsList className="bg-transparent px-4 border-b border-border/60 justify-start rounded-none">
                   <TabsTrigger value="order-book" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none">Order Book</TabsTrigger>
