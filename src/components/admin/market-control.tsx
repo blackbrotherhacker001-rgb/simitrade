@@ -150,7 +150,7 @@ export function MarketControl() {
                 <div 
                 key={trend} 
                 className={cn(
-                    "p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all border-2 rounded-lg",
+                    "p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all border-2 rounded-lg transform-gpu hover:-translate-y-1 hover:shadow-lg",
                     selectedTrend === trend 
                     ? "border-primary ring-2 ring-primary/50 shadow-lg bg-primary/10"
                     : "border-muted hover:border-primary/50"

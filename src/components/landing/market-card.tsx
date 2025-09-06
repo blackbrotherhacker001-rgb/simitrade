@@ -79,7 +79,7 @@ export function MarketCard() {
       <CardContent className="p-4">
         <Table>
           <TableHeader>
-            <TableRow className="border-b-border/30">
+            <TableRow className="border-b-border/30 hover:bg-transparent">
               <TableHead className="text-muted-foreground">Asset</TableHead>
               <TableHead className="text-muted-foreground">
                 Price / Cap
