@@ -89,7 +89,9 @@ export function LandingHeader() {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Marketplace</Button>
+            <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+              <Link href="/markets">Marketplace</Link>
+            </Button>
             <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Services</Button>
             <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
                 <Link href="/markets">Insights</Link>
