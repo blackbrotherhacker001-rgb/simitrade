@@ -51,8 +51,7 @@ import {
 import { useAuth } from '@/hooks/use-auth';
 import type { User as UserType } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { MOCK_USERS } from '@/lib/constants';
 
 type UserDetail = UserType & {
     email: string;
@@ -81,40 +80,32 @@ export default function UserDetailPage() {
             if (!userId) return;
 
             setLoading(true);
-            try {
-                const userRef = doc(db, 'users', userId);
-                const userSnap = await getDoc(userRef);
+            const mockUserData = MOCK_USERS[userId];
 
-                if (userSnap.exists()) {
-                    const userData = userSnap.data() as UserType;
-                    setUser({
-                        ...userData,
-                        email: `${userData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
-                        avatar: `https://i.pravatar.cc/150?u=${userId}`,
-                        score: '32%',
-                        lastLogin: userData.lastLoginAt ? new Date(userData.lastLoginAt).toLocaleDateString() : 'Never',
-                        activityScore: 32,
-                        accountAge: '15 days',
-                        riskLevel: 'High',
-                        riskScore: '78/100 (20% confidence)',
-                        joined: 'Aug 19, 2025',
-                        emailVerified: false,
-                        failedLogins: 0,
-                    });
-                } else {
-                     toast({
-                        variant: "destructive",
-                        title: "User Not Found",
-                        description: "The requested user does not exist in the database.",
-                    });
-                }
-            } catch (error) {
+            if (mockUserData) {
+                setUser({
+                    walletAddress: userId,
+                    name: mockUserData.name,
+                    balance: mockUserData.balance,
+                    isAdmin: userId === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1',
+                    email: `${mockUserData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
+                    avatar: `https://i.pravatar.cc/150?u=${userId}`,
+                    score: '32%',
+                    lastLogin: mockUserData.lastLoginAt ? new Date(mockUserData.lastLoginAt).toLocaleDateString() : 'Never',
+                    activityScore: 32,
+                    accountAge: '15 days',
+                    riskLevel: 'High',
+                    riskScore: '78/100 (20% confidence)',
+                    joined: 'Aug 19, 2025',
+                    emailVerified: false,
+                    failedLogins: 0,
+                });
+            } else {
                  toast({
                     variant: "destructive",
-                    title: "Error fetching user",
-                    description: "Could not retrieve user data.",
+                    title: "User Not Found",
+                    description: "The requested user does not exist.",
                 });
-                console.error(error);
             }
             setLoading(false);
         }

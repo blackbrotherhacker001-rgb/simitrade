@@ -46,9 +46,7 @@ import { Eye, UserPlus, LogIn, Database, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import type { User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { seedUsers } from '@/lib/seed-db';
+import { MOCK_USERS } from '@/lib/constants';
 
 const addUserSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -62,7 +60,6 @@ export default function UserManagementPage() {
     const { login } = useAuth();
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
-    const [seeding, setSeeding] = useState(false);
     const [isAddUserDialogOpen, setAddUserDialogOpen] = useState(false);
     const { toast } = useToast();
 
@@ -74,81 +71,48 @@ export default function UserManagementPage() {
         },
     });
 
-    const fetchUsers = async () => {
+    const fetchUsers = () => {
         setLoading(true);
-        try {
-            const usersCollection = collection(db, 'users');
-            const userSnapshot = await getDocs(usersCollection);
-            const userList = userSnapshot.docs.map(doc => doc.data() as User);
-             // Sort to ensure admin user is always at the top
-            userList.sort((a, b) => (a.isAdmin === b.isAdmin) ? 0 : a.isAdmin ? -1 : 1);
-            setUsers(userList);
-        } catch (error) {
-            console.error("Error fetching users:", error);
-            toast({
-                variant: "destructive",
-                title: "Failed to load users",
-                description: "Could not retrieve user data from the database.",
-            });
-        } finally {
-            setLoading(false);
-        }
+        const userList = Object.entries(MOCK_USERS).map(([walletAddress, data]) => ({
+            ...data,
+            walletAddress,
+            isAdmin: walletAddress === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1',
+        }));
+        userList.sort((a, b) => (a.isAdmin === b.isAdmin) ? 0 : a.isAdmin ? -1 : 1);
+        setUsers(userList);
+        setLoading(false);
     };
 
     useEffect(() => {
         fetchUsers();
     }, []);
 
-    const handleSeedData = async () => {
-        setSeeding(true);
-        try {
-            const result = await seedUsers();
-            if (result.success) {
-                toast({
-                    title: "Database Seeded",
-                    description: `${result.count} users have been added to the database.`,
-                });
-                await fetchUsers(); // Refresh the user list
-            } else {
-                throw result.error;
-            }
-        } catch (error) {
-             toast({
-                variant: "destructive",
-                title: "Database Seeding Failed",
-                description: "Could not seed the database. Check console for errors.",
-            });
-        } finally {
-            setSeeding(false);
-        }
-    }
+    const handleAddUser = (values: AddUserFormValues) => {
+        const newWalletAddress = `0x${[...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`;
+        const newUser: User = {
+            walletAddress: newWalletAddress,
+            name: values.name,
+            balance: values.balance,
+            isAdmin: false,
+            lastLoginAt: new Date().toISOString(),
+        };
 
-    const handleAddUser = async (values: AddUserFormValues) => {
-        try {
-            const newWalletAddress = `0x${[...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`;
-            const newUser: User = {
-                walletAddress: newWalletAddress,
-                name: values.name,
-                balance: values.balance,
-                isAdmin: false,
-                lastLoginAt: new Date().toISOString(),
-            };
-            await setDoc(doc(db, "users", newWalletAddress), newUser);
-            toast({
-                title: "User Added",
-                description: `${values.name} has been added successfully.`,
-            });
-            await fetchUsers();
-            setAddUserDialogOpen(false);
-            form.reset();
-        } catch (error) {
-            console.error("Error adding user:", error);
-            toast({
-                variant: "destructive",
-                title: "Failed to add user",
-                description: "Could not add user to the database.",
-            });
-        }
+        // In a real app, this would be an API call. Here, we just add to the local state.
+        MOCK_USERS[newWalletAddress] = {
+            name: newUser.name,
+            balance: newUser.balance,
+            lastLoginAt: newUser.lastLoginAt!,
+        };
+        
+        setUsers(prevUsers => [...prevUsers, newUser]);
+        
+        toast({
+            title: "User Added",
+            description: `${values.name} has been added successfully.`,
+        });
+        
+        setAddUserDialogOpen(false);
+        form.reset();
     };
 
     const handleViewUser = (userId: string) => {
@@ -171,10 +135,6 @@ export default function UserManagementPage() {
                 </CardDescription>
             </div>
             <div className="flex gap-2">
-                <Button onClick={handleSeedData} disabled={seeding}>
-                    {seeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
-                    {seeding ? 'Seeding...' : 'Seed Database'}
-                </Button>
                 <Dialog open={isAddUserDialogOpen} onOpenChange={setAddUserDialogOpen}>
                     <DialogTrigger asChild>
                         <Button>
@@ -252,7 +212,7 @@ export default function UserManagementPage() {
                     ) : users.length === 0 ? (
                         <TableRow>
                              <TableCell colSpan={6} className="text-center py-8">
-                                No users found. Click "Seed Database" to populate users.
+                                No users found.
                             </TableCell>
                         </TableRow>
                     ) : (
