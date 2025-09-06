@@ -21,8 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Eye, UserPlus } from 'lucide-react';
-import { MOCK_USERS } from '@/hooks/use-auth';
+import { Eye, UserPlus, LogIn } from 'lucide-react';
+import { MOCK_USERS, useAuth } from '@/hooks/use-auth';
 
 const users = Object.entries(MOCK_USERS).map(([walletAddress, userData], index) => ({
     id: walletAddress,
@@ -37,11 +37,17 @@ const users = Object.entries(MOCK_USERS).map(([walletAddress, userData], index) 
 
 export function UserManagement() {
     const router = useRouter();
+    const { login } = useAuth();
 
     const handleViewUser = (userId: string) => {
         // For now, we navigate to a generic detail page.
         // In a real app, this would be `/admin/users/${userId}`
         router.push('/admin/users/detail');
+    }
+
+    const handleLoginAsUser = (userId: string) => {
+      login(userId, false);
+      router.push('/dashboard');
     }
 
   return (
@@ -93,10 +99,16 @@ export function UserManagement() {
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">
-                                <Button variant="outline" size="sm" onClick={() => handleViewUser(user.id)}>
-                                    <Eye className="mr-2 h-4 w-4"/>
-                                    View
-                                </Button>
+                                <div className="flex gap-2 justify-end">
+                                    <Button variant="outline" size="sm" onClick={() => handleLoginAsUser(user.id)}>
+                                        <LogIn className="mr-2 h-4 w-4"/>
+                                        Login
+                                    </Button>
+                                    <Button variant="outline" size="sm" onClick={() => handleViewUser(user.id)}>
+                                        <Eye className="mr-2 h-4 w-4"/>
+                                        View
+                                    </Button>
+                                </div>
                             </TableCell>
                         </TableRow>
                     ))}

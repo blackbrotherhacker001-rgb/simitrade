@@ -33,6 +33,7 @@ import {
   Eye,
   CheckCircle,
   XCircle,
+  LogIn,
 } from 'lucide-react';
 import {
   Table,
@@ -42,11 +43,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useAuth } from '@/hooks/use-auth';
 
 const user = {
     name: 'demo user',
     email: 'demouser@gmail.com',
     id: 'ID: 430669de-2bf1-40d4-aefe-5722b54db525',
+    walletAddress: '0x1234567890AbCdEf1234567890aBcDeF12345678', // Example address for login
     avatar: 'https://i.pravatar.cc/150?u=demo-user',
     isAdmin: true,
     score: '32%',
@@ -62,6 +65,12 @@ const user = {
 
 export function UserDetail() {
     const router = useRouter();
+    const { login } = useAuth();
+
+    const handleLoginAsUser = () => {
+        login(user.walletAddress, false);
+        router.push('/dashboard');
+    }
 
   return (
     <div className="space-y-6">
@@ -87,6 +96,10 @@ export function UserDetail() {
                     <p className="text-xs text-muted-foreground">{user.id} | Score: {user.score}</p>
                 </div>
                 <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={handleLoginAsUser}>
+                        <LogIn className="mr-2 h-4 w-4" />
+                        Login as User
+                    </Button>
                     <Button variant="outline" size="sm">
                         <RefreshCw className="mr-2 h-4 w-4" />
                         Refresh
