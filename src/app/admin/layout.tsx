@@ -21,7 +21,7 @@ export default function AdminLayout({
       // A more robust solution might wait a moment, but for now,
       // a simple redirect if the user is explicitly not an admin is safer.
     } else if (!user.isAdmin) {
-      router.push('/user/overview');
+      router.push(`/user/${user.walletAddress}/overview`);
     }
   }, [user, router]);
 

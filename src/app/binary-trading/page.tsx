@@ -11,7 +11,7 @@ export default function BinaryTradingRedirect() {
 
     useEffect(() => {
         if (user) {
-            router.replace(`/user/binary-trading`);
+            router.replace(`/user/${user.walletAddress}/binary-trading`);
         } else if (!needsLogin) {
             setNeedsLogin(true);
         }
