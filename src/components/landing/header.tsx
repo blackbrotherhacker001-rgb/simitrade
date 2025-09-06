@@ -44,9 +44,11 @@ export function LandingHeader() {
                             Spot Trading
                         </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <LineChart className="mr-2 h-4 w-4" />
-                        Binary Options
+                    <DropdownMenuItem asChild>
+                        <Link href="/dashboard/binary-trading">
+                            <LineChart className="mr-2 h-4 w-4" />
+                            Binary Options
+                        </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         <Repeat className="mr-2 h-4 w-4" />
