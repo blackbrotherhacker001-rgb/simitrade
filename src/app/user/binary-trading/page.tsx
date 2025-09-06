@@ -3,9 +3,11 @@
 
 import { TradingViewWidget } from '@/components/dashboard/trade/trading-view-widget';
 import { TradePanel } from '@/components/dashboard/trade/trade-panel';
+import { MarketProvider } from '@/hooks/use-market';
 
 export default function BinaryTradingPage() {
   return (
+    <MarketProvider>
       <div className="flex flex-1 overflow-hidden h-full">
         <div className="flex flex-col flex-1">
           <div className="flex-grow h-full">
@@ -16,5 +18,6 @@ export default function BinaryTradingPage() {
             <TradePanel />
         </div>
       </div>
+    </MarketProvider>
   );
 }
