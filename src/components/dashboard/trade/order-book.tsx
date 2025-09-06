@@ -44,11 +44,13 @@ export function OrderBook() {
                     <TableRow key={ask.price} className="border-none relative">
                         <TableCell className="p-1 text-red-500">{ask.price.toFixed(2)}</TableCell>
                         <TableCell className="p-1 text-right">{ask.amount.toFixed(4)}</TableCell>
-                        <TableCell className="p-1 text-right">{ask.total.toFixed(4)}</TableCell>
-                        <div
-                            className="absolute top-0 right-0 h-full bg-red-500/20"
-                            style={{ width: `${(ask.total / 10) * 100}%`, zIndex: -1 }}
-                        />
+                        <TableCell className="p-1 text-right">
+                            {ask.total.toFixed(4)}
+                             <div
+                                className="absolute top-0 right-0 h-full bg-red-500/20"
+                                style={{ width: `${(ask.total / 10) * 100}%`, zIndex: 0 }}
+                            />
+                        </TableCell>
                     </TableRow>
                     ))}
                 </TableBody>
@@ -68,11 +70,13 @@ export function OrderBook() {
                     <TableRow key={bid.price} className="border-none relative">
                         <TableCell className="p-1 text-green-500">{bid.price.toFixed(2)}</TableCell>
                         <TableCell className="p-1 text-right">{bid.amount.toFixed(4)}</TableCell>
-                        <TableCell className="p-1 text-right">{bid.total.toFixed(4)}</TableCell>
-                        <div
-                            className="absolute top-0 right-0 h-full bg-green-500/20"
-                            style={{ width: `${(bid.total / 10) * 100}%`, zIndex: -1 }}
-                        />
+                        <TableCell className="p-1 text-right">
+                           {bid.total.toFixed(4)}
+                            <div
+                                className="absolute top-0 right-0 h-full bg-green-500/20"
+                                style={{ width: `${(bid.total / 10) * 100}%`, zIndex: 0 }}
+                            />
+                        </TableCell>
                     </TableRow>
                     ))}
                 </TableBody>
