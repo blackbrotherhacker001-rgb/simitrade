@@ -68,8 +68,7 @@ export function UserDetail() {
     const { login } = useAuth();
 
     const handleLoginAsUser = () => {
-        login(user.walletAddress, false);
-        router.push('/dashboard');
+        login(user.walletAddress);
     }
 
   return (

@@ -9,12 +9,13 @@ import {
   useCallback,
   type ReactNode,
 } from 'react';
+import { useRouter } from 'next/navigation';
 import type { User } from '@/types';
 import { MOCK_USERS } from '@/lib/constants';
 
 interface AuthContextType {
   user: User | null;
-  login: (walletAddress: string, isAdmin: boolean) => void;
+  login: (walletAddress: string) => void;
   logout: () => void;
   updateBalance: (newBalance: number) => void;
   updateUser: (data: Partial<User>) => void;
@@ -27,6 +28,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [needsLogin, setNeedsLogin] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -40,14 +42,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = useCallback((walletAddress: string, isAdmin: boolean) => {
+  const login = useCallback((walletAddress: string) => {
     const mockUserData = MOCK_USERS[walletAddress];
 
     if (!mockUserData) {
       console.error('Login failed: User not found in mock data.');
-      setNeedsLogin(false); // Close dialog even if login fails
+      setNeedsLogin(false);
       return;
     }
+    
+    const isAdmin = walletAddress === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1';
     
     const userData: User = {
       walletAddress,
@@ -60,8 +64,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(userData);
     localStorage.setItem('crypto-sim-user', JSON.stringify(userData));
     setNeedsLogin(false);
+    
+    const targetPath = isAdmin ? '/admin/dashboard' : `/user/${walletAddress}/overview`;
+    router.push(targetPath);
 
-  }, []);
+  }, [router]);
 
   const logout = useCallback(() => {
     setUser(null);

@@ -19,19 +19,9 @@ import Image from 'next/image';
 
 export function LoginForm() {
   const { user, login, needsLogin, setNeedsLogin } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (user && needsLogin) {
-        setNeedsLogin(false);
-        const targetPath = user.isAdmin ? '/admin/dashboard' : `/user/${user.walletAddress}/overview`;
-        router.push(targetPath);
-    }
-  }, [user, needsLogin, router, setNeedsLogin]);
   
-  const handleLogin = (isAdmin: boolean) => {
-    const walletAddress = isAdmin ? ADMIN_WALLET_ADDRESS : USER_WALLET_ADDRESS;
-    login(walletAddress, isAdmin);
+  const handleLogin = (walletAddress: string) => {
+    login(walletAddress);
   };
   
   if(!needsLogin) return null;
@@ -57,11 +47,11 @@ export function LoginForm() {
         </div>
         <div className="flex flex-col gap-3 pt-4">
             <p className="text-sm text-center text-muted-foreground">For simulation purposes:</p>
-            <Button onClick={() => handleLogin(false)}>
+            <Button onClick={() => handleLogin(USER_WALLET_ADDRESS)}>
                 <User className="mr-2 h-4 w-4" />
                 Login as User
             </Button>
-            <Button variant="secondary" onClick={() => handleLogin(true)}>
+            <Button variant="secondary" onClick={() => handleLogin(ADMIN_WALLET_ADDRESS)}>
                 <Shield className="mr-2 h-4 w-4" />
                 Login as Admin
             </Button>

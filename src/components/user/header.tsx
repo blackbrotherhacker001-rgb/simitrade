@@ -29,6 +29,8 @@ export function Header() {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(balance);
   };
 
+  if (!user) return null;
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background">
       <div className="container-fluid flex h-16 items-center px-6">
@@ -36,37 +38,41 @@ export function Header() {
           {/* We can add a search bar here if needed in the future */}
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
+          <Button variant="ghost" size="icon" asChild>
+            <Link href={`/user/${user.walletAddress}/notifications`}>
+                <Bell className="h-5 w-5" />
+            </Link>
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src={`https://i.pravatar.cc/150?u=${user?.walletAddress}`} alt={user?.name} />
-                  <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+                  <AvatarImage src={`https://i.pravatar.cc/150?u=${user.walletAddress}`} alt={user.name} />
+                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{user?.name}</p>
+                  <p className="text-sm font-medium leading-none">{user.name}</p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    {user?.walletAddress ? formatAddress(user.walletAddress) : 'No wallet'}
+                    {formatAddress(user.walletAddress)}
                   </p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href={`/user/${user?.walletAddress}/personal-info`}>
+                <Link href={`/user/${user.walletAddress}/personal-info`}>
                   <UserIcon className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+              <DropdownMenuItem asChild>
+                <Link href={`/user/${user.walletAddress}/security`}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout}>
