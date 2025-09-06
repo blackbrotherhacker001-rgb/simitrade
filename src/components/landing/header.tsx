@@ -21,13 +21,14 @@ import {
   TrendingUp,
   Landmark,
   Database,
+  User,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
 import Link from 'next/link';
 
 export function LandingHeader() {
-  const { setNeedsLogin } = useAuth();
+  const { user, setNeedsLogin } = useAuth();
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
       <div className="container flex h-16 items-center">
@@ -95,14 +96,23 @@ export function LandingHeader() {
             </Button>
         </nav>
         <div className="ml-auto flex items-center gap-2">
-          <Button
-            variant="ghost"
-            className="text-muted-foreground hover:text-foreground"
-            onClick={() => setNeedsLogin(true)}
-          >
-            <Settings className="mr-2 h-4 w-4" />
-            Admin
-          </Button>
+            {user && user.isAdmin ? (
+                 <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+                    <Link href="/admin">
+                         <Settings className="mr-2 h-4 w-4" />
+                         Admin
+                    </Link>
+                 </Button>
+            ) : (
+                <Button
+                    variant="ghost"
+                    className="text-muted-foreground hover:text-foreground"
+                    onClick={() => setNeedsLogin(true)}
+                >
+                    <Settings className="mr-2 h-4 w-4" />
+                    Admin
+                </Button>
+            )}
           <Button variant="ghost" size="icon">
             <img
               src="https://cdn.weglot.com/flags/circle/us.svg"
@@ -120,11 +130,22 @@ export function LandingHeader() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
             </span>
           </Button>
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full" onClick={() => setNeedsLogin(true)}>
-            <Avatar className="h-8 w-8">
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
-          </Button>
+           {user ? (
+                 <Button variant="ghost" asChild className="relative h-8 w-8 rounded-full">
+                    <Link href="/dashboard/overview">
+                        <Avatar className="h-8 w-8">
+                            <AvatarImage src={`https://i.pravatar.cc/150?u=${user.walletAddress}`} alt={user.name} />
+                           <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                    </Link>
+                 </Button>
+            ) : (
+                 <Button variant="ghost" className="relative h-8 w-8 rounded-full" onClick={() => setNeedsLogin(true)}>
+                    <Avatar className="h-8 w-8">
+                       <AvatarFallback>U</AvatarFallback>
+                    </Avatar>
+                </Button>
+            )}
         </div>
       </div>
     </header>
