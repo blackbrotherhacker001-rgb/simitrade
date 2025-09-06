@@ -12,7 +12,7 @@ import { BarChart2, User, Shield, Bell, Wallet, Home, Key, ArrowLeft, ChevronRig
 import { Badge } from "../ui/badge";
 
 const navItems = [
-    { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { href: "/dashboard", icon: BarChart2, label: "Dashboard" },
     { href: "/dashboard/personal-info", icon: User, label: "Personal Info" },
     { href: "/dashboard/security", icon: Shield, label: "Security" },
     { href: "/dashboard/notifications", icon: Bell, label: "Notifications" },
@@ -67,7 +67,7 @@ export function DashboardSidebar() {
                             >
                                 <item.icon className="mr-3 h-5 w-5" />
                                 {item.label}
-                                {item.href === '/dashboard' && <span className="ml-auto h-2 w-2 rounded-full bg-primary animate-pulse"></span>}
+                                {pathname === item.href && <span className="ml-auto h-2 w-2 rounded-full bg-primary"></span>}
                             </Button>
                         </Link>
                     ))}

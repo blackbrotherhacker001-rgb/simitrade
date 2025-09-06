@@ -20,7 +20,7 @@ export default function DashboardOverviewPage() {
           value="50/100"
           description="Good"
           descriptionColor="text-yellow-400"
-          icon={<ShieldCheck className="h-6 w-6 text-yellow-400" />}
+          icon={<Shield className="h-6 w-6 text-yellow-400" />}
           iconBg="bg-yellow-400/10"
           borderColor="border-yellow-400/50"
         />
@@ -44,7 +44,7 @@ export default function DashboardOverviewPage() {
         <StatCard
           title="Login Activity"
           value="4"
-          description="+33% vs last month"
+          description="Logins this month"
           descriptionColor="text-green-400"
           icon={<Activity className="h-6 w-6 text-cyan-400" />}
           iconBg="bg-cyan-400/10"
