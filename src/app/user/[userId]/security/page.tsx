@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button';
 import { ShieldCheck, KeyRound, Smartphone, Mail, Eye, ShieldOff } from 'lucide-react';
 import { LoginHistory } from '@/components/dashboard/security/login-history';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function SecurityPage() {
+  const { user } = useAuth();
   const { toast } = useToast();
 
   const handleAction = (title: string, description: string) => {
@@ -16,6 +18,10 @@ export default function SecurityPage() {
       description,
     });
   };
+
+  if (!user) {
+    return null; // Or a loading state
+  }
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
