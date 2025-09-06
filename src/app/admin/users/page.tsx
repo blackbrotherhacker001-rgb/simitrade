@@ -35,7 +35,7 @@ const users = Object.entries(MOCK_USERS).map(([walletAddress, userData], index) 
 }));
 
 
-export function UserManagement() {
+export default function UserManagementPage() {
     const router = useRouter();
     const { login } = useAuth();
 
@@ -51,6 +51,7 @@ export function UserManagement() {
     }
 
   return (
+    <div className="container mx-auto p-4 md:p-6">
     <Card>
         <CardHeader className="flex flex-row items-center justify-between">
             <div>
@@ -116,5 +117,6 @@ export function UserManagement() {
             </Table>
         </CardContent>
     </Card>
+    </div>
   );
 }

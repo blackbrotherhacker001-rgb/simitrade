@@ -63,7 +63,7 @@ const user = {
     failedLogins: 0,
 };
 
-export function UserDetail() {
+export default function UserDetailPage() {
     const router = useRouter();
     const { login } = useAuth();
 
@@ -73,7 +73,7 @@ export function UserDetail() {
     }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 container mx-auto p-4 md:p-6">
         <div className="flex items-center gap-4">
             <Button variant="outline" size="icon" onClick={() => router.back()}>
                 <ChevronLeft className="h-4 w-4" />
