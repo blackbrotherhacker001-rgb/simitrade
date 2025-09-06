@@ -20,6 +20,10 @@ import {
   User,
   Wallet,
   Bell,
+  LineChart,
+  Repeat,
+  ShoppingBag,
+  Info,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
@@ -29,18 +33,35 @@ import Link from 'next/link';
 const NavLink = ({
   children,
   hasDropdown = false,
+  href
 }: {
   children: React.ReactNode;
   hasDropdown?: boolean;
-}) => (
-  <Button
-    variant="ghost"
-    className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
-  >
-    {children}
-    {hasDropdown && <ChevronDown className="h-4 w-4" />}
-  </Button>
-);
+  href?: string;
+}) => {
+    if (href) {
+        return (
+            <Link href={href}>
+                <Button
+                    variant="ghost"
+                    className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+                >
+                    {children}
+                </Button>
+            </Link>
+        )
+    }
+
+  return (
+    <Button
+      variant="ghost"
+      className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+    >
+      {children}
+      {hasDropdown && <ChevronDown className="h-4 w-4" />}
+    </Button>
+  );
+};
 
 export function LandingHeader() {
   const { setNeedsLogin } = useAuth();
@@ -49,12 +70,36 @@ export function LandingHeader() {
       <div className="container flex h-16 items-center">
         <Logo />
         <nav className="ml-10 hidden md:flex items-center gap-2 text-sm font-medium">
-          <NavLink hasDropdown>Trading</NavLink>
-          <NavLink hasDropdown>Portfolio</NavLink>
-          <NavLink hasDropdown>Investments</NavLink>
-          <NavLink hasDropdown>Marketplace</NavLink>
-          <NavLink hasDropdown>Services</NavLink>
-          <NavLink>Insights</NavLink>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <NavLink hasDropdown>Trading</NavLink>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem asChild>
+                        <Link href="/dashboard/trade">
+                            <BarChart2 className="mr-2 h-4 w-4" />
+                            Spot Trading
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <LineChart className="mr-2 h-4 w-4" />
+                        Binary Options
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Repeat className="mr-2 h-4 w-4" />
+                        Forex
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Briefcase className="mr-2 h-4 w-4" />
+                        P2P Exchange
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <NavLink hasDropdown>Portfolio</NavLink>
+            <NavLink hasDropdown>Investments</NavLink>
+            <NavLink hasDropdown>Marketplace</NavLink>
+            <NavLink hasDropdown>Services</NavLink>
+            <NavLink href="/markets">Insights</NavLink>
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <Button
