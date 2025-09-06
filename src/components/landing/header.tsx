@@ -13,55 +13,15 @@ import {
   BarChart2,
   Briefcase,
   ChevronDown,
-  FileText,
-  MessageCircle,
-  Settings,
-  Sun,
-  User,
-  Wallet,
-  Bell,
   LineChart,
   Repeat,
-  ShoppingBag,
-  Info,
+  Settings,
+  Sun,
+  Bell,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
-import { cn } from '@/lib/utils';
 import Link from 'next/link';
-
-const NavLink = ({
-  children,
-  hasDropdown = false,
-  href
-}: {
-  children: React.ReactNode;
-  hasDropdown?: boolean;
-  href?: string;
-}) => {
-    if (href) {
-        return (
-            <Link href={href}>
-                <Button
-                    variant="ghost"
-                    className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
-                >
-                    {children}
-                </Button>
-            </Link>
-        )
-    }
-
-  return (
-    <Button
-      variant="ghost"
-      className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
-    >
-      {children}
-      {hasDropdown && <ChevronDown className="h-4 w-4" />}
-    </Button>
-  );
-};
 
 export function LandingHeader() {
   const { setNeedsLogin } = useAuth();
@@ -72,7 +32,10 @@ export function LandingHeader() {
         <nav className="ml-10 hidden md:flex items-center gap-2 text-sm font-medium">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <NavLink hasDropdown>Trading</NavLink>
+                    <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground hover:text-foreground">
+                        Trading
+                        <ChevronDown className="h-4 w-4" />
+                    </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem asChild>
@@ -95,11 +58,13 @@ export function LandingHeader() {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <NavLink hasDropdown>Portfolio</NavLink>
-            <NavLink hasDropdown>Investments</NavLink>
-            <NavLink hasDropdown>Marketplace</NavLink>
-            <NavLink hasDropdown>Services</NavLink>
-            <NavLink href="/markets">Insights</NavLink>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Portfolio</Button>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Investments</Button>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Marketplace</Button>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Services</Button>
+            <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+                <Link href="/markets">Insights</Link>
+            </Button>
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <Button
