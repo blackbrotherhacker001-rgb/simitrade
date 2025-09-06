@@ -11,6 +11,8 @@ import {
 } from 'react';
 import { chat } from '@/ai/flows/chat-flow';
 import { useAuth } from './use-auth';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 type Message = {
     role: 'user' | 'model';
@@ -26,44 +28,50 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-const CHAT_STORAGE_PREFIX = 'chat-history-';
+const CHATS_COLLECTION = 'chats';
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const [isOpen, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const { user } = useAuth();
   
-  const storageKey = user ? `${CHAT_STORAGE_PREFIX}${user.walletAddress}` : null;
+  const chatDocumentId = user ? user.walletAddress : null;
 
   useEffect(() => {
-    if (!user || !storageKey) {
-        // If there's no user, we can default to a welcome message, but not save it.
+    if (!chatDocumentId) {
         setMessages([{ role: 'model', content: 'Hello! Please log in to start a chat.' }]);
         return;
     };
-    try {
-        const storedMessages = localStorage.getItem(storageKey);
-        if (storedMessages) {
-            setMessages(JSON.parse(storedMessages));
+
+    const docRef = doc(db, CHATS_COLLECTION, chatDocumentId);
+
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            setMessages(data.messages || []);
         } else {
-             // Set a default initial message for a new chat
             const initialMessage = [{ role: 'model', content: 'Hello! How can I help you today?' }];
             setMessages(initialMessage);
-            localStorage.setItem(storageKey, JSON.stringify(initialMessage));
+            setDoc(docRef, { messages: initialMessage });
         }
-    } catch(e) {
-        console.error("Could not process chat history from localStorage", e);
-        setMessages([{ role: 'model', content: 'Hello! How can I help you today?' }]);
-    }
-  }, [user, storageKey]);
+    }, (error) => {
+        console.error("Error listening to chat document:", error);
+        setMessages([{ role: 'model', content: 'Could not load chat history.' }]);
+    });
+
+    return () => unsubscribe();
+
+  }, [chatDocumentId]);
 
 
   const addMessage = useCallback(async (message: Message) => {
-    if (!storageKey) return;
+    if (!chatDocumentId) return;
     
     const updatedMessages = [...messages, message];
     setMessages(updatedMessages);
-    localStorage.setItem(storageKey, JSON.stringify(updatedMessages));
+
+    const docRef = doc(db, CHATS_COLLECTION, chatDocumentId);
+    await setDoc(docRef, { messages: updatedMessages });
     
     // If the message is from the user, get a reply from the AI
     if (message.role === 'user') {
@@ -71,15 +79,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         const result = await chat({ history: updatedMessages });
         const finalMessages = [...updatedMessages, { role: 'model', content: result.reply }];
         setMessages(finalMessages);
-        localStorage.setItem(storageKey, JSON.stringify(finalMessages));
+        await setDoc(docRef, { messages: finalMessages });
       } catch (error) {
         console.error("Failed to get AI reply:", error);
         const errorMessages = [...updatedMessages, { role: 'model', content: "Sorry, I'm having trouble connecting. Please try again later." }];
         setMessages(errorMessages);
-        localStorage.setItem(storageKey, JSON.stringify(errorMessages));
+        await setDoc(docRef, { messages: errorMessages });
       }
     }
-  }, [messages, storageKey]);
+  }, [messages, chatDocumentId]);
 
   return (
     <ChatContext.Provider value={{ isOpen, setOpen, messages, addMessage }}>
