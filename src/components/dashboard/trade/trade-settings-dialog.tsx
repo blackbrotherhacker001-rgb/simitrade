@@ -34,7 +34,7 @@ const ShortcutCard = ({
 }) => (
   <div
     className={cn(
-      'bg-card/50 rounded-lg p-3 flex flex-col items-center justify-center text-center',
+      'bg-card/50 rounded-lg p-3 flex flex-col items-center justify-center text-center transition-transform duration-200 hover:scale-105 hover:shadow-lg',
       className
     )}
   >
