@@ -28,8 +28,27 @@ interface TradeConfirmationDialogProps {
 
 export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeConfirmationDialogProps) {
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
+  const [countdown, setCountdown] = useState(3);
   const { toast } = useToast();
   const { user, updateBalance } = useAuth();
+
+  useEffect(() => {
+    if (isOpen) {
+      setCountdown(3);
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown <= 1) {
+            clearInterval(timer);
+            handleConfirm();
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [isOpen]);
   
   const handleConfirm = () => {
     if (!user || !trade) return;
@@ -53,7 +72,6 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
                 description: `You lost your investment of $${trade.amount.toFixed(2)}. Better luck next time!`,
             });
         }
-        onOpenChange(false);
     }, trade.expiry * 1000);
 
     // Give immediate feedback
@@ -170,7 +188,7 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
             onClick={handleConfirm}
           >
              <Check className="mr-2 h-4 w-4"/>
-            Confirm
+            Confirm ({countdown}s)
           </Button>
         </DialogFooter>
       </DialogContent>
