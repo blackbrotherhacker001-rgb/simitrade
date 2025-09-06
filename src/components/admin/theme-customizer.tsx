@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useTheme } from '@/hooks/use-theme';
 import { Upload, Save, Paintbrush } from 'lucide-react';
 import Image from 'next/image';
 
@@ -35,16 +36,22 @@ const themeSchema = z.object({
 type ThemeFormValues = z.infer<typeof themeSchema>;
 
 export function ThemeCustomizer() {
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const { theme, setTheme } = useTheme();
+  const [logoPreview, setLogoPreview] = useState<string | null>(theme.logo);
   const { toast } = useToast();
 
   const form = useForm<ThemeFormValues>({
     resolver: zodResolver(themeSchema),
     defaultValues: {
-      appName: 'Bicrypto',
+      appName: theme.name || 'Bicrypto',
       logo: null,
     },
   });
+
+  useEffect(() => {
+    form.setValue('appName', theme.name);
+    setLogoPreview(theme.logo);
+  }, [theme, form]);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -52,14 +59,17 @@ export function ThemeCustomizer() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setLogoPreview(reader.result as string);
+        form.setValue('logo', reader.result as string);
       };
       reader.readAsDataURL(file);
-      form.setValue('logo', file);
     }
   };
 
   const onSubmit = (values: ThemeFormValues) => {
-    console.log(values);
+    setTheme({
+      name: values.appName,
+      logo: (values.logo as string | null) || theme.logo,
+    });
     toast({
       title: 'Theme Saved',
       description: 'Your new theme settings have been applied.',

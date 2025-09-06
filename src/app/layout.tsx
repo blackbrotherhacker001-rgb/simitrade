@@ -2,6 +2,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/hooks/use-auth';
+import { ThemeProvider } from '@/hooks/use-theme';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import { LoginForm } from '@/components/auth/login-form';
@@ -24,9 +25,11 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} font-body antialiased`}>
         <AuthProvider>
-          {children}
-          <Toaster />
-          <LoginForm />
+          <ThemeProvider>
+            {children}
+            <Toaster />
+            <LoginForm />
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>
