@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { OrderBookEntry } from '@/types';
 import { useMemo } from 'react';
+import { TrendingUp } from 'lucide-react';
 
 const generateOrderBookData = (count: number, isAsks: boolean): OrderBookEntry[] => {
     const data = [];
