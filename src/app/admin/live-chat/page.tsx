@@ -7,12 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bot, Send, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Bot, Send, Sparkles, Image as ImageIcon, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { chat } from '@/ai/flows/chat-flow';
 import { useToast } from '@/hooks/use-toast';
-import { collection, doc, onSnapshot, setDoc, getDocs } from 'firebase/firestore';
+import { collection, doc, onSnapshot, setDoc, getDocs, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useAuth } from '@/hooks/use-auth';
 
 type Message = {
   role: 'user' | 'model';
@@ -35,8 +36,12 @@ export default function LiveChatPage() {
   const [loadingSuggestion, setLoadingSuggestion] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { user } = useAuth(); // Using auth hook to ensure firebase is ready
 
   useEffect(() => {
+    // Only fetch users if the admin user is loaded, ensuring Firebase is connected.
+    if (!user) return;
+
     // Fetch all users with chat history
     const fetchChatUsers = async () => {
         try {
@@ -68,7 +73,7 @@ export default function LiveChatPage() {
         }
     };
     fetchChatUsers();
-  }, [toast]);
+  }, [toast, user]);
 
 
   // Effect to load messages and listen for real-time updates
