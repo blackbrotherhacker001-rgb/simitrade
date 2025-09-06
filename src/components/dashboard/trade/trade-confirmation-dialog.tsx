@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import { ArrowUp, ArrowDown, ChevronUp, ChevronDown, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Separator } from '../ui/separator';
+import { Separator } from '@/components/ui/separator';
 
 interface TradeConfirmationDialogProps {
   isOpen: boolean;
