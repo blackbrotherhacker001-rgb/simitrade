@@ -13,7 +13,6 @@ import { Badge } from "../ui/badge";
 
 const navItems = [
     { href: "/user/overview", icon: LayoutDashboard, label: "Dashboard" },
-    { href: "/user/trade", icon: LineChart, label: "Trade" },
     { href: "/user/personal-info", icon: User, label: "Personal Info" },
     { href: "/user/security", icon: Shield, label: "Security" },
     { href: "/user/notifications", icon: Bell, label: "Notifications" },
