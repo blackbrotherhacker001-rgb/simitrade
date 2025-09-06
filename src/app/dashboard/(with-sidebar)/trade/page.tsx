@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function TradePage() {
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-1 overflow-hidden h-full">
       <SpotMarketList />
       <div className="flex flex-col flex-1 border-l border-r border-border/60">
         <SpotHeader />
