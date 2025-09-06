@@ -201,7 +201,56 @@ export function SpotTradePanel() {
                     </>
                 )}
                  {activeStopTab === 'stop-limit' && (
-                     <p className="text-center text-muted-foreground py-8">Stop-Limit order options unavailable.</p>
+                    <>
+                        <div className="space-y-1">
+                            <div className="flex justify-between items-center">
+                                <Label htmlFor="stop-limit-market-price" className="text-xs text-muted-foreground">Market Price</Label>
+                                <span className="text-xs text-red-500 flex items-center">
+                                    <TrendingDown className="h-3 w-3 mr-1"/>
+                                    {market.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <Label htmlFor="stop-limit-stop-price" className="text-xs text-muted-foreground">Stop Price</Label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                                <Input id="stop-limit-stop-price" type="text" defaultValue="115720.17" className="bg-[#1f2937] pl-6"/>
+                            </div>
+                        </div>
+                        
+                        <div className="space-y-1">
+                            <Label htmlFor="stop-limit-limit-price" className="text-xs text-muted-foreground">Limit Price</Label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                                <Input id="stop-limit-limit-price" type="text" defaultValue="115720.17" className="bg-[#1f2937] pl-6"/>
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <Label htmlFor="stop-limit-amount" className="text-xs text-muted-foreground">Amount</Label>
+                            <div className="relative">
+                                <Input id="stop-limit-amount" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">BTC</span>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-4 gap-2">
+                            <Button variant="outline" size="sm" className="bg-[#1f2937]">25%</Button>
+                            <Button variant="outline" size="sm" className="bg-[#1f2937]">50%</Button>
+                            <Button variant="outline" size="sm" className="bg-[#1f2937]">75%</Button>
+                            <Button variant="outline" size="sm" className="bg-[#1f2937]">100%</Button>
+                        </div>
+                        
+                        <div className="text-xs text-muted-foreground p-2 bg-black/20 rounded-md">
+                           Stop Limit orders become limit orders when the stop price is reached. The order will be filled at the limit price or better.
+                        </div>
+
+                        <Button className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white')}>
+                            {tradeType === 'buy' ? 'Buy BTC Stop Limit' : 'Sell BTC Stop Limit'}
+                        </Button>
+                    </>
                  )}
             </TabsContent>
         </Tabs>
