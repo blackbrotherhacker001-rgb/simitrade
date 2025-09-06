@@ -98,7 +98,7 @@ export function LandingHeader() {
         <div className="ml-auto flex items-center gap-2">
             {user && user.isAdmin ? (
                  <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
-                    <Link href="/admin">
+                    <Link href="/admin/dashboard">
                          <Settings className="mr-2 h-4 w-4" />
                          Admin
                     </Link>
