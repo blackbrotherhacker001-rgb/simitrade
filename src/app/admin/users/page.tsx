@@ -47,6 +47,7 @@ import { useAuth } from '@/hooks/use-auth';
 import type { User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { MOCK_USERS } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 
 const addUserSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -223,7 +224,7 @@ export default function UserManagementPage() {
                         </TableRow>
                     ) : (
                         users.map(user => (
-                            <TableRow key={user.walletAddress}>
+                            <TableRow key={user.walletAddress} className="transition-all hover:shadow-lg hover:scale-[1.02] hover:bg-muted/50">
                                 <TableCell>
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-9 w-9">
