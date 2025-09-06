@@ -14,6 +14,7 @@ import { Badge } from '../ui/badge';
 import { ArrowRight, TrendingDown, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
+import Link from 'next/link';
 
 const assets = [
   {
@@ -135,8 +136,10 @@ export function MarketCard() {
             ))}
           </TableBody>
         </Table>
-         <Button variant="link" className="w-full mt-4 text-primary">
-            View All Markets <ArrowRight className="ml-2 h-4 w-4" />
+         <Button variant="link" className="w-full mt-4 text-primary" asChild>
+            <Link href="/markets">
+                View All Markets <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
         </Button>
       </CardContent>
     </Card>
