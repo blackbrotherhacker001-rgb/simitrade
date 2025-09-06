@@ -17,16 +17,6 @@ export function MarketsHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
       <div className="container flex h-16 items-center">
         <Logo />
-        <nav className="ml-10 hidden md:flex items-center gap-2 text-sm font-medium">
-             <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
-                <Link href="/">Home</Link>
-            </Button>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">About</Button>
-            <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
-                <Link href="/markets">Markets</Link>
-            </Button>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Trade</Button>
-        </nav>
         <div className="ml-auto flex items-center gap-2">
           <Button variant="ghost" size="icon">
             <img
