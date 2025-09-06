@@ -27,10 +27,10 @@ export interface MarketData {
 
 export interface SpotMarket {
     symbol: string;
-    name: string;
+    pair: string;
     price: number;
-    change24h: number;
-    volume24h: number;
+    change: number;
+    volume: number;
     icon: string;
 }
 

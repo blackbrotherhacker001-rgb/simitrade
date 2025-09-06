@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowUp, ArrowDown, Minus, Plus, Wallet, Shield, Clock, Check, DollarSign } from 'lucide-react';
@@ -78,7 +78,7 @@ export function TradePanel() {
 
   return (
     <>
-      <div className="p-4 space-y-4 bg-[#161A25] h-full flex flex-col">
+      <div className="p-4 space-y-4 bg-[#1F2328] h-full flex flex-col">
         <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Amount</label>

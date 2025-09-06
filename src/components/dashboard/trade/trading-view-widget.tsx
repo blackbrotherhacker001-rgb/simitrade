@@ -16,25 +16,33 @@ export function TradingViewWidget() {
         {
           "autosize": true,
           "symbol": "COINBASE:BTCUSD",
-          "interval": "D",
+          "interval": "60",
           "timezone": "Etc/UTC",
           "theme": "dark",
           "style": "1",
           "locale": "en",
           "enable_publishing": false,
           "allow_symbol_change": true,
+          "withdateranges": false,
+          "hide_side_toolbar": false,
+          "details": true,
+          "hotlist": true,
+          "calendar": false,
           "container_id": "tradingview-widget-container-script"
         }`;
       
       if (container.current) {
+        // Clear previous widget script if it exists
+        while (container.current.firstChild) {
+            container.current.removeChild(container.current.firstChild);
+        }
         container.current.appendChild(script);
       }
 
       return () => {
         if (container.current) {
-            const scripts = container.current.getElementsByTagName('script');
-            if (scripts.length > 0) {
-                 container.current.removeChild(scripts[0]);
+            while (container.current.firstChild) {
+                container.current.removeChild(container.current.firstChild);
             }
         }
       };
@@ -45,7 +53,6 @@ export function TradingViewWidget() {
   return (
     <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }}>
       <div id="tradingview-widget-container-script" style={{ height: "calc(100% - 32px)", width: "100%" }}></div>
-      <div className="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span className="blue-text">Track all markets on TradingView</span></a></div>
     </div>
   );
 }

@@ -2,16 +2,39 @@
 'use client';
 
 import { TradingViewWidget } from '@/components/dashboard/trade/trading-view-widget';
-import { TradePanel } from '@/components/dashboard/trade/trade-panel';
+import { SpotMarketList } from '@/components/dashboard/trade/spot-market-list';
+import { SpotTradePanel } from '@/components/dashboard/trade/spot-trade-panel';
+import { OrderBook } from '@/components/dashboard/trade/order-book';
+import { RecentTrades } from '@/components/dashboard/trade/recent-trades';
+import { SpotHeader } from '@/components/dashboard/trade/spot-header';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function TradePage() {
   return (
-    <div className="flex h-[calc(100vh-120px)] w-full">
-      <div className="flex-1">
-        <TradingViewWidget />
-      </div>
-      <div className="w-80 flex-shrink-0 border-l border-border/60">
-        <TradePanel />
+    <div className="flex flex-col h-full w-full text-white bg-[#111318]">
+      <SpotHeader />
+      <div className="flex flex-1 overflow-hidden">
+        <SpotMarketList />
+        <div className="flex flex-col flex-1 border-l border-r border-border/60">
+          <div className="flex-grow h-[60%]">
+            <TradingViewWidget />
+          </div>
+          <div className="flex-grow h-[40%] border-t border-border/60">
+             <Tabs defaultValue="order-book" className="h-full flex flex-col">
+                <TabsList className="bg-transparent px-4 border-b border-border/60 justify-start rounded-none">
+                    <TabsTrigger value="order-book" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none">Order Book</TabsTrigger>
+                    <TabsTrigger value="recent-trades" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none">Recent Trades</TabsTrigger>
+                </TabsList>
+                <TabsContent value="order-book" className="flex-grow overflow-y-auto">
+                    <OrderBook />
+                </TabsContent>
+                <TabsContent value="recent-trades" className="flex-grow overflow-y-auto">
+                    <RecentTrades />
+                </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+        <SpotTradePanel />
       </div>
     </div>
   );

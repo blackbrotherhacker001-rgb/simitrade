@@ -33,8 +33,8 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-background text-foreground flex">
       <DashboardSidebar />
       <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1 p-6 bg-[#161A25] overflow-y-auto">
+        {/* The header can be part of the specific page now */}
+        <main className="flex-1 bg-[#161A25] overflow-y-auto">
           {children}
         </main>
       </div>
