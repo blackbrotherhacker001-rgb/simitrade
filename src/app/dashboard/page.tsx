@@ -43,14 +43,6 @@ export default function DashboardPage() {
                 borderColor="border-blue-400/20"
             />
             <StatCard 
-                title="API Keys"
-                value="0"
-                description="No keys created"
-                icon={<KeyRound className="h-6 w-6 text-purple-400"/>}
-                iconBg="bg-purple-400/10"
-                borderColor="border-purple-400/20"
-            />
-            <StatCard 
                 title="Login Activity"
                 value="4"
                 description="+33% vs last month"

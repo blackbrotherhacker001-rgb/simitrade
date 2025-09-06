@@ -17,7 +17,6 @@ const navItems = [
     { href: "/dashboard/security", icon: Shield, label: "Security" },
     { href: "/dashboard/notifications", icon: Bell, label: "Notifications" },
     { href: "/dashboard/wallet", icon: Wallet, label: "Wallet" },
-    { href: "/dashboard/api-keys", icon: KeyRound, label: "API Keys" },
 ]
 
 export function DashboardSidebar() {
