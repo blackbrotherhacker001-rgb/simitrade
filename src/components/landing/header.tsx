@@ -18,6 +18,9 @@ import {
   Settings,
   Sun,
   Bell,
+  TrendingUp,
+  Landmark,
+  Database,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
@@ -63,7 +66,28 @@ export function LandingHeader() {
                 </DropdownMenuContent>
             </DropdownMenu>
             <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Portfolio</Button>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Investments</Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground hover:text-foreground">
+                        Investments
+                        <ChevronDown className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem>
+                        <TrendingUp className="mr-2 h-4 w-4" />
+                        Investment Plans
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Landmark className="mr-2 h-4 w-4" />
+                        Staking Rewards
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Database className="mr-2 h-4 w-4" />
+                        Token Sales
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
             <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Marketplace</Button>
             <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Services</Button>
             <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
