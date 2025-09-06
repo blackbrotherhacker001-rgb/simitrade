@@ -4,9 +4,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LifeBuoy, MessageSquare, Clock, Users, Shield, Ticket } from 'lucide-react';
+import Link from 'next/link';
 
 const supportFeatures = [
     {
+        id: 'tickets',
         icon: <Ticket className="h-6 w-6 text-primary" />,
         title: 'Support Tickets',
         description: 'Create and manage support tickets for your issues',
@@ -17,9 +19,11 @@ const supportFeatures = [
             'Full conversation history'
         ],
         buttonText: 'Go to Support Center',
-        buttonVariant: 'default'
+        buttonVariant: 'default',
+        href: '/admin/support-tickets' // Example link
     },
     {
+        id: 'chat',
         icon: <MessageSquare className="h-6 w-6 text-primary" />,
         title: 'Live Chat',
         description: 'Get instant help from our support agents',
@@ -29,8 +33,9 @@ const supportFeatures = [
             'Queue position tracking',
             'File sharing capabilities'
         ],
-        buttonText: 'Try Live Chat (Bottom Right)',
-        buttonVariant: 'outline'
+        buttonText: 'Open Live Chat',
+        buttonVariant: 'outline',
+        href: '/admin/live-chat'
     }
 ]
 
@@ -84,8 +89,8 @@ export default function ServicesPage() {
                             <li key={item}>{item}</li>
                         ))}
                     </ul>
-                    <Button className="w-full" variant={feature.buttonVariant as any}>
-                        {feature.buttonText}
+                    <Button className="w-full" variant={feature.buttonVariant as any} asChild>
+                      <Link href={feature.href}>{feature.buttonText}</Link>
                     </Button>
                 </CardContent>
             </Card>
@@ -106,4 +111,3 @@ export default function ServicesPage() {
     </div>
   );
 }
-
