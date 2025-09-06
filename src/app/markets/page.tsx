@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const marketStats = [
   {
@@ -211,8 +212,10 @@ export default function MarketsPage() {
                   <TableCell>{formatMarketCap(asset.volume)}</TableCell>
                   <TableCell>{formatMarketCap(asset.cap)}</TableCell>
                   <TableCell className="text-right">
-                    <Button size="sm">
-                      Trade <ArrowRight className="ml-2 h-4 w-4" />
+                    <Button size="sm" asChild>
+                      <Link href="/dashboard/trade">
+                        Trade <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
                     </Button>
                   </TableCell>
                 </TableRow>
