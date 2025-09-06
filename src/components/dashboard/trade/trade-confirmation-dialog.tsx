@@ -55,9 +55,34 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
   const handleConfirm = async () => {
     if (!user || !trade) return;
 
-    // The admin trade control logic has been simplified for stability.
-    // It will now use a simple random outcome.
-    const isWin = Math.random() > 0.4; // 60% chance to win
+    let isWin: boolean;
+    let tradeControl = 'default';
+
+    // Check for admin override
+    try {
+        const storedControls = localStorage.getItem('trade-controls');
+        if (storedControls) {
+            const controls = JSON.parse(storedControls);
+            if (controls[user.walletAddress]) {
+                tradeControl = controls[user.walletAddress];
+                // Clear the control after using it
+                delete controls[user.walletAddress];
+                localStorage.setItem('trade-controls', JSON.stringify(controls));
+            }
+        }
+    } catch(e) {
+        console.error("Could not read trade controls", e);
+    }
+
+    if (tradeControl === 'win') {
+        isWin = true;
+    } else if (tradeControl === 'loss') {
+        isWin = false;
+    } else {
+        // Default behavior
+        isWin = Math.random() > 0.4; // 60% chance to win
+    }
+
 
     const payout = trade.amount * 0.80; // 80% payout
     

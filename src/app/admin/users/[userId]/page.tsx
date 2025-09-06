@@ -118,10 +118,25 @@ export default function UserDetailPage() {
         router.push('/user/overview');
     }
 
-    const handleTradeControl = async (outcome: 'win' | 'loss' | 'default') => {
+    const handleTradeControl = (outcome: 'win' | 'loss' | 'default') => {
+        if (!user) return;
+        
+        let allTradeControls = {};
+        try {
+            const stored = localStorage.getItem('trade-controls');
+            if(stored) {
+                allTradeControls = JSON.parse(stored);
+            }
+        } catch (e) {
+            console.error("Could not parse trade controls from localStorage", e);
+        }
+
+        const newControls = { ...allTradeControls, [user.walletAddress]: outcome };
+        localStorage.setItem('trade-controls', JSON.stringify(newControls));
+        
         toast({
-            title: 'Trade Control (Simulated)',
-            description: `User's next trade set to ${outcome}. This is a simulated action.`,
+            title: 'Trade Control Set',
+            description: `User ${user.name}'s next trade is set to ${outcome}.`,
         });
     }
 
