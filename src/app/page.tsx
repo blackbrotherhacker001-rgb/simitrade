@@ -1,8 +1,6 @@
 
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { LandingHeader } from '@/components/landing/header';
 import { MarketCard } from '@/components/landing/market-card';
@@ -10,18 +8,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, ArrowRight } from 'lucide-react';
 
 export default function LandingPage() {
-  const { user, setNeedsLogin } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (user) {
-      if (user.isAdmin) {
-        router.replace('/admin');
-      } else {
-        router.replace('/dashboard');
-      }
-    }
-  }, [user, router]);
+  const { setNeedsLogin } = useAuth();
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground">
