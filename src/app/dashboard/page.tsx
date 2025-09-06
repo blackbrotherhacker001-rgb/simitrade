@@ -2,7 +2,7 @@
 'use client';
 
 import { AccountSummaryCard } from '@/components/dashboard/account-summary-card';
-import { RecentActivity }s from '@/components/dashboard/recent-activity';
+import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { SecurityOverview } from '@/components/dashboard/security-overview';
 import { StatCard } from '@/components/dashboard/stat-card';
 import { Button } from '@/components/ui/button';
