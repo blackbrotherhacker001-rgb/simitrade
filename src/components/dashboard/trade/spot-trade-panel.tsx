@@ -9,9 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
+import { TrendingDown } from 'lucide-react';
+import { useMarket } from '@/hooks/use-market';
 
 export function SpotTradePanel() {
   const { user } = useAuth();
+  const { market } = useMarket();
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
   const [activeMainTab, setActiveMainTab] = useState('standard');
 
@@ -58,8 +61,9 @@ export function SpotTradePanel() {
                 <div className="space-y-1">
                     <Label htmlFor="price" className="text-xs text-muted-foreground">Price</Label>
                     <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                        <Input id="price" type="number" defaultValue="110209.69" className="bg-[#1f2937] pl-6"/>
+                        <Input id="price" type="number" defaultValue="110209.69" className="bg-[#1f2937] pl-6 pr-12"/>
+                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">USDT</span>
                     </div>
                 </div>
                 <div className="space-y-1">
@@ -80,8 +84,8 @@ export function SpotTradePanel() {
                 <div className="space-y-1">
                     <Label htmlFor="total" className="text-xs text-muted-foreground">Total</Label>
                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
                         <Input id="total" type="number" placeholder="0.00" className="bg-[#1f2937] pl-6 pr-12"/>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">USDT</span>
                     </div>
                 </div>
@@ -89,10 +93,52 @@ export function SpotTradePanel() {
                 <Button className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white')}>
                     {tradeType === 'buy' ? 'Buy BTC' : 'Sell BTC'}
                 </Button>
-
             </TabsContent>
-            <TabsContent value="market">
-                 <p className="text-center text-muted-foreground py-8">Market trade options unavailable.</p>
+
+             <TabsContent value="market" className="mt-4 space-y-4">
+                <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                        <Label htmlFor="market-price" className="text-xs text-muted-foreground">Market Price</Label>
+                        <span className="text-xs text-red-500 flex items-center">
+                            <TrendingDown className="h-3 w-3 mr-1"/>
+                            {market.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                        </span>
+                    </div>
+                    <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                        <Input id="market-price" type="text" readOnly value={market.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} className="bg-[#1f2937] pl-6"/>
+                    </div>
+                </div>
+                <div className="space-y-1">
+                    <Label htmlFor="market-amount" className="text-xs text-muted-foreground">Amount</Label>
+                    <div className="relative">
+                         <Input id="market-amount" type="number" placeholder="0.00" className="bg-[#1f2937] pr-12"/>
+                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">BTC</span>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                    <Button variant="outline" size="sm" className="bg-[#1f2937]">25%</Button>
+                    <Button variant="outline" size="sm" className="bg-[#1f2937]">50%</Button>
+                    <Button variant="outline" size="sm" className="bg-[#1f2937]">75%</Button>
+                    <Button variant="outline" size="sm" className="bg-[#1f2937]">100%</Button>
+                </div>
+
+                <div className="space-y-1">
+                    <Label htmlFor="market-total" className="text-xs text-muted-foreground">Estimated Total</Label>
+                     <div className="relative">
+                        <Input id="market-total" type="number" placeholder="0.00" className="bg-[#1f2937] pl-6 pr-12"/>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">USDT</span>
+                    </div>
+                </div>
+                <div className="text-xs text-muted-foreground p-2 bg-black/20 rounded-md">
+                   Market orders execute immediately at the best available price. The final execution price may differ from the estimated price.
+                </div>
+                <Button className={cn("w-full", tradeType === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white')}>
+                    {tradeType === 'buy' ? 'Buy BTC at Market' : 'Sell BTC at Market'}
+                </Button>
+
             </TabsContent>
              <TabsContent value="stop">
                  <p className="text-center text-muted-foreground py-8">Stop trade options unavailable.</p>
