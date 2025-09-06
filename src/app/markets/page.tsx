@@ -25,6 +25,7 @@ import {
   ArrowRight,
   Filter,
   ArrowUpDown,
+  Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
@@ -39,19 +40,19 @@ const marketStats = [
   },
   {
     title: '24h Gainers',
-    value: '38',
+    value: '14',
     icon: <TrendingUp className="h-6 w-6 text-green-400" />,
     iconBg: 'bg-green-400/10',
   },
   {
     title: '24h Losers',
-    value: '12',
+    value: '35',
     icon: <TrendingDown className="h-6 w-6 text-red-400" />,
     iconBg: 'bg-red-400/10',
   },
   {
     title: 'Total Volume',
-    value: '$4.11B',
+    value: '$3.71B',
     icon: <CircleDollarSign className="h-6 w-6 text-purple-400" />,
     iconBg: 'bg-purple-400/10',
   },
@@ -61,56 +62,65 @@ const assets = [
   {
     symbol: 'BTC',
     pair: 'BTC/USDT',
-    price: 111021.01,
-    change: -0.12,
-    volume: 2320000000,
-    cap: 111020000000,
+    price: 110817.11,
+    change: -1.69,
+    volume: 2050000000,
+    cap: 110820000000,
     icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/btc.svg',
   },
   {
     symbol: 'SOL',
     pair: 'SOL/USDT',
-    price: 204.07,
-    change: 0.58,
-    volume: 808930000,
-    cap: 204070000,
+    price: 203.14,
+    change: -2.10,
+    volume: 740170000,
+    cap: 203140000,
     icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/sol.svg',
   },
   {
     symbol: 'XRP',
     pair: 'XRP/USDT',
-    price: 2.82,
-    change: 0.79,
-    volume: 324830000,
+    price: 2.8204,
+    change: -0.64,
+    volume: 292660000,
     cap: 2820000,
     icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/xrp.svg',
   },
   {
     symbol: 'TRX',
     pair: 'TRX/USDT',
-    price: 0.33,
-    change: -1.04,
-    volume: 122290000,
-    cap: 331700,
+    price: 0.3313,
+    change: -1.72,
+    volume: 116410000,
+    cap: 331300,
     icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/trx.svg',
   },
    {
     symbol: 'SUI',
     pair: 'SUI/USDT',
-    price: 3.40,
-    change: 2.64,
-    volume: 112050000,
-    cap: 3400000,
+    price: 3.3758,
+    change: -0.37,
+    volume: 107840000,
+    cap: 3380000,
     icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/sui.svg',
   },
+  {
+    symbol: 'ADA',
+    pair: 'ADA/USDT',
+    price: 0.8243,
+    change: -0.38,
+    volume: 100030000,
+    cap: 824300,
+    icon: 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/color/ada.svg',
+  }
 ];
 
-const formatCurrency = (value: number) => {
+const formatCurrency = (value: number, decimals = 2) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
   }).format(value);
 };
 
@@ -197,7 +207,7 @@ export default function MarketsPage() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">{formatCurrency(asset.price)}</TableCell>
+                  <TableCell className="font-medium">{formatCurrency(asset.price, asset.price > 1 ? 2 : 4)}</TableCell>
                   <TableCell>
                      <Badge
                       variant="outline"
@@ -208,15 +218,16 @@ export default function MarketsPage() {
                           : 'text-red-400 border-red-400/50 bg-red-400/10'
                       )}
                     >
-                      {asset.change >= 0 ? '↗' : '↘'} {asset.change.toFixed(2)}%
+                      {asset.change.toFixed(2)}% {asset.change >= 0 ? '↗' : '↘'}
                     </Badge>
                   </TableCell>
                   <TableCell>{formatMarketCap(asset.volume)}</TableCell>
                   <TableCell>{formatMarketCap(asset.cap)}</TableCell>
                   <TableCell className="text-right">
-                    <Button size="sm" asChild>
+                    <Button size="sm" asChild className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white">
                       <Link href="/user/trade">
-                        Trade <ArrowRight className="ml-2 h-4 w-4" />
+                        <Zap className="mr-2 h-4 w-4" />
+                        Trade
                       </Link>
                     </Button>
                   </TableCell>
@@ -229,5 +240,3 @@ export default function MarketsPage() {
     </div>
   );
 }
-
-    
