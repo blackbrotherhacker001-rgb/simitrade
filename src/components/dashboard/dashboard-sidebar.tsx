@@ -9,11 +9,11 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
-import { BarChart2, User, Shield, Bell, Wallet, KeyRound, HelpCircle, Settings, ChevronRight, LogOut, ArrowLeft } from 'lucide-react';
+import { BarChart2, User, Shield, Bell, Wallet, KeyRound, HelpCircle, Settings, ChevronRight, LogOut, ArrowLeft, Home } from 'lucide-react';
 import { Logo } from "../common/logo";
 
 const navItems = [
-    { href: "/dashboard", icon: BarChart2, label: "Dashboard" },
+    { href: "/dashboard/trade", icon: BarChart2, label: "Trade" },
     { href: "/dashboard/personal-info", icon: User, label: "Personal Info" },
     { href: "/dashboard/security", icon: Shield, label: "Security" },
     { href: "/dashboard/notifications", icon: Bell, label: "Notifications" },
@@ -28,9 +28,9 @@ export function DashboardSidebar() {
     return (
         <aside className="w-64 flex-shrink-0 bg-background border-r border-border/60 flex flex-col">
             <div className="h-16 flex items-center px-6 gap-2">
-                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => router.push('/')}>
-                     <ArrowLeft className="h-4 w-4"/>
-                 </Button>
+                 <Link href="/" className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), "h-8 w-8")}>
+                     <Home className="h-4 w-4"/>
+                 </Link>
                 <h1 className="text-lg font-semibold">Home</h1>
             </div>
             <div className="flex-grow flex flex-col p-4 space-y-4">
@@ -73,7 +73,7 @@ export function DashboardSidebar() {
                             >
                                 <item.icon className="mr-3 h-5 w-5" />
                                 {item.label}
-                                {item.label === 'Dashboard' && <span className="ml-auto h-2 w-2 rounded-full bg-primary animate-pulse"></span>}
+                                {item.label === 'Trade' && <span className="ml-auto h-2 w-2 rounded-full bg-primary animate-pulse"></span>}
                             </Button>
                         </Link>
                     ))}
