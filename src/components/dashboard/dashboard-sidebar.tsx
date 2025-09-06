@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { Progress } from "../ui/progress";
 import { BarChart2, User, Shield, Bell, Wallet, KeyRound, HelpCircle, Settings, ChevronRight, LogOut, ArrowLeft, Home } from 'lucide-react';
 import { Logo } from "../common/logo";

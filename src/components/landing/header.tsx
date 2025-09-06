@@ -19,6 +19,7 @@ import {
   Sun,
   User,
   Wallet,
+  Bell,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
