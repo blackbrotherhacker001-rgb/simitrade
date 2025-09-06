@@ -34,6 +34,10 @@ import {
   CheckCircle,
   XCircle,
   LogIn,
+  TrendingUp,
+  TrendingDown,
+  Shuffle,
+  ShieldQuestion,
 } from 'lucide-react';
 import {
   Table,
@@ -45,7 +49,7 @@ import {
 } from '@/components/ui/table';
 import { useAuth } from '@/hooks/use-auth';
 import type { User as UserType } from '@/types';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
@@ -124,6 +128,25 @@ export default function UserDetailPage() {
         login(user.walletAddress, user.isAdmin);
         router.push('/user/overview');
     }
+
+    const handleTradeControl = async (outcome: 'win' | 'loss' | 'default') => {
+        if (!user) return;
+        try {
+            const userDocRef = doc(db, 'users', user.walletAddress);
+            await updateDoc(userDocRef, { nextTradeOutcome: outcome });
+            toast({
+                title: 'Trade Control Set',
+                description: `User's next trade is set to ${outcome}.`,
+            });
+        } catch (error) {
+            toast({
+                variant: 'destructive',
+                title: 'Update Failed',
+                description: 'Could not update trade control setting.',
+            });
+        }
+    }
+
 
     if (loading) {
          return <div className="flex min-h-screen items-center justify-center"><p>Loading user details...</p></div>
@@ -261,18 +284,22 @@ export default function UserDetailPage() {
                             </Card>
                              <Card className="lg:col-span-1">
                                 <CardHeader>
-                                    <CardTitle className="text-lg">Account Summary</CardTitle>
+                                    <CardTitle className="text-lg">Trade Control</CardTitle>
                                 </CardHeader>
                                 <CardContent className="flex justify-around items-center">
-                                    <div className="text-center">
-                                        <p className="text-3xl font-bold">{user.activityScore}%</p>
-                                        <p className="text-sm text-muted-foreground">Activity Score</p>
-                                        <p className="text-xs text-muted-foreground">User engagement level</p>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-3xl font-bold text-destructive">{user.riskLevel}</p>
-                                        <p className="text-sm text-muted-foreground">Risk Level</p>
-                                        <p className="text-xs text-muted-foreground">Security assessment</p>
+                                    <div className="space-y-2 w-full">
+                                        <p className="text-sm text-muted-foreground text-center mb-2">Set the outcome for the user's next trade.</p>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            <Button variant="outline" onClick={() => handleTradeControl('win')} className="text-green-500 border-green-500 hover:bg-green-500/10 hover:text-green-600">
+                                                <TrendingUp className="mr-2 h-4 w-4" /> Force Win
+                                            </Button>
+                                            <Button variant="outline" onClick={() => handleTradeControl('loss')} className="text-red-500 border-red-500 hover:bg-red-500/10 hover:text-red-600">
+                                                <TrendingDown className="mr-2 h-4 w-4" /> Force Loss
+                                            </Button>
+                                            <Button variant="secondary" onClick={() => handleTradeControl('default')}>
+                                                <Shuffle className="mr-2 h-4 w-4" /> Default
+                                            </Button>
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>

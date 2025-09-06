@@ -15,6 +15,9 @@ import { useAuth } from '@/hooks/use-auth';
 import { ArrowUp, ArrowDown, ChevronUp, ChevronDown, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { User } from '@/types';
 
 interface TradeConfirmationDialogProps {
   isOpen: boolean;
@@ -33,9 +36,10 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
   const { user, updateBalance } = useAuth();
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (isOpen) {
       setCountdown(3);
-      const timer = setInterval(() => {
+      timer = setInterval(() => {
         setCountdown((prevCountdown) => {
           if (prevCountdown <= 1) {
             clearInterval(timer);
@@ -46,15 +50,43 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
           return prevCountdown - 1;
         });
       }, 1000);
-
-      return () => clearInterval(timer);
     }
+    return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
   
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!user || !trade) return;
 
-    const isWin = Math.random() > 0.4; // 60% chance to win
+    let isWin;
+    const userDocRef = doc(db, 'users', user.walletAddress);
+
+    try {
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+            const userData = userDoc.data() as User;
+            const tradeOutcome = userData.nextTradeOutcome;
+
+            if (tradeOutcome === 'win') {
+                isWin = true;
+            } else if (tradeOutcome === 'loss') {
+                isWin = false;
+            }
+
+            // Reset the trade outcome after using it
+            if (tradeOutcome && tradeOutcome !== 'default') {
+                await updateDoc(userDocRef, { nextTradeOutcome: 'default' });
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching user trade control:", error);
+    }
+
+    // If isWin is still undefined, use the default random logic
+    if (isWin === undefined) {
+        isWin = Math.random() > 0.4; // 60% chance to win
+    }
+
     const payout = trade.amount * 0.80; // 80% payout
     
     // The timeout should be based on the trade expiry
@@ -187,9 +219,10 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
           <Button 
             className="bg-green-600 hover:bg-green-700 text-white border-none"
             onClick={handleConfirm}
+            disabled={countdown > 0}
           >
              <Check className="mr-2 h-4 w-4"/>
-            Confirm ({countdown}s)
+            Confirm {countdown > 0 ? `(${countdown}s)`: ''}
           </Button>
         </DialogFooter>
       </DialogContent>

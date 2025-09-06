@@ -5,6 +5,7 @@ export interface User {
   isAdmin: boolean;
   name: string;
   lastLoginAt?: string;
+  nextTradeOutcome?: 'win' | 'loss' | 'default';
 }
 
 export interface Transaction {
