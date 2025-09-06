@@ -620,7 +620,7 @@ export default function MarketsPage() {
                   <TableCell>{formatMarketCap(asset.cap)}</TableCell>
                   <TableCell className="text-right">
                     <Button size="sm" asChild className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white">
-                      <Link href="/user/trade">
+                      <Link href="/trade">
                         <Zap className="mr-2 h-4 w-4" />
                         Trade
                       </Link>
@@ -635,4 +635,3 @@ export default function MarketsPage() {
     </div>
   );
 }
-

@@ -43,7 +43,7 @@ export function LandingHeader() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem asChild>
-                        <Link href="/user/trade">
+                        <Link href="/trade">
                             <BarChart2 className="mr-2 h-4 w-4" />
                             Spot Trading
                         </Link>
