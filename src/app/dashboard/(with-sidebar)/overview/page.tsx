@@ -44,7 +44,7 @@ export default function DashboardOverviewPage() {
         <StatCard
           title="Login Activity"
           value="4"
-          description="Logins this month"
+          description="+33% vs last month"
           descriptionColor="text-green-400"
           icon={<Activity className="h-6 w-6 text-cyan-400" />}
           iconBg="bg-cyan-400/10"
