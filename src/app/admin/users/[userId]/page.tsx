@@ -43,8 +43,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useAuth, MOCK_USERS } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import type { User as UserType } from '@/types';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 type UserDetail = UserType & {
     email: string;
@@ -64,36 +67,66 @@ export default function UserDetailPage() {
     const params = useParams();
     const { login } = useAuth();
     const [user, setUser] = useState<UserDetail | null>(null);
+    const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
 
     useEffect(() => {
-        const userId = params.userId as string;
-        if (userId && MOCK_USERS[userId]) {
-            const userData = MOCK_USERS[userId];
-            // This would in a real app be a fetch to an API. Here we construct it.
-            setUser({
-                ...userData,
-                walletAddress: userId,
-                isAdmin: userId === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1',
-                email: `${userData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
-                avatar: `https://i.pravatar.cc/150?u=${userId}`,
-                score: '32%',
-                lastLogin: 'Never',
-                activityScore: 32,
-                accountAge: '15 days',
-                riskLevel: 'High',
-                riskScore: '78/100 (20% confidence)',
-                joined: 'Aug 19, 2025',
-                emailVerified: false,
-                failedLogins: 0,
-            });
+        const fetchUser = async () => {
+            const userId = params.userId as string;
+            if (!userId) return;
+
+            setLoading(true);
+            try {
+                const userDocRef = doc(db, 'users', userId);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    const userData = userDoc.data() as UserType;
+                     setUser({
+                        ...userData,
+                        email: `${userData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
+                        avatar: `https://i.pravatar.cc/150?u=${userId}`,
+                        score: '32%',
+                        lastLogin: userData.lastLoginAt ? new Date(userData.lastLoginAt).toLocaleDateString() : 'Never',
+                        activityScore: 32,
+                        accountAge: '15 days',
+                        riskLevel: 'High',
+                        riskScore: '78/100 (20% confidence)',
+                        joined: 'Aug 19, 2025',
+                        emailVerified: false,
+                        failedLogins: 0,
+                    });
+                } else {
+                     toast({
+                        variant: "destructive",
+                        title: "User Not Found",
+                        description: "The requested user does not exist in the database.",
+                    });
+                }
+            } catch (error) {
+                 toast({
+                    variant: "destructive",
+                    title: "Error fetching user",
+                    description: "Could not load user data from the database.",
+                });
+                console.error("Error fetching user:", error);
+            } finally {
+                setLoading(false);
+            }
         }
-    }, [params.userId]);
+
+        fetchUser();
+    }, [params.userId, toast]);
 
 
     const handleLoginAsUser = () => {
         if (!user) return;
         login(user.walletAddress, user.isAdmin);
         router.push('/user/overview');
+    }
+
+    if (loading) {
+         return <div className="flex min-h-screen items-center justify-center"><p>Loading user details...</p></div>
     }
 
     if (!user) {
@@ -124,10 +157,12 @@ export default function UserDetailPage() {
                     <p className="text-xs text-muted-foreground">ID: {user.walletAddress.slice(0,15)}... | Score: {user.score}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={handleLoginAsUser}>
-                        <LogIn className="mr-2 h-4 w-4" />
-                        Login as User
-                    </Button>
+                    {!user.isAdmin && (
+                        <Button variant="outline" size="sm" onClick={handleLoginAsUser}>
+                            <LogIn className="mr-2 h-4 w-4" />
+                            Login as User
+                        </Button>
+                    )}
                     <Button variant="outline" size="sm">
                         <RefreshCw className="mr-2 h-4 w-4" />
                         Refresh

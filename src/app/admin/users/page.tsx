@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Card,
@@ -21,30 +21,76 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Eye, UserPlus, LogIn } from 'lucide-react';
-import { MOCK_USERS, useAuth } from '@/hooks/use-auth';
-
-const users = Object.entries(MOCK_USERS).map(([walletAddress, userData], index) => ({
-    id: walletAddress,
-    name: userData.name,
-    email: `${userData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
-    avatar: `https://i.pravatar.cc/150?u=${walletAddress}`,
-    balance: userData.balance,
-    status: index % 2 === 0 ? 'Active' : 'Banned',
-    isAdmin: userData.name === 'Admin User'
-}));
+import { Eye, UserPlus, LogIn, Database } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { User } from '@/types';
+import { seedUsers } from '@/lib/seed-db';
+import { useToast } from '@/hooks/use-toast';
 
 
 export default function UserManagementPage() {
     const router = useRouter();
     const { login } = useAuth();
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const usersCollection = collection(db, 'users');
+                const userSnapshot = await getDocs(usersCollection);
+                const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+                // Sort to ensure admin is always first, for consistency
+                userList.sort((a, b) => (a.isAdmin === b.isAdmin) ? 0 : a.isAdmin ? -1 : 1);
+                setUsers(userList);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+                toast({
+                    variant: "destructive",
+                    title: "Error fetching users",
+                    description: "Could not load user data from the database.",
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUsers();
+    }, [toast]);
+
+    const handleSeedData = async () => {
+        const result = await seedUsers();
+        if (result.success) {
+            toast({
+                title: "Database Seeded",
+                description: `${result.count} users have been added to Firestore.`,
+            });
+            // Refresh users
+            setLoading(true);
+            const usersCollection = collection(db, 'users');
+            const userSnapshot = await getDocs(usersCollection);
+            const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+            userList.sort((a, b) => (a.isAdmin === b.isAdmin) ? 0 : a.isAdmin ? -1 : 1);
+            setUsers(userList);
+            setLoading(false);
+        } else {
+             toast({
+                variant: "destructive",
+                title: "Seeding Failed",
+                description: `Could not seed the database.`,
+            });
+        }
+    }
 
     const handleViewUser = (userId: string) => {
         router.push(`/admin/users/${userId}`);
     }
 
-    const handleLoginAsUser = (userId: string) => {
-      login(userId, false);
+    const handleLoginAsUser = (userId: string, isAdmin: boolean) => {
+      login(userId, isAdmin);
       router.push('/user/overview');
     }
 
@@ -55,13 +101,19 @@ export default function UserManagementPage() {
             <div>
                 <CardTitle>User List</CardTitle>
                 <CardDescription>
-                    Browse and manage all registered users on the platform.
+                    Browse and manage all registered users on the platform from Firestore.
                 </CardDescription>
             </div>
-            <Button>
-                <UserPlus className="mr-2 h-4 w-4" />
-                Add User
-            </Button>
+            <div className="flex gap-2">
+                <Button onClick={handleSeedData}>
+                    <Database className="mr-2 h-4 w-4" />
+                    Seed Database
+                </Button>
+                <Button>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Add User
+                </Button>
+            </div>
         </CardHeader>
         <CardContent>
              <Table>
@@ -76,41 +128,56 @@ export default function UserManagementPage() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {users.map(user => (
-                        <TableRow key={user.id}>
-                            <TableCell>
-                                <div className="flex items-center gap-3">
-                                    <Avatar className="h-9 w-9">
-                                        <AvatarImage src={user.avatar} alt={user.name} />
-                                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                    </Avatar>
-                                    <span className="font-medium">{user.name}</span>
-                                </div>
-                            </TableCell>
-                            <TableCell>{user.email}</TableCell>
-                             <TableCell>
-                                {user.isAdmin ? <Badge variant="secondary">Admin</Badge> : <Badge variant="outline">User</Badge>}
-                            </TableCell>
-                            <TableCell>${user.balance.toLocaleString()}</TableCell>
-                            <TableCell>
-                                <Badge variant={user.status === 'Active' ? 'default' : 'destructive'}>
-                                {user.status}
-                                </Badge>
-                            </TableCell>
-                            <TableCell className="text-right">
-                                <div className="flex gap-2 justify-end">
-                                    <Button variant="outline" size="sm" onClick={() => handleLoginAsUser(user.id)}>
-                                        <LogIn className="mr-2 h-4 w-4"/>
-                                        Login
-                                    </Button>
-                                    <Button variant="outline" size="sm" onClick={() => handleViewUser(user.id)}>
-                                        <Eye className="mr-2 h-4 w-4"/>
-                                        View
-                                    </Button>
-                                </div>
+                    {loading ? (
+                        <TableRow>
+                            <TableCell colSpan={6} className="text-center py-8">Loading users...</TableCell>
+                        </TableRow>
+                    ) : users.length === 0 ? (
+                        <TableRow>
+                             <TableCell colSpan={6} className="text-center py-8">
+                                No users found in the database.
+                                <Button variant="link" onClick={handleSeedData}>Seed the database with demo users.</Button>
                             </TableCell>
                         </TableRow>
-                    ))}
+                    ) : (
+                        users.map(user => (
+                            <TableRow key={user.walletAddress}>
+                                <TableCell>
+                                    <div className="flex items-center gap-3">
+                                        <Avatar className="h-9 w-9">
+                                            <AvatarImage src={`https://i.pravatar.cc/150?u=${user.walletAddress}`} alt={user.name} />
+                                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        <span className="font-medium">{user.name}</span>
+                                    </div>
+                                </TableCell>
+                                <TableCell>{`${user.name.toLowerCase().replace(/\s/g, '.')}@email.com`}</TableCell>
+                                <TableCell>
+                                    {user.isAdmin ? <Badge variant="secondary">Admin</Badge> : <Badge variant="outline">User</Badge>}
+                                </TableCell>
+                                <TableCell>${user.balance.toLocaleString()}</TableCell>
+                                <TableCell>
+                                    <Badge variant={'default'}>
+                                        Active
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                    <div className="flex gap-2 justify-end">
+                                        {!user.isAdmin && (
+                                            <Button variant="outline" size="sm" onClick={() => handleLoginAsUser(user.walletAddress, user.isAdmin)}>
+                                                <LogIn className="mr-2 h-4 w-4"/>
+                                                Login
+                                            </Button>
+                                        )}
+                                        <Button variant="outline" size="sm" onClick={() => handleViewUser(user.walletAddress)}>
+                                            <Eye className="mr-2 h-4 w-4"/>
+                                            View
+                                        </Button>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    )}
                 </TableBody>
             </Table>
         </CardContent>
