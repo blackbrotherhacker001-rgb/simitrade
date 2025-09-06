@@ -16,7 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { ProfileDialog } from '@/components/dashboard/profile-dialog';
 import { TransactionsHistory } from '@/components/dashboard/transactions-history';
 
-export default function ProfilePage() {
+export default function PersonalInfoPage() {
   const { user } = useAuth();
 
   if (!user) {
@@ -52,7 +52,7 @@ export default function ProfilePage() {
     <div className="container mx-auto p-4 md:p-6">
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-3xl">User Profile</CardTitle>
+          <CardTitle className="text-3xl">Personal Info</CardTitle>
           <CardDescription>View and manage your account details and wallet.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
