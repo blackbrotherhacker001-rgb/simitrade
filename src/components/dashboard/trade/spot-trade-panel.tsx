@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
+import { Label } from '@/components/ui/label';
 
 export function SpotTradePanel() {
   const { user } = useAuth();
