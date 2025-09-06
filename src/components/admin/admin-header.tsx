@@ -151,7 +151,7 @@ export function AdminHeader() {
                                <Link href="/admin/ai/investment/duration" className="flex items-center gap-2">
                                     <Clock className="mr-2 h-4 w-4"/>
                                     Trading Durations
-                               </Link>
+                                </Link>
                             </DropdownMenuItem>
                         </DropdownMenuSubContent>
                     </DropdownMenuPortal>
