@@ -79,7 +79,7 @@ const assets = [
   {
     symbol: 'XRP',
     pair: 'XRP/USDT',
-    price: 2.8221,
+    price: 2.82,
     change: 0.79,
     volume: 324830000,
     cap: 2820000,
@@ -88,7 +88,7 @@ const assets = [
   {
     symbol: 'TRX',
     pair: 'TRX/USDT',
-    price: 0.3317,
+    price: 0.33,
     change: -1.04,
     volume: 122290000,
     cap: 331700,
@@ -97,7 +97,7 @@ const assets = [
    {
     symbol: 'SUI',
     pair: 'SUI/USDT',
-    price: 3.404,
+    price: 3.40,
     change: 2.64,
     volume: 112050000,
     cap: 3400000,
@@ -109,13 +109,15 @@ const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value);
 };
 
 const formatMarketCap = (value: number) => {
-  if (value >= 1e9) return `${formatCurrency(value / 1e9)}B`;
-  if (value >= 1e6) return `${formatCurrency(value / 1e6)}M`;
-  if (value >= 1e3) return `${formatCurrency(value / 1e3)}K`;
+  if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
+  if (value >= 1e6) return `$${(value / 1e6).toFixed(2)}M`;
+  if (value >= 1e3) return `$${(value / 1e3).toFixed(2)}K`;
   return formatCurrency(value);
 };
 
