@@ -29,7 +29,8 @@ export default function UserDashboardLayout({
     }
   }, [user, router, params]);
   
-  const isTradingPage = pathname.includes('/trade');
+  const isUserPageButNotTrade = pathname.startsWith('/user') && !pathname.includes('/trade') && !pathname.includes('/binary-trading');
+
 
   if (!user || (params.userId && user.walletAddress !== params.userId)) {
     return (
@@ -39,26 +40,23 @@ export default function UserDashboardLayout({
     );
   }
 
-  if (isTradingPage) {
-    return (
-        <div className="flex flex-col h-screen">
+  if (isUserPageButNotTrade) {
+     return (
+        <div className="flex min-h-screen">
+        <DashboardSidebar />
+        <div className="flex-1 flex flex-col">
             <Header />
             <main className="flex-1 bg-[#161A25] overflow-y-auto">
-                {children}
+            {children}
             </main>
         </div>
-    )
+        </div>
+    );
   }
 
   return (
-    <div className="flex min-h-screen">
-      <DashboardSidebar />
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1 bg-[#161A25] overflow-y-auto">
-          {children}
-        </main>
-      </div>
-    </div>
+    <>
+      {children}
+    </>
   );
 }
