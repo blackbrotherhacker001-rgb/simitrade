@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowUp, ArrowDown, Minus, Plus, Wallet, Shield, Clock, Check } from 'lucide-react';
+import { ArrowUp, ArrowDown, Minus, Plus, Wallet, Shield, Clock, Check, DollarSign } from 'lucide-react';
 import { TradeConfirmationDialog } from './trade-confirmation-dialog';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
@@ -20,6 +20,10 @@ const expiryOptions = [
     { duration: 300, label: '5 min', payout: 85 },
     { duration: 900, label: '15 min', payout: 80 },
 ];
+
+const quickAmounts = [100, 500, 1000];
+const quickPercentages = [10, 25, 50, 100];
+
 
 export function TradePanel() {
   const [amount, setAmount] = useState(1000);
@@ -78,19 +82,44 @@ export function TradePanel() {
         <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Amount</label>
-                <div className="flex items-center border border-input rounded-md">
-                     <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setAmount(p => Math.max(10, p-10))}><Minus className="h-4 w-4"/></Button>
-                     <Input 
-                        value={`$${amount.toLocaleString()}`} 
-                        onChange={(e) => {
-                            const val = parseInt(e.target.value.replace(/[^0-9]/g, ''));
-                            if (!isNaN(val)) setAmount(val);
-                        }}
-                        className="w-full text-center border-none focus-visible:ring-0 shadow-none" 
-                     />
-                    <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setAmount(p => p+10)}><Plus className="h-4 w-4"/></Button>
-                </div>
-                <p className="text-xs text-muted-foreground">{((amount / balance) * 100).toFixed(1)}% of balance</p>
+                <Popover>
+                    <PopoverTrigger asChild>
+                         <div className="flex items-center justify-between border border-input rounded-md h-10 px-3 cursor-pointer">
+                             <div className="flex items-center gap-2">
+                                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-semibold">${amount.toLocaleString()}</span>
+                            </div>
+                            <span className="text-sm text-muted-foreground">{((amount / balance) * 100).toFixed(1)}%</span>
+                        </div>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 bg-[#1F2328] border-gray-700 p-3" align="start">
+                        <div className="space-y-3">
+                            <h4 className="font-semibold text-white">Select Amount</h4>
+                            <div className="grid grid-cols-3 gap-2">
+                                {quickAmounts.map(qa => (
+                                    <Button key={qa} variant="secondary" className="bg-card/50" onClick={() => setAmount(qa)}>${qa}</Button>
+                                ))}
+                            </div>
+                            <div className="grid grid-cols-4 gap-2">
+                                 {quickPercentages.map(qp => (
+                                    <Button key={qp} variant="secondary" className="bg-card/50" onClick={() => setAmount(balance * (qp/100))}>{qp}%</Button>
+                                ))}
+                            </div>
+                            <div className="relative">
+                               <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                               <Input 
+                                    value={amount} 
+                                    type="number"
+                                    onChange={(e) => {
+                                        const val = parseInt(e.target.value);
+                                        if (!isNaN(val)) setAmount(val);
+                                    }}
+                                    className="pl-8" 
+                                 />
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
             </div>
              <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Expiry</label>
