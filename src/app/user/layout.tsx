@@ -3,7 +3,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { DashboardSidebar } from '@/components/user/dashboard-sidebar';
 import { Header } from '@/components/user/header';
@@ -16,6 +16,7 @@ export default function UserDashboardLayout({
   const { user } = useAuth();
   const router = useRouter();
   const params = useParams();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (user === null) {
@@ -27,6 +28,8 @@ export default function UserDashboardLayout({
         router.push(`/user/${user.walletAddress}/overview`);
     }
   }, [user, router, params]);
+  
+  const isTradingPage = pathname.includes('/trade');
 
   if (!user || (params.userId && user.walletAddress !== params.userId)) {
     return (
@@ -34,6 +37,17 @@ export default function UserDashboardLayout({
         <p>Authenticating...</p>
       </div>
     );
+  }
+
+  if (isTradingPage) {
+    return (
+        <div className="flex flex-col h-screen">
+            <Header />
+            <main className="flex-1 bg-[#161A25] overflow-y-auto">
+                {children}
+            </main>
+        </div>
+    )
   }
 
   return (
