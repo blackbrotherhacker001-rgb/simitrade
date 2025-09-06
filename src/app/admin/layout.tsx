@@ -17,13 +17,17 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (user === null) {
-      router.push('/');
+      // If there's no user, we might be waiting for localStorage to load.
+      // A more robust solution might wait a moment, but for now,
+      // a simple redirect if the user is explicitly not an admin is safer.
     } else if (!user.isAdmin) {
       router.push('/user/overview');
     }
   }, [user, router]);
 
   if (!user || !user.isAdmin) {
+    // Avoid rendering the children if the user is not an admin.
+    // This prevents flashing of admin content for non-admin users.
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Authenticating...</p>

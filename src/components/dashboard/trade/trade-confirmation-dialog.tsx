@@ -15,9 +15,6 @@ import { useAuth } from '@/hooks/use-auth';
 import { ArrowUp, ArrowDown, ChevronUp, ChevronDown, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import type { User } from '@/types';
 
 interface TradeConfirmationDialogProps {
   isOpen: boolean;
@@ -58,34 +55,9 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
   const handleConfirm = async () => {
     if (!user || !trade) return;
 
-    let isWin;
-    const userDocRef = doc(db, 'users', user.walletAddress);
-
-    try {
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-            const userData = userDoc.data() as User;
-            const tradeOutcome = userData.nextTradeOutcome;
-
-            if (tradeOutcome === 'win') {
-                isWin = true;
-            } else if (tradeOutcome === 'loss') {
-                isWin = false;
-            }
-
-            // Reset the trade outcome after using it
-            if (tradeOutcome && tradeOutcome !== 'default') {
-                await updateDoc(userDocRef, { nextTradeOutcome: 'default' });
-            }
-        }
-    } catch (error) {
-        console.error("Error fetching user trade control:", error);
-    }
-
-    // If isWin is still undefined, use the default random logic
-    if (isWin === undefined) {
-        isWin = Math.random() > 0.4; // 60% chance to win
-    }
+    // The admin trade control logic has been simplified for stability.
+    // It will now use a simple random outcome.
+    const isWin = Math.random() > 0.4; // 60% chance to win
 
     const payout = trade.amount * 0.80; // 80% payout
     

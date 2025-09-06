@@ -10,9 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { User } from '@/types';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { MOCK_USERS, ADMIN_WALLET_ADDRESS, USER_WALLET_ADDRESS } from '@/lib/constants';
+import { ADMIN_WALLET_ADDRESS, MOCK_USERS } from '@/lib/constants';
 
 interface AuthContextType {
   user: User | null;
@@ -42,14 +40,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = useCallback(async (walletAddress: string, isAdmin: boolean) => {
-    // For the demo, we will use the mock user data to ensure a smooth login experience,
-    // avoiding race conditions with Firestore on initial authentication.
+  const login = useCallback((walletAddress: string, isAdmin: boolean) => {
     const mockUserData = MOCK_USERS[walletAddress];
 
     if (!mockUserData) {
       console.error('Login failed: User not found in mock data.');
-      setNeedsLogin(false);
+      setNeedsLogin(false); // Close dialog even if login fails
       return;
     }
     
@@ -58,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: mockUserData.name,
       balance: mockUserData.balance,
       lastLoginAt: new Date().toISOString(),
-      isAdmin: isAdmin,
+      isAdmin,
     };
     
     setUser(userData);

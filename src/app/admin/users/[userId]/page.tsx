@@ -49,9 +49,8 @@ import {
 } from '@/components/ui/table';
 import { useAuth } from '@/hooks/use-auth';
 import type { User as UserType } from '@/types';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { MOCK_USERS } from '@/lib/constants';
 
 type UserDetail = UserType & {
     email: string;
@@ -80,43 +79,33 @@ export default function UserDetailPage() {
             if (!userId) return;
 
             setLoading(true);
-            try {
-                const userDocRef = doc(db, 'users', userId);
-                const userDoc = await getDoc(userDocRef);
+            const userData = MOCK_USERS[userId];
 
-                if (userDoc.exists()) {
-                    const userData = userDoc.data() as UserType;
-                     setUser({
-                        ...userData,
-                        email: `${userData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
-                        avatar: `https://i.pravatar.cc/150?u=${userId}`,
-                        score: '32%',
-                        lastLogin: userData.lastLoginAt ? new Date(userData.lastLoginAt).toLocaleDateString() : 'Never',
-                        activityScore: 32,
-                        accountAge: '15 days',
-                        riskLevel: 'High',
-                        riskScore: '78/100 (20% confidence)',
-                        joined: 'Aug 19, 2025',
-                        emailVerified: false,
-                        failedLogins: 0,
-                    });
-                } else {
-                     toast({
-                        variant: "destructive",
-                        title: "User Not Found",
-                        description: "The requested user does not exist in the database.",
-                    });
-                }
-            } catch (error) {
+            if (userData) {
+                 setUser({
+                    ...userData,
+                    walletAddress: userId,
+                    isAdmin: userId === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1',
+                    email: `${userData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
+                    avatar: `https://i.pravatar.cc/150?u=${userId}`,
+                    score: '32%',
+                    lastLogin: userData.lastLoginAt ? new Date(userData.lastLoginAt).toLocaleDateString() : 'Never',
+                    activityScore: 32,
+                    accountAge: '15 days',
+                    riskLevel: 'High',
+                    riskScore: '78/100 (20% confidence)',
+                    joined: 'Aug 19, 2025',
+                    emailVerified: false,
+                    failedLogins: 0,
+                });
+            } else {
                  toast({
                     variant: "destructive",
-                    title: "Error fetching user",
-                    description: "Could not load user data from the database.",
+                    title: "User Not Found",
+                    description: "The requested user does not exist.",
                 });
-                console.error("Error fetching user:", error);
-            } finally {
-                setLoading(false);
             }
+            setLoading(false);
         }
 
         fetchUser();
@@ -130,21 +119,10 @@ export default function UserDetailPage() {
     }
 
     const handleTradeControl = async (outcome: 'win' | 'loss' | 'default') => {
-        if (!user) return;
-        try {
-            const userDocRef = doc(db, 'users', user.walletAddress);
-            await updateDoc(userDocRef, { nextTradeOutcome: outcome });
-            toast({
-                title: 'Trade Control Set',
-                description: `User's next trade is set to ${outcome}.`,
-            });
-        } catch (error) {
-            toast({
-                variant: 'destructive',
-                title: 'Update Failed',
-                description: 'Could not update trade control setting.',
-            });
-        }
+        toast({
+            title: 'Trade Control (Simulated)',
+            description: `User's next trade set to ${outcome}. This is a simulated action.`,
+        });
     }
 
 

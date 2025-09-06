@@ -11,9 +11,7 @@ import { Bot, Send, Sparkles, Image as ImageIcon, MessageSquare } from 'lucide-r
 import { cn } from '@/lib/utils';
 import { chat } from '@/ai/flows/chat-flow';
 import { useToast } from '@/hooks/use-toast';
-import { collection, doc, onSnapshot, setDoc, getDocs, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth, MOCK_USERS } from '@/hooks/use-auth';
 
 type Message = {
   role: 'user' | 'model';
@@ -26,8 +24,6 @@ type ChatUser = {
   online: boolean;
 };
 
-const CHATS_COLLECTION = 'chats';
-
 export default function LiveChatPage() {
   const [chatUsers, setChatUsers] = useState<ChatUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
@@ -36,65 +32,32 @@ export default function LiveChatPage() {
   const [loadingSuggestion, setLoadingSuggestion] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { user } = useAuth(); // Using auth hook to ensure firebase is ready
-
+  
   useEffect(() => {
-    // Only fetch users if the admin user is loaded, ensuring Firebase is connected.
-    if (!user) return;
-
-    // Fetch all users with chat history
-    const fetchChatUsers = async () => {
-        try {
-            const chatsSnapshot = await getDocs(collection(db, CHATS_COLLECTION));
-            const usersWithChats: ChatUser[] = [];
-
-            for (const chatDoc of chatsSnapshot.docs) {
-                const userDoc = await getDoc(doc(db, 'users', chatDoc.id));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    usersWithChats.push({
-                        id: chatDoc.id,
-                        name: userData.name || 'Unknown User',
-                        online: true, // Simplified for this demo
-                    });
-                }
-            }
-            setChatUsers(usersWithChats);
-            if (usersWithChats.length > 0) {
-              setSelectedUser(usersWithChats[0]);
-            }
-        } catch (error) {
-            console.error("Error fetching chat users:", error);
-            toast({
-                variant: 'destructive',
-                title: 'Error Loading Chats',
-                description: 'Could not fetch user chat sessions from Firestore.'
-            });
-        }
-    };
-    fetchChatUsers();
-  }, [toast, user]);
+    // Using mock users for stability
+    const users = Object.entries(MOCK_USERS)
+        .filter(([id, user]) => !user.isAdmin)
+        .map(([id, user]) => ({
+            id,
+            name: user.name,
+            online: true, // Simplified for demo
+        }));
+    setChatUsers(users);
+    if (users.length > 0) {
+      setSelectedUser(users[0]);
+    }
+  }, []);
 
 
-  // Effect to load messages and listen for real-time updates
+  // Effect to load messages
   useEffect(() => {
     if (!selectedUser) {
         setMessages([]);
         return;
     };
-
-    const chatDocRef = doc(db, CHATS_COLLECTION, selectedUser.id);
-    const unsubscribe = onSnapshot(chatDocRef, (docSnap) => {
-        if (docSnap.exists()) {
-            setMessages(docSnap.data().messages || []);
-        } else {
-            setMessages([]);
-        }
-    }, (error) => {
-        console.error("Error listening to chat document:", error);
-    });
-
-    return () => unsubscribe();
+    // For this reverted version, we'll just show a welcome message.
+    // A more complex implementation could use localStorage per-user.
+    setMessages([{ role: 'model', content: `You are now chatting with ${selectedUser.name}.` }]);
   }, [selectedUser]);
 
   const handleUserSelect = (user: ChatUser) => {
@@ -105,17 +68,16 @@ export default function LiveChatPage() {
     if (input.trim() === '' || !selectedUser) return;
     const newMessages: Message[] = [...messages, { role: 'model', content: input }];
     setMessages(newMessages);
-
-    const chatDocRef = doc(db, CHATS_COLLECTION, selectedUser.id);
-    await setDoc(chatDocRef, { messages: newMessages }, { merge: true });
-
+    // In this reverted version, we don't persist to Firestore.
     setInput('');
   };
 
   const handleGenerateSuggestion = async () => {
     setLoadingSuggestion(true);
     try {
-      const result = await chat({ history: messages });
+      // Create a history that looks like a real conversation for the AI
+      const historyForAI = [...messages, { role: 'user', content: "..." }]; // Dummy user message
+      const result = await chat({ history: historyForAI });
       setInput(result.reply);
     } catch (error) {
       console.error("Failed to generate suggestion:", error);

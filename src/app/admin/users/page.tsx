@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Card,
@@ -23,66 +23,30 @@ import {
 } from '@/components/ui/table';
 import { Eye, UserPlus, LogIn, Database } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import type { User } from '@/types';
-import { seedUsers } from '@/lib/seed-db';
 import { useToast } from '@/hooks/use-toast';
-
+import { MOCK_USERS } from '@/lib/constants';
 
 export default function UserManagementPage() {
     const router = useRouter();
     const { login } = useAuth();
-    const [users, setUsers] = useState<User[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [users, setUsers] = useState<User[]>(() => {
+        const userList = Object.entries(MOCK_USERS).map(([walletAddress, userData]) => ({
+            ...userData,
+            walletAddress,
+            isAdmin: walletAddress === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1',
+        }));
+        userList.sort((a, b) => (a.isAdmin === b.isAdmin) ? 0 : a.isAdmin ? -1 : 1);
+        return userList;
+    });
+    const [loading, setLoading] = useState(false);
     const { toast } = useToast();
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const usersCollection = collection(db, 'users');
-                const userSnapshot = await getDocs(usersCollection);
-                const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
-                // Sort to ensure admin is always first, for consistency
-                userList.sort((a, b) => (a.isAdmin === b.isAdmin) ? 0 : a.isAdmin ? -1 : 1);
-                setUsers(userList);
-            } catch (error) {
-                console.error("Error fetching users:", error);
-                toast({
-                    variant: "destructive",
-                    title: "Error fetching users",
-                    description: "Could not load user data from the database.",
-                });
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUsers();
-    }, [toast]);
-
     const handleSeedData = async () => {
-        const result = await seedUsers();
-        if (result.success) {
-            toast({
-                title: "Database Seeded",
-                description: `${result.count} users have been added to Firestore.`,
-            });
-            // Refresh users
-            setLoading(true);
-            const usersCollection = collection(db, 'users');
-            const userSnapshot = await getDocs(usersCollection);
-            const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
-            userList.sort((a, b) => (a.isAdmin === b.isAdmin) ? 0 : a.isAdmin ? -1 : 1);
-            setUsers(userList);
-            setLoading(false);
-        } else {
-             toast({
-                variant: "destructive",
-                title: "Seeding Failed",
-                description: `Could not seed the database.`,
-            });
-        }
+        toast({
+            title: "Database Seeding Disabled",
+            description: "This feature is temporarily disabled for stability.",
+        });
     }
 
     const handleViewUser = (userId: string) => {
@@ -101,7 +65,7 @@ export default function UserManagementPage() {
             <div>
                 <CardTitle>User List</CardTitle>
                 <CardDescription>
-                    Browse and manage all registered users on the platform from Firestore.
+                    Browse and manage all registered users on the platform.
                 </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -135,8 +99,7 @@ export default function UserManagementPage() {
                     ) : users.length === 0 ? (
                         <TableRow>
                              <TableCell colSpan={6} className="text-center py-8">
-                                No users found in the database.
-                                <Button variant="link" onClick={handleSeedData}>Seed the database with demo users.</Button>
+                                No users found.
                             </TableCell>
                         </TableRow>
                     ) : (
@@ -185,3 +148,4 @@ export default function UserManagementPage() {
     </div>
   );
 }
+
