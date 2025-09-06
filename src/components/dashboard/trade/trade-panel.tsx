@@ -4,14 +4,21 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowUp, ArrowDown, Minus, Plus, Wallet, Shield } from 'lucide-react';
+import { ArrowUp, ArrowDown, Minus, Plus, Wallet, Shield, Clock, Check } from 'lucide-react';
 import { TradeConfirmationDialog } from './trade-confirmation-dialog';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { Input } from '@/components/ui/input';
 import { TradeSettingsDialog } from './trade-settings-dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 type TradeType = 'RISE' | 'FALL';
+
+const expiryOptions = [
+    { duration: 60, label: '1 min', payout: 87 },
+    { duration: 300, label: '5 min', payout: 85 },
+    { duration: 900, label: '15 min', payout: 80 },
+];
 
 export function TradePanel() {
   const [amount, setAmount] = useState(1000);
@@ -45,8 +52,17 @@ export function TradePanel() {
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
-    if (m > 0) return `${m} minute${m > 1 ? 's' : ''}`;
+    if (m > 0) {
+        if (s > 0) return `${m}m ${s}s`;
+        return `${m} minute${m > 1 ? 's' : ''}`;
+    }
     return `${s} seconds`;
+  }
+  
+  const getExpiryTime = (durationInSeconds: number) => {
+      const now = new Date();
+      now.setSeconds(now.getSeconds() + durationInSeconds);
+      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'});
   }
 
   const formatTimer = (seconds: number) => {
@@ -77,12 +93,53 @@ export function TradePanel() {
             </div>
              <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Expiry</label>
-                <div className="flex items-center border border-input rounded-md">
-                     <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setExpiry(p => Math.max(15, p-15))}><Minus className="h-4 w-4"/></Button>
-                     <div className="w-full text-center text-sm py-2">{new Date(Date.now() + expiry * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})} PM</div>
-                    <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setExpiry(p => p+15)}><Plus className="h-4 w-4"/></Button>
-                </div>
-                <p className="text-xs text-muted-foreground">{formatTime(expiry)}</p>
+                 <Popover>
+                    <PopoverTrigger asChild>
+                        <div className="flex items-center justify-between border border-input rounded-md h-10 px-3 cursor-pointer">
+                             <div className="flex items-center gap-2">
+                                <Clock className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-semibold">{getExpiryTime(expiry)}</span>
+                            </div>
+                            <span className="text-sm text-muted-foreground">{formatTime(expiry)}</span>
+                        </div>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 bg-[#1F2328] border-gray-700 p-0">
+                        <div className="p-3">
+                            <h4 className="font-semibold text-white">Expiry Time</h4>
+                        </div>
+                         <div className="flex flex-col gap-1 px-2 pb-2">
+                            {expiryOptions.map(option => (
+                                <div 
+                                    key={option.duration}
+                                    onClick={() => setExpiry(option.duration)}
+                                    className={cn(
+                                        "p-2 rounded-md cursor-pointer flex justify-between items-center",
+                                        expiry === option.duration ? 'bg-green-500/20 text-green-400' : 'hover:bg-card/50'
+                                    )}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {expiry === option.duration && <Check className="h-4 w-4 text-green-400"/>}
+                                        <div>
+                                            <p className={cn("font-semibold", expiry === option.duration ? 'text-green-400' : 'text-white')}>{getExpiryTime(option.duration)}</p>
+                                            <p className={cn("text-xs", expiry === option.duration ? 'text-green-400/80' : 'text-muted-foreground')}>{option.label}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <Badge className={cn(expiry === option.duration ? 'bg-green-500 text-white' : 'bg-green-500/20 text-green-400')}>{option.payout}%</Badge>
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            <Clock className="inline-block h-3 w-3 mr-1" />
+                                            {formatTimer(option.duration - 10)}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                         </div>
+                         <div className="border-t border-gray-700 p-3 flex justify-between items-center text-sm">
+                            <p className="text-muted-foreground">Next expiry in:</p>
+                            <p className="font-mono font-semibold text-white">{formatTimer(nextExpiryTime)}</p>
+                         </div>
+                    </PopoverContent>
+                 </Popover>
             </div>
         </div>
 
