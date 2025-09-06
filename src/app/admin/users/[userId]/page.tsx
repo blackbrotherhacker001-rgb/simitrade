@@ -117,7 +117,7 @@ export default function UserDetailPage() {
     const handleLoginAsUser = () => {
         if (!user) return;
         login(user.walletAddress, user.isAdmin);
-        router.push(`/user/${user.walletAddress}/overview`);
+        router.push(`/user/overview`);
     }
 
     const handleTradeControl = (outcome: 'win' | 'loss' | 'default') => {
@@ -294,7 +294,7 @@ export default function UserDetailPage() {
                                     <CardTitle className="text-lg">Trade Control</CardTitle>
                                     <CardDescription className="text-xs">Set the outcome for the user's next trade.</CardDescription>
                                 </CardHeader>
-                                <CardContent className="flex flex-col items-center justify-center h-full">
+                                <CardContent className="flex items-center justify-center">
                                     <div className="grid grid-cols-3 gap-2 w-full">
                                         <Button variant="outline" onClick={() => handleTradeControl('win')} className="text-green-500 border-green-500 hover:bg-green-500/10 hover:text-green-600 flex-1">
                                             <TrendingUp className="mr-2 h-4 w-4" /> Win
@@ -348,3 +348,5 @@ export default function UserDetailPage() {
     </div>
   );
 }
+
+    

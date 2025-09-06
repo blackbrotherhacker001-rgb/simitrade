@@ -73,11 +73,13 @@ export default function UserManagementPage() {
 
     const fetchUsers = () => {
         setLoading(true);
+        // Directly use the MOCK_USERS object to build the user list
         const userList = Object.entries(MOCK_USERS).map(([walletAddress, data]) => ({
             ...data,
             walletAddress,
             isAdmin: walletAddress === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1',
         }));
+        // Sort to show admin user first
         userList.sort((a, b) => (a.isAdmin === b.isAdmin) ? 0 : a.isAdmin ? -1 : 1);
         setUsers(userList);
         setLoading(false);
@@ -88,7 +90,10 @@ export default function UserManagementPage() {
     }, []);
 
     const handleAddUser = (values: AddUserFormValues) => {
+        // Generate a new unique wallet address for the simulation
         const newWalletAddress = `0x${[...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`;
+        
+        // This is a temporary user object to add to the list
         const newUser: User = {
             walletAddress: newWalletAddress,
             name: values.name,
@@ -97,13 +102,15 @@ export default function UserManagementPage() {
             lastLoginAt: new Date().toISOString(),
         };
 
-        // In a real app, this would be an API call. Here, we just add to the local state.
+        // IMPORTANT: To persist the new user for the session, we add it to the mock object.
+        // In a real app, this would be an API call to a database.
         MOCK_USERS[newWalletAddress] = {
             name: newUser.name,
             balance: newUser.balance,
             lastLoginAt: newUser.lastLoginAt!,
         };
         
+        // Update the local state to re-render the table with the new user
         setUsers(prevUsers => [...prevUsers, newUser]);
         
         toast({
@@ -121,7 +128,7 @@ export default function UserManagementPage() {
 
     const handleLoginAsUser = (userId: string, isAdmin: boolean) => {
       login(userId, isAdmin);
-      router.push(`/user/${userId}/overview`);
+      router.push(`/user/overview`);
     }
 
   return (
@@ -143,14 +150,14 @@ export default function UserManagementPage() {
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Create New User</DialogTitle>
-                            <DialogDescription>
-                                Fill out the form below to add a new user to the system.
-                            </DialogDescription>
-                        </DialogHeader>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(handleAddUser)} className="space-y-4">
+                                <DialogHeader>
+                                    <DialogTitle>Create New User</DialogTitle>
+                                    <DialogDescription>
+                                        Fill out the form below to add a new user to the system.
+                                    </DialogDescription>
+                                </DialogHeader>
                                 <FormField
                                     control={form.control}
                                     name="name"
@@ -261,3 +268,5 @@ export default function UserManagementPage() {
     </div>
   );
 }
+
+    

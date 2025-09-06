@@ -58,20 +58,20 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
     let isWin: boolean;
     let tradeControl = 'default';
 
-    // Check for admin override
+    // Check for admin override from localStorage
     try {
         const storedControls = localStorage.getItem('trade-controls');
         if (storedControls) {
             const controls = JSON.parse(storedControls);
             if (controls[user.walletAddress]) {
                 tradeControl = controls[user.walletAddress];
-                // Clear the control after using it
+                // Clear the control after using it for a one-time effect
                 delete controls[user.walletAddress];
                 localStorage.setItem('trade-controls', JSON.stringify(controls));
             }
         }
     } catch(e) {
-        console.error("Could not read trade controls", e);
+        console.error("Could not read trade controls from localStorage", e);
     }
 
     if (tradeControl === 'win') {
@@ -79,14 +79,14 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
     } else if (tradeControl === 'loss') {
         isWin = false;
     } else {
-        // Default behavior
+        // Default behavior: slightly in favor of the user for a better demo experience
         isWin = Math.random() > 0.4; // 60% chance to win
     }
 
 
-    const payout = trade.amount * 0.80; // 80% payout
+    const payout = trade.amount * 0.87; // 87% payout to match display
     
-    // The timeout should be based on the trade expiry
+    // The timeout simulates the trade duration
     const confirmationTimeout = setTimeout(() => {
         if (isWin) {
             updateBalance(user.balance + payout);
@@ -104,7 +104,7 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
         }
     }, trade.expiry * 1000);
 
-    // Give immediate feedback
+    // Give immediate feedback that the trade has been placed
     toast({
         title: "Trade Placed",
         description: `Your ${trade.type} trade for $${trade.amount} has been placed.`
@@ -128,9 +128,9 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
   const expiryTime = expiryDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true});
   const expiryMinutes = Math.round(trade.expiry / 60);
 
-  const potentialProfit = trade.amount * 0.80;
+  const potentialProfit = trade.amount * 0.87;
   const potentialLoss = trade.amount;
-  const profitPercentage = 80;
+  const profitPercentage = 87;
   const lossPercentage = 100;
 
   return (
@@ -195,7 +195,7 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
                     </div>
                     <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Risk/Reward Ratio:</span>
-                        <span className="text-white">1:0.80</span>
+                        <span className="text-white">1:0.87</span>
                     </div>
                     <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Execution:</span>
@@ -226,3 +226,5 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
     </Dialog>
   );
 }
+
+    
