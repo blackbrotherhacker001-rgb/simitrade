@@ -11,7 +11,7 @@ import {
 } from 'react';
 import type { User } from '@/types';
 
-const MOCK_USERS: Record<string, Omit<User, 'walletAddress' | 'isAdmin'>> = {
+export const MOCK_USERS: Record<string, Omit<User, 'walletAddress' | 'isAdmin'>> = {
     '0x1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa': { name: 'Satoshi Nakamoto', balance: 980000, lastLoginAt: '2025-08-23T14:07:03Z' },
     '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045': { name: 'Vitalik Buterin', balance: 450000, lastLoginAt: '2025-08-23T13:07:03Z' },
     '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2': { name: 'Charles Hoskinson', balance: 250000, lastLoginAt: '2025-08-22T18:30:00Z' },
