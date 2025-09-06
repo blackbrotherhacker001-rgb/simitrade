@@ -35,7 +35,8 @@ import {
   FileUp,
   ArrowUpFromLine,
   Clock,
-  Type
+  Type,
+  LogOut,
 } from 'lucide-react';
 import { AdminLogo } from '../common/admin-logo';
 import { Badge } from '../ui/badge';
@@ -52,6 +53,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth';
 
 
 const NavLink = ({ href, label, icon: Icon, currentPath }: { href: string; label: string; icon: React.ElementType; currentPath: string; }) => (
@@ -73,6 +75,7 @@ const NavLink = ({ href, label, icon: Icon, currentPath }: { href: string; label
 export function AdminHeader() {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background">
@@ -276,8 +279,14 @@ export function AdminHeader() {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                    <DropdownMenuItem>Logout</DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => logout()}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
