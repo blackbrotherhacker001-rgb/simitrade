@@ -6,7 +6,7 @@ import { AccountSummaryCard } from '@/components/dashboard/account-summary-card'
 import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { SecurityOverview } from '@/components/dashboard/security-overview';
 import { StatCard } from '@/components/dashboard/stat-card';
-import { Shield, Calendar, Key, Activity, UserCheck, Wallet, ShieldCheck, TrendingUp, TrendingDown, ArrowRight, BookUser } from 'lucide-react';
+import { Shield, Calendar, Activity, UserCheck, Wallet } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 
 export default function DashboardOverviewPage() {
@@ -37,14 +37,6 @@ export default function DashboardOverviewPage() {
           icon={<Calendar className="h-6 w-6 text-blue-400" />}
           iconBg="bg-blue-400/10"
           borderColor="border-blue-400/50"
-        />
-        <StatCard
-          title="API Keys"
-          value="0"
-          description="No keys created"
-          icon={<Key className="h-6 w-6 text-purple-400" />}
-          iconBg="bg-purple-400/10"
-          borderColor="border-purple-400/50"
         />
         <StatCard
           title="Login Activity"
