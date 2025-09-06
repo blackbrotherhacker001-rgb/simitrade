@@ -39,7 +39,8 @@ export function TradeConfirmationDialog({ isOpen, onOpenChange, trade }: TradeCo
         setCountdown((prevCountdown) => {
           if (prevCountdown <= 1) {
             clearInterval(timer);
-            handleConfirm();
+            // Defer the confirmation to the next tick to avoid state updates during render
+            setTimeout(() => handleConfirm(), 0);
             return 0;
           }
           return prevCountdown - 1;
