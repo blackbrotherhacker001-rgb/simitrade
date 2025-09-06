@@ -3,6 +3,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import {
   Card,
   CardContent,
@@ -21,13 +24,38 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { Eye, UserPlus, LogIn, Database, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import type { User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { seedUsers } from '@/lib/seed-db';
+
+const addUserSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  balance: z.coerce.number().min(0, { message: "Balance must be a non-negative number." }),
+});
+
+type AddUserFormValues = z.infer<typeof addUserSchema>;
 
 export default function UserManagementPage() {
     const router = useRouter();
@@ -35,7 +63,16 @@ export default function UserManagementPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [seeding, setSeeding] = useState(false);
+    const [isAddUserDialogOpen, setAddUserDialogOpen] = useState(false);
     const { toast } = useToast();
+
+    const form = useForm<AddUserFormValues>({
+        resolver: zodResolver(addUserSchema),
+        defaultValues: {
+            name: "",
+            balance: 1000,
+        },
+    });
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -86,6 +123,34 @@ export default function UserManagementPage() {
         }
     }
 
+    const handleAddUser = async (values: AddUserFormValues) => {
+        try {
+            const newWalletAddress = `0x${[...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`;
+            const newUser: User = {
+                walletAddress: newWalletAddress,
+                name: values.name,
+                balance: values.balance,
+                isAdmin: false,
+                lastLoginAt: new Date().toISOString(),
+            };
+            await setDoc(doc(db, "users", newWalletAddress), newUser);
+            toast({
+                title: "User Added",
+                description: `${values.name} has been added successfully.`,
+            });
+            await fetchUsers();
+            setAddUserDialogOpen(false);
+            form.reset();
+        } catch (error) {
+            console.error("Error adding user:", error);
+            toast({
+                variant: "destructive",
+                title: "Failed to add user",
+                description: "Could not add user to the database.",
+            });
+        }
+    };
+
     const handleViewUser = (userId: string) => {
         router.push(`/admin/users/${userId}`);
     }
@@ -110,10 +175,56 @@ export default function UserManagementPage() {
                     {seeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
                     {seeding ? 'Seeding...' : 'Seed Database'}
                 </Button>
-                <Button>
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Add User
-                </Button>
+                <Dialog open={isAddUserDialogOpen} onOpenChange={setAddUserDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button>
+                            <UserPlus className="mr-2 h-4 w-4" />
+                            Add User
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Create New User</DialogTitle>
+                            <DialogDescription>
+                                Fill out the form below to add a new user to the system.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(handleAddUser)} className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Full Name</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="e.g. John Doe" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="balance"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Initial Balance (USD)</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <DialogFooter>
+                                    <Button type="button" variant="secondary" onClick={() => setAddUserDialogOpen(false)}>Cancel</Button>
+                                    <Button type="submit">Create User</Button>
+                                </DialogFooter>
+                            </form>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
             </div>
         </CardHeader>
         <CardContent>
@@ -190,3 +301,5 @@ export default function UserManagementPage() {
     </div>
   );
 }
+
+    
