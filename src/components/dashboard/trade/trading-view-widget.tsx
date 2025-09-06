@@ -2,9 +2,18 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+
+const symbolMapping: { [key: string]: string } = {
+  '/dashboard/trade': 'COINBASE:BTCUSD',
+  '/dashboard/binary-trading': 'COINBASE:BTCUSD',
+  '/dashboard/forex': 'FX:EURUSD',
+};
 
 export function TradingViewWidget() {
   const container = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const symbol = symbolMapping[pathname] || 'COINBASE:BTCUSD';
 
   useEffect(
     () => {
@@ -15,7 +24,7 @@ export function TradingViewWidget() {
       script.innerHTML = `
         {
           "autosize": true,
-          "symbol": "COINBASE:BTCUSD",
+          "symbol": "${symbol}",
           "interval": "60",
           "timezone": "Etc/UTC",
           "theme": "dark",
@@ -48,7 +57,7 @@ export function TradingViewWidget() {
         }
       };
     },
-    []
+    [symbol]
   );
 
   return (

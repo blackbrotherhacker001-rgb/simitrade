@@ -50,9 +50,11 @@ export function LandingHeader() {
                             Binary Options
                         </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <Repeat className="mr-2 h-4 w-4" />
-                        Forex
+                    <DropdownMenuItem asChild>
+                        <Link href="/dashboard/forex">
+                            <Repeat className="mr-2 h-4 w-4" />
+                            Forex
+                        </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         <Briefcase className="mr-2 h-4 w-4" />
