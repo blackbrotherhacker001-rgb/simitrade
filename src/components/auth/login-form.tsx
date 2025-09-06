@@ -24,7 +24,8 @@ export function LoginForm() {
   useEffect(() => {
     if (user && needsLogin) {
         setNeedsLogin(false);
-        router.push(user.isAdmin ? '/admin/dashboard' : '/user/overview');
+        const targetPath = user.isAdmin ? '/admin/dashboard' : `/user/${user.walletAddress}/overview`;
+        router.push(targetPath);
     }
   }, [user, needsLogin, router, setNeedsLogin]);
   

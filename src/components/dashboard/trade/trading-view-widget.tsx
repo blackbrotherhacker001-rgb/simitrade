@@ -3,17 +3,12 @@
 
 import React, { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-
-const symbolMapping: { [key: string]: string } = {
-  '/user/trade': 'COINBASE:BTCUSD',
-  '/dashboard/binary-trading': 'COINBASE:BTCUSD',
-  '/dashboard/forex': 'FX:EURUSD',
-};
+import { useMarket } from '@/hooks/use-market';
 
 export function TradingViewWidget() {
   const container = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
-  const symbol = symbolMapping[pathname] || 'COINBASE:BTCUSD';
+  const { market } = useMarket();
+  const symbol = `COINBASE:${market.symbol}USD`;
 
   useEffect(
     () => {

@@ -29,6 +29,12 @@ import Link from 'next/link';
 
 export function LandingHeader() {
   const { user, setNeedsLogin } = useAuth();
+  
+  const getTradeLink = (defaultPath: string) => {
+    if (!user) return '/trade';
+    return `/user/${user.walletAddress}${defaultPath.replace('/dashboard', '')}`;
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
       <div className="container flex h-16 items-center">
@@ -49,16 +55,14 @@ export function LandingHeader() {
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link href="/dashboard/binary-trading">
+                        <Link href="/trade">
                             <LineChart className="mr-2 h-4 w-4" />
                             Binary Options
                         </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                        <Link href="/dashboard/forex">
-                            <Repeat className="mr-2 h-4 w-4" />
-                            Forex
-                        </Link>
+                    <DropdownMenuItem>
+                        <Repeat className="mr-2 h-4 w-4" />
+                        Forex
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         <Briefcase className="mr-2 h-4 w-4" />
@@ -66,7 +70,9 @@ export function LandingHeader() {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Portfolio</Button>
+            <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+                <Link href={user ? `/user/${user.walletAddress}/wallet` : '/# '}>Portfolio</Link>
+            </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground hover:text-foreground">
