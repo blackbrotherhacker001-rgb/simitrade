@@ -30,6 +30,7 @@ import {
 const profileFormSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   username: z.string().min(1, 'Username is required.'),
+  walletAddress: z.string().min(1, 'Wallet address is required.'),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -43,11 +44,12 @@ export default function PersonalInfoPage() {
     defaultValues: {
       name: user?.name || '',
       username: user?.name?.toLowerCase().replace(' ', '') || '',
+      walletAddress: user?.walletAddress || '',
     },
   });
   
   const onSubmit = (data: ProfileFormValues) => {
-    updateUser({ name: data.name });
+    updateUser({ name: data.name, walletAddress: data.walletAddress });
     toast({
       title: 'Profile Updated',
       description: 'Your personal information has been saved.',
@@ -120,10 +122,19 @@ export default function PersonalInfoPage() {
                     <FormLabel>Email Address</FormLabel>
                     <Input value={`${user?.name?.toLowerCase().replace(' ', '.')}@email.com`} type="email" readOnly disabled className="mt-1"/>
                 </div>
-                <div>
-                    <FormLabel>Wallet Address</FormLabel>
-                    <Input value={user?.walletAddress} readOnly disabled className="mt-1"/>
-                </div>
+                <FormField
+                  control={form.control}
+                  name="walletAddress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Wallet Address</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </CardContent>
             <CardFooter>
