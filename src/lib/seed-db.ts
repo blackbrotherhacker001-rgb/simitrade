@@ -3,7 +3,7 @@
 
 import { collection, doc, writeBatch } from 'firebase/firestore';
 import { db } from './firebase';
-import { MOCK_USERS } from '@/hooks/use-auth';
+import { MOCK_USERS } from '@/lib/constants';
 import type { User } from '@/types';
 
 export async function seedUsers() {
@@ -13,7 +13,7 @@ export async function seedUsers() {
   let count = 0;
   for (const walletAddress in MOCK_USERS) {
     const userRef = doc(usersCollection, walletAddress);
-    const userData: Omit<User, 'walletAddress'> = MOCK_USERS[walletAddress];
+    const userData: Omit<User, 'walletAddress' | 'isAdmin'> = MOCK_USERS[walletAddress];
     
     // Add the isAdmin property, setting it true for the admin user
     const fullUserData: User = {

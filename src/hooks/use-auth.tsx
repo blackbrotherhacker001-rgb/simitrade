@@ -10,17 +10,9 @@ import {
   type ReactNode,
 } from 'react';
 import type { User } from '@/types';
-
-export const MOCK_USERS: Record<string, Omit<User, 'walletAddress' | 'isAdmin'>> = {
-    '0x1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa': { name: 'Satoshi Nakamoto', balance: 980000, lastLoginAt: '2025-08-23T14:07:03Z' },
-    '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045': { name: 'Vitalik Buterin', balance: 450000, lastLoginAt: '2025-08-23T13:07:03Z' },
-    '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2': { name: 'Charles Hoskinson', balance: 250000, lastLoginAt: '2025-08-22T18:30:00Z' },
-    '0x742d35Cc6634C0532925a3b844Bc454e4438f44e': { name: 'Gavin Wood', balance: 150000, lastLoginAt: '2025-08-21T11:45:00Z' },
-    '0x503828976D22510aad0201ac7EC88293211D23Da': { name: 'Barry Silbert', balance: 75000, lastLoginAt: '2025-08-20T09:00:00Z' },
-    '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1': { name: 'Admin User', balance: 1000000, lastLoginAt: new Date().toISOString() }, // Admin
-    '0x1234567890AbCdEf1234567890aBcDeF12345678': { name: 'Default User', balance: 10000, lastLoginAt: new Date().toISOString() }, // Default user for login form
-};
-
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { MOCK_USERS } from '@/lib/constants';
 
 interface AuthContextType {
   user: User | null;
@@ -50,16 +42,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = useCallback((walletAddress: string, isAdmin: boolean) => {
-    const mockData = MOCK_USERS[walletAddress] || { name: 'New User', balance: 10000 };
-    const newUser: User = {
-      walletAddress,
-      isAdmin,
-      ...mockData,
-      lastLoginAt: new Date().toISOString(),
-    };
-    setUser(newUser);
-    localStorage.setItem('crypto-sim-user', JSON.stringify(newUser));
+  const login = useCallback(async (walletAddress: string, isAdmin: boolean) => {
+    try {
+        const userDocRef = doc(db, 'users', walletAddress);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+            const userData = userDoc.data() as User;
+            setUser(userData);
+            localStorage.setItem('crypto-sim-user', JSON.stringify(userData));
+        } else {
+            // Fallback for demo purposes if user not in DB
+            const mockData = MOCK_USERS[walletAddress] || { name: 'New User', balance: 10000, lastLoginAt: new Date().toISOString() };
+            const newUser: User = {
+                walletAddress,
+                isAdmin,
+                ...mockData,
+                lastLoginAt: new Date().toISOString(),
+            };
+            setUser(newUser);
+            localStorage.setItem('crypto-sim-user', JSON.stringify(newUser));
+        }
+    } catch (error) {
+        console.error("Error logging in:", error);
+    }
   }, []);
 
   const logout = useCallback(() => {
