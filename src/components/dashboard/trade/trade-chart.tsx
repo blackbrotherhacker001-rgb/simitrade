@@ -154,7 +154,7 @@ export function TradeChart() {
             />
             {candlestickData.map((d, i) => (
                 <ReferenceLine 
-                    key={i} 
+                    key={`wick-${i}`}
                     x={d.time} 
                     segment={[
                         { y: d.uv[1] }, 
@@ -166,7 +166,7 @@ export function TradeChart() {
             ))}
              {candlestickData.map((d, i) => (
                 <ReferenceLine 
-                    key={i} 
+                    key={`candle-${i}`}
                     x={d.time} 
                     segment={[
                         { y: d.uv[0] }, 
