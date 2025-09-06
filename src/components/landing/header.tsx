@@ -136,7 +136,7 @@ export function LandingHeader() {
           </Button>
            {user ? (
                  <Button variant="ghost" asChild className="relative h-8 w-8 rounded-full">
-                    <Link href="/user/overview">
+                    <Link href={`/user/${user.walletAddress}/overview`}>
                         <Avatar className="h-8 w-8">
                             <AvatarImage src={`https://i.pravatar.cc/150?u=${user.walletAddress}`} alt={user.name} />
                            <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>

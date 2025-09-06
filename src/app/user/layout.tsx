@@ -3,7 +3,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { DashboardSidebar } from '@/components/user/dashboard-sidebar';
 import { Header } from '@/components/user/header';
@@ -15,17 +15,20 @@ export default function UserDashboardLayout({
 }) {
   const { user } = useAuth();
   const router = useRouter();
+  const params = useParams();
 
   useEffect(() => {
     if (user === null) {
       router.push('/');
     } else if (user.isAdmin) {
-        // Optional: redirect admin to admin dashboard if they land here.
         router.push('/admin/dashboard');
+    } else if (params.userId && user.walletAddress !== params.userId) {
+        // If the logged-in user is not the one in the URL, redirect to their own dashboard
+        router.push(`/user/${user.walletAddress}/overview`);
     }
-  }, [user, router]);
+  }, [user, router, params]);
 
-  if (!user) {
+  if (!user || (params.userId && user.walletAddress !== params.userId)) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Authenticating...</p>

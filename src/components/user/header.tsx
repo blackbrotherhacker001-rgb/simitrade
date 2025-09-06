@@ -43,7 +43,7 @@ export function Header() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt={user?.name} />
+                  <AvatarImage src={`https://i.pravatar.cc/150?u=${user?.walletAddress}`} alt={user?.name} />
                   <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
                 </Avatar>
               </Button>
@@ -59,7 +59,7 @@ export function Header() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/user/personal-info">
+                <Link href={`/user/${user?.walletAddress}/personal-info`}>
                   <UserIcon className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </Link>

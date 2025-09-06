@@ -115,7 +115,7 @@ export default function UserDetailPage() {
     const handleLoginAsUser = () => {
         if (!user) return;
         login(user.walletAddress, user.isAdmin);
-        router.push('/user/overview');
+        router.push(`/user/${user.walletAddress}/overview`);
     }
 
     const handleTradeControl = (outcome: 'win' | 'loss' | 'default') => {

@@ -55,7 +55,7 @@ export default function UserManagementPage() {
 
     const handleLoginAsUser = (userId: string, isAdmin: boolean) => {
       login(userId, isAdmin);
-      router.push('/user/overview');
+      router.push(`/user/${userId}/overview`);
     }
 
   return (
