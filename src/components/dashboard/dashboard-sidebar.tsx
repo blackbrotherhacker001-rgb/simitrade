@@ -68,12 +68,12 @@ export function DashboardSidebar() {
                     {navItems.map(item => (
                         <Link key={item.label} href={item.href}>
                             <Button 
-                                variant={pathname === item.href ? 'secondary' : 'ghost'} 
+                                variant={pathname.startsWith(item.href) ? 'secondary' : 'ghost'} 
                                 className="w-full justify-start"
                             >
                                 <item.icon className="mr-3 h-5 w-5" />
                                 {item.label}
-                                {item.label === 'Trade' && <span className="ml-auto h-2 w-2 rounded-full bg-primary animate-pulse"></span>}
+                                {item.href === '/dashboard/trade' && <span className="ml-auto h-2 w-2 rounded-full bg-primary animate-pulse"></span>}
                             </Button>
                         </Link>
                     ))}

@@ -29,7 +29,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-[#161A25]">
+    <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background">
       <div className="container-fluid flex h-16 items-center px-6">
         <div className="flex-1">
           {/* We can add a search bar here if needed in the future */}

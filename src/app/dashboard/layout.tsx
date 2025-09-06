@@ -4,8 +4,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
-import { Header } from '@/components/dashboard/header';
-import { DashboardSidebar } from '@/components/dashboard/dashboard-sidebar';
 
 export default function DashboardLayout({
   children,
@@ -30,14 +28,10 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex">
-      <DashboardSidebar />
-      <div className="flex-1 flex flex-col">
-        {/* The header can be part of the specific page now */}
-        <main className="flex-1 bg-[#161A25] overflow-y-auto">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+       <main className="flex-1 flex flex-col bg-[#161A25] overflow-y-auto h-screen">
           {children}
         </main>
-      </div>
     </div>
   );
 }
