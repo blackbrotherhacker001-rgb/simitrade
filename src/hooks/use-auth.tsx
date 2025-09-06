@@ -12,7 +12,7 @@ import {
 import type { User } from '@/types';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { MOCK_USERS } from '@/lib/constants';
+import { MOCK_USERS, ADMIN_WALLET_ADDRESS, USER_WALLET_ADDRESS } from '@/lib/constants';
 
 interface AuthContextType {
   user: User | null;
@@ -43,31 +43,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (walletAddress: string, isAdmin: boolean) => {
-    try {
-        const userDocRef = doc(db, 'users', walletAddress);
-        const userDoc = await getDoc(userDocRef);
+    // For the demo, we will use the mock user data to ensure a smooth login experience,
+    // avoiding race conditions with Firestore on initial authentication.
+    const mockUserData = MOCK_USERS[walletAddress];
 
-        let userData: User;
-        if (userDoc.exists()) {
-            // Data from Firestore is the source of truth
-            userData = userDoc.data() as User;
-        } else {
-            // Fallback for demo purposes if user not in DB (e.g., before seeding)
-            const mockData = MOCK_USERS[walletAddress] || { name: 'New User', balance: 10000, lastLoginAt: new Date().toISOString() };
-            userData = {
-                walletAddress,
-                isAdmin, // Use the isAdmin value passed to the function
-                ...mockData,
-                lastLoginAt: new Date().toISOString(),
-            };
-        }
-        
-        setUser(userData);
-        localStorage.setItem('crypto-sim-user', JSON.stringify(userData));
-        setNeedsLogin(false); 
-    } catch (error) {
-        console.error("Error logging in:", error);
+    if (!mockUserData) {
+      console.error('Login failed: User not found in mock data.');
+      setNeedsLogin(false);
+      return;
     }
+    
+    const userData: User = {
+      walletAddress,
+      name: mockUserData.name,
+      balance: mockUserData.balance,
+      lastLoginAt: new Date().toISOString(),
+      isAdmin: isAdmin,
+    };
+    
+    setUser(userData);
+    localStorage.setItem('crypto-sim-user', JSON.stringify(userData));
+    setNeedsLogin(false);
+
   }, []);
 
   const logout = useCallback(() => {
