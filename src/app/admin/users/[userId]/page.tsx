@@ -38,6 +38,7 @@ import {
   TrendingDown,
   Shuffle,
   ShieldQuestion,
+  Loader2,
 } from 'lucide-react';
 import {
   Table,
@@ -50,7 +51,8 @@ import {
 import { useAuth } from '@/hooks/use-auth';
 import type { User as UserType } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import { MOCK_USERS } from '@/lib/constants';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 type UserDetail = UserType & {
     email: string;
@@ -79,31 +81,40 @@ export default function UserDetailPage() {
             if (!userId) return;
 
             setLoading(true);
-            const userData = MOCK_USERS[userId];
+            try {
+                const userRef = doc(db, 'users', userId);
+                const userSnap = await getDoc(userRef);
 
-            if (userData) {
-                 setUser({
-                    ...userData,
-                    walletAddress: userId,
-                    isAdmin: userId === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1',
-                    email: `${userData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
-                    avatar: `https://i.pravatar.cc/150?u=${userId}`,
-                    score: '32%',
-                    lastLogin: userData.lastLoginAt ? new Date(userData.lastLoginAt).toLocaleDateString() : 'Never',
-                    activityScore: 32,
-                    accountAge: '15 days',
-                    riskLevel: 'High',
-                    riskScore: '78/100 (20% confidence)',
-                    joined: 'Aug 19, 2025',
-                    emailVerified: false,
-                    failedLogins: 0,
-                });
-            } else {
+                if (userSnap.exists()) {
+                    const userData = userSnap.data() as UserType;
+                    setUser({
+                        ...userData,
+                        email: `${userData.name.toLowerCase().replace(/\s/g, '.')}@email.com`,
+                        avatar: `https://i.pravatar.cc/150?u=${userId}`,
+                        score: '32%',
+                        lastLogin: userData.lastLoginAt ? new Date(userData.lastLoginAt).toLocaleDateString() : 'Never',
+                        activityScore: 32,
+                        accountAge: '15 days',
+                        riskLevel: 'High',
+                        riskScore: '78/100 (20% confidence)',
+                        joined: 'Aug 19, 2025',
+                        emailVerified: false,
+                        failedLogins: 0,
+                    });
+                } else {
+                     toast({
+                        variant: "destructive",
+                        title: "User Not Found",
+                        description: "The requested user does not exist in the database.",
+                    });
+                }
+            } catch (error) {
                  toast({
                     variant: "destructive",
-                    title: "User Not Found",
-                    description: "The requested user does not exist.",
+                    title: "Error fetching user",
+                    description: "Could not retrieve user data.",
                 });
+                console.error(error);
             }
             setLoading(false);
         }
@@ -142,11 +153,23 @@ export default function UserDetailPage() {
 
 
     if (loading) {
-         return <div className="flex min-h-screen items-center justify-center"><p>Loading user details...</p></div>
+         return (
+            <div className="flex min-h-screen items-center justify-center">
+                <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+                <p>Loading user details...</p>
+            </div>
+         )
     }
 
     if (!user) {
-        return <div className="flex min-h-screen items-center justify-center"><p>User not found.</p></div>
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen">
+                <p className="mb-4">User not found.</p>
+                <Button onClick={() => router.back()}>
+                    <ChevronLeft className="mr-2 h-4 w-4" /> Go Back
+                </Button>
+            </div>
+        )
     }
 
   return (

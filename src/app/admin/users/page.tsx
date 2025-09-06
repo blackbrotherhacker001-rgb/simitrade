@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Card,
@@ -21,32 +21,69 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Eye, UserPlus, LogIn, Database } from 'lucide-react';
+import { Eye, UserPlus, LogIn, Database, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import type { User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import { MOCK_USERS } from '@/lib/constants';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { seedUsers } from '@/lib/seed-db';
 
 export default function UserManagementPage() {
     const router = useRouter();
     const { login } = useAuth();
-    const [users, setUsers] = useState<User[]>(() => {
-        const userList = Object.entries(MOCK_USERS).map(([walletAddress, userData]) => ({
-            ...userData,
-            walletAddress,
-            isAdmin: walletAddress === '0xbd9A66ff3694e47726C1C8DD572A38168217BaA1',
-        }));
-        userList.sort((a, b) => (a.isAdmin === b.isAdmin) ? 0 : a.isAdmin ? -1 : 1);
-        return userList;
-    });
-    const [loading, setLoading] = useState(false);
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [seeding, setSeeding] = useState(false);
     const { toast } = useToast();
 
+    const fetchUsers = async () => {
+        setLoading(true);
+        try {
+            const usersCollection = collection(db, 'users');
+            const userSnapshot = await getDocs(usersCollection);
+            const userList = userSnapshot.docs.map(doc => doc.data() as User);
+             // Sort to ensure admin user is always at the top
+            userList.sort((a, b) => (a.isAdmin === b.isAdmin) ? 0 : a.isAdmin ? -1 : 1);
+            setUsers(userList);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            toast({
+                variant: "destructive",
+                title: "Failed to load users",
+                description: "Could not retrieve user data from the database.",
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
     const handleSeedData = async () => {
-        toast({
-            title: "Database Seeding Disabled",
-            description: "This feature is temporarily disabled for stability.",
-        });
+        setSeeding(true);
+        try {
+            const result = await seedUsers();
+            if (result.success) {
+                toast({
+                    title: "Database Seeded",
+                    description: `${result.count} users have been added to the database.`,
+                });
+                await fetchUsers(); // Refresh the user list
+            } else {
+                throw result.error;
+            }
+        } catch (error) {
+             toast({
+                variant: "destructive",
+                title: "Database Seeding Failed",
+                description: "Could not seed the database. Check console for errors.",
+            });
+        } finally {
+            setSeeding(false);
+        }
     }
 
     const handleViewUser = (userId: string) => {
@@ -69,9 +106,9 @@ export default function UserManagementPage() {
                 </CardDescription>
             </div>
             <div className="flex gap-2">
-                <Button onClick={handleSeedData}>
-                    <Database className="mr-2 h-4 w-4" />
-                    Seed Database
+                <Button onClick={handleSeedData} disabled={seeding}>
+                    {seeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
+                    {seeding ? 'Seeding...' : 'Seed Database'}
                 </Button>
                 <Button>
                     <UserPlus className="mr-2 h-4 w-4" />
@@ -94,12 +131,17 @@ export default function UserManagementPage() {
                 <TableBody>
                     {loading ? (
                         <TableRow>
-                            <TableCell colSpan={6} className="text-center py-8">Loading users...</TableCell>
+                            <TableCell colSpan={6} className="text-center py-8">
+                                <div className="flex justify-center items-center">
+                                    <Loader2 className="mr-2 h-6 w-6 animate-spin"/>
+                                    Loading users...
+                                </div>
+                            </TableCell>
                         </TableRow>
                     ) : users.length === 0 ? (
                         <TableRow>
                              <TableCell colSpan={6} className="text-center py-8">
-                                No users found.
+                                No users found. Click "Seed Database" to populate users.
                             </TableCell>
                         </TableRow>
                     ) : (
