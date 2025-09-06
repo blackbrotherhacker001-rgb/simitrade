@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Input } from '@/components/ui/input';
 import { TradeSettingsDialog } from './trade-settings-dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
 
 type TradeType = 'RISE' | 'FALL';
 
